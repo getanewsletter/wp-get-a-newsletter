@@ -1,0 +1,4 @@
+*.tmproj
+*.bak
+.DS_Store
+.idea
