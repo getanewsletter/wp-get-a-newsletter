@@ -465,7 +465,7 @@ class GAPI
      */
     function newsletters_show()
     {
-        $ok = $this->call_api(Http::GET, 'lists/');
+        $ok = $this->call_api(Http::GET, 'lists/?paginate_by=100');
         if ($ok) {
             $this->result = array();
 
