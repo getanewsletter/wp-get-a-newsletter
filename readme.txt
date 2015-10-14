@@ -12,6 +12,11 @@ Email marketing made simple.
 
 Website: http://www.getanewsletter.com
 
+Getting people to sign up to your newsletter has never been easier.
+Just add get a newsletter widget to your site and let people hear more from you.
+In our tool you are able to send responsive html mails, dive into reports about
+which of your subscribers reads your emails.
+
 == Installation ==
 
 Signup required at (https://app.getanewsletter.com)
@@ -23,4 +28,4 @@ Signup required at (https://app.getanewsletter.com)
 5. Copy API token
 6. Open wordpress settings and goto getanewsletter plugin
 7. Paste API token and fill out required information
-8. Goto Layout > widgets and look for a widget called get a newsletter, add it to an desierd place.
+8. Add subscribe widget, goto Layout > widgets and look for a widget called get a newsletter
