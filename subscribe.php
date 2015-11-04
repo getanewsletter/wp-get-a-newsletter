@@ -1,5 +1,5 @@
 <?php
-$pageUR1  = ereg_replace("/(.+)", "", $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"]);
+$pageUR1  = preg_replace("/(.+)", "", $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"]);
 $curdomain  = str_replace("www.", "", $pageUR1); 
 
 if(strpos($_SERVER['HTTP_REFERER'],$curdomain))
