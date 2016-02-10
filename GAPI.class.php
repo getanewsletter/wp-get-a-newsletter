@@ -1,8 +1,4 @@
 <?php
-require_once ("lib/httpful.phar");
-
-use \Httpful\Http;
-use \Httpful\Request;
 
 /*
  * For more information on Get a Newsletter's API visit https://api.getanewsletter.com/.
@@ -73,16 +69,7 @@ class GAPI
         $this->username = $username;
         $this->password = $password;
 
-        $json_handler = new Httpful\Handlers\JsonHandler(array('decode_as_array' => true));
-        Httpful\Httpful::register('application/json', $json_handler);
-
-        $template = Request::init()
-            ->addHeader('Accept', 'application/json;')
-            ->addHeader('Authorization', 'Token ' . $this->password)
-            ->expects('application/json')
-            ->sendsJson();
-
-        Request::ini($template);
+        $this->request = _wp_http_get_object();
     }
 
     /*
@@ -131,7 +118,7 @@ class GAPI
      */
     function check_login()
     {
-        return $this->call_api(Http::GET, 'user/');
+        return $this->call_api('GET', 'user/');
     }
 
     /*
@@ -176,13 +163,13 @@ class GAPI
      * Arguments
      * =========
      * $method      = Method to use for the call. One of the following:
-                      Http::GET,
-     *                Http::POST,
-     *                Http::PUT,
-     *                Http::PATCH;
+                      'GET',
+     *                'POST',
+     *                'PUT',
+     *                'PATCH';
      * $endpoint    = The API endpoint, e.g. 'contacts/test@example.com/'.
-     * $args        = Associative array of arguments when the method is Http::POST,
-     *                Http::PUT or Http::PATCH. For example: array('foo' => 'bar')
+     * $args        = Associative array of arguments when the method is 'POST',
+     *                'PUT' or 'PATCH'. For example: array('foo' => 'bar')
      *
      * $method and $endpoint are mandatory arguments.
      *
@@ -192,23 +179,25 @@ class GAPI
      *
      * In case of an error $errorCode and $errorMessage will be updated.
      */
-    protected function call_api($method, $endpoint, $args=null)
+    protected function call_api($method, $endpoint, $args = null)
     {
         $uri = $this->address . '/' . $this->api_version . '/' . $endpoint;
 
-        $request = Request::init($method)->uri($uri);
-
-        if ($args) {
-            $request->body($args);
-        }
-
         // TODO: Handle ConnectionErrorException.
         // TODO: Handle Exception: Unable to parse response as JSON and other exceptions.
-        $this->response = $request->send();
+        $this->response = (object) $this->request->request($uri, array(
+            'method' => $method,
+            'headers' => array(
+                'Accept' => 'application/json;',
+                'Authorization' => 'Token ' . $this->password
+            ),
+            'body' => $args
+        ));
+
+        $this->response->body = json_decode($this->response->body);
 
         if (floor($this->response->code / 100) == 2) {
             $this->result = true;
-
         } else {
             $this->errorCode = $this->response->code;
             $this->errorMessage = self::parse_errors($this->response->body);
@@ -260,9 +249,9 @@ class GAPI
         }
 
         if ($mode == 1) {
-            return $this->call_api(Http::POST, 'contacts/', $data);
+            return $this->call_api('POST', 'contacts/', $data);
         } else if ($mode == 2) {
-            $this->call_api(Http::POST, 'contacts/', $data);
+            $this->call_api('POST', 'contacts/', $data);
             return true;
         } else if ($mode == 3) {
             foreach ($data as $field => $value) {
@@ -270,9 +259,9 @@ class GAPI
                     unset($data[$field]);
                 }
             }
-            return $this->call_api(Http::PATCH, 'contacts/' . $email . '/', $data);
+            return $this->call_api('PATCH', 'contacts/' . $email . '/', $data);
         } else {
-            return $this->call_api(Http::PUT, 'contacts/' . $email . '/', $data);
+            return $this->call_api('PUT', 'contacts/' . $email . '/', $data);
         }
     }
 
@@ -334,7 +323,7 @@ class GAPI
             $data['attributes'] = $attributes;
         }
 
-        return $this->call_api(Http::PUT, 'contacts/' . $email . '/', $data);
+        return $this->call_api('PUT', 'contacts/' . $email . '/', $data);
     }
 
     /*
@@ -354,7 +343,7 @@ class GAPI
      */
     function contact_delete($email)
     {
-        return $this->call_api(Http::DELETE, 'contacts/' . $email . '/');
+        return $this->call_api('DELETE', 'contacts/' . $email . '/');
     }
 
     /*
@@ -392,7 +381,7 @@ class GAPI
             }
         }
 
-        $status = $this->call_api(Http::GET, 'contacts/' . $email . '/');
+        $status = $this->call_api('GET', 'contacts/' . $email . '/');
         if ($status) {
             $data = $this->response->body;
 
@@ -448,7 +437,7 @@ class GAPI
      */
     function subscription_delete($email, $list_id)
     {
-        return $this->call_api(Http::DELETE, 'lists/'. $list_id . '/subscribers/' . $email . '/');
+        return $this->call_api('DELETE', 'lists/'. $list_id . '/subscribers/' . $email . '/');
     }
 
     /*
@@ -465,7 +454,7 @@ class GAPI
      */
     function newsletters_show()
     {
-        $ok = $this->call_api(Http::GET, 'lists/?paginate_by=100');
+        $ok = $this->call_api('GET', 'lists/?paginate_by=100');
         if ($ok) {
             $this->result = array();
 
@@ -505,7 +494,7 @@ class GAPI
      */
     function subscriptions_listing($list_id, $start = null, $end = null)
     {
-        $ok = $this->call_api(Http::GET, 'lists/' . $list_id . '/subscribers/?paginate_by=100');
+        $ok = $this->call_api('GET', 'lists/' . $list_id . '/subscribers/?paginate_by=100');
         if ($ok) {
             $this->result = array();
             foreach ($this->response->body['results'] as $subs) {
@@ -570,7 +559,7 @@ class GAPI
      */
     function attribute_create($name)
     {
-        return $this->call_api(Http::POST, 'attributes/', array('name' => $name));
+        return $this->call_api('POST', 'attributes/', array('name' => $name));
     }
 
     /*
@@ -592,7 +581,7 @@ class GAPI
     {
         $code = $this->attribute_get_code($name);
         if ($code) {
-            return $this->call_api(Http::DELETE, 'attributes/' . $code . '/');
+            return $this->call_api('DELETE', 'attributes/' . $code . '/');
         } else {
             return false;
         }
@@ -612,7 +601,7 @@ class GAPI
      */
     function attribute_listing()
     {
-        $ok = $this->call_api(Http::GET, 'attributes/');
+        $ok = $this->call_api('GET', 'attributes/');
         if ($ok) {
             $this->result = $this->response->body['results'];
 
@@ -657,7 +646,7 @@ class GAPI
      */
     function reports_bounces($id, $filter = null, $start = null, $end = null)
     {
-        $ok = $this->call_api(Http::GET, 'reports/' . $id . '/bounces/?paginate_by=100');
+        $ok = $this->call_api('GET', 'reports/' . $id . '/bounces/?paginate_by=100');
         if ($ok) {
             $this->result = array();
             foreach ($this->response->body['results'] as $bounce) {
@@ -693,7 +682,7 @@ class GAPI
      */
     function reports_clicks_per_link($id, $link_id)
     {
-        $ok = $this->call_api(Http::GET, 'reports/' . $id . '/links/' . $link_id . '/clicks/?paginate_by=100');
+        $ok = $this->call_api('GET', 'reports/' . $id . '/links/' . $link_id . '/clicks/?paginate_by=100');
         if ($ok) {
             $this->result = array();
             foreach ($this->response->body['results'] as $link) {
@@ -732,7 +721,7 @@ class GAPI
      */
     function reports_links($id)
     {
-        $ok = $this->call_api(Http::GET, 'reports/' . $id . '/links/?ordering=id');
+        $ok = $this->call_api('GET', 'reports/' . $id . '/links/?ordering=id');
         if ($ok) {
             $this->result = array();
             foreach ($this->response->body['results'] as $link) {
@@ -765,7 +754,7 @@ class GAPI
     function reports_listing($latest = true)
     {
         $ordering = $latest ? '-sent' : 'sent';
-        $ok = $this->call_api(Http::GET, 'reports/?orderging=' . $ordering);
+        $ok = $this->call_api('GET', 'reports/?orderging=' . $ordering);
         if ($ok) {
             $this->result = array();
             foreach ($this->response->body['results'] as $report) {
@@ -801,7 +790,7 @@ class GAPI
      */
     function reports_opens($id)
     {
-        $ok = $this->call_api(Http::GET, 'reports/' . $id . '/opens/?paginate_by=100');
+        $ok = $this->call_api('GET', 'reports/' . $id . '/opens/?paginate_by=100');
         if ($ok) {
             $this->result = array();
             foreach ($this->response->body['results'] as $open) {
@@ -839,7 +828,7 @@ class GAPI
      */
     function reports_unsubscribes($id, $start = null, $end = null)
     {
-        $ok = $this->call_api(Http::GET, 'reports/' . $id . '/unsubscribed/?paginate_by=100');
+        $ok = $this->call_api('GET', 'reports/' . $id . '/unsubscribed/?paginate_by=100');
         if ($ok) {
             $this->result = array();
             foreach ($this->response->body['results'] as $unsub) {
