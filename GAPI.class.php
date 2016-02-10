@@ -69,7 +69,7 @@ class GAPI
         $this->username = $username;
         $this->password = $password;
 
-        $this->request = _wp_http_get_object();
+        $this->http = new WP_Http;
     }
 
     /*
@@ -185,7 +185,7 @@ class GAPI
 
         // TODO: Handle ConnectionErrorException.
         // TODO: Handle Exception: Unable to parse response as JSON and other exceptions.
-        $this->response = (object) $this->request->request($uri, array(
+        $this->response = (object) $this->http->request($uri, array(
             'method' => $method,
             'headers' => array(
                 'Accept' => 'application/json;',
