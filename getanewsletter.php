@@ -204,6 +204,15 @@ add_action('widgets_init', create_function('', 'return register_widget("GetaNews
 
 /* AJAX */
 
+add_action('wp_ajax_getanewsletter_subscribe', 'getanewsletter_subscribe');
+add_action('wp_ajax_nopriv_getanewsletter_subscribe', 'getanewsletter_subscribe');
+
+function getanewsletter_subscribe() {
+	require_once(plugin_dir_path( __FILE__) . '/subscribe.php');
+
+	die();
+}
+
 add_action('wp_head', 'news_js_ajax' );
 
 function news_js_ajax()
@@ -222,8 +231,11 @@ function news_js_ajax()
 
     			jQuery.ajax({
     				type: 'POST',
-    				url: '<?php echo $pluginurl; ?>subscribe.php',
-    				data: data,
+    				url: '<?php echo admin_url('admin-ajax.php'); ?>',
+    				data: {
+						action: 'getanewsletter_subscribe',
+						data: data
+					},
     				beforeSend: function(message) {
     					jQuery('.news-loading').show();
     				},

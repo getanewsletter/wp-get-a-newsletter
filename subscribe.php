@@ -7,10 +7,6 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
 	$post = (!empty($_POST))? true : false;
 
 	if($post) {
-		if (!function_exists('add_action')) {
-			require_once("../../../wp-config.php");
-		}
-
 		$news_user = get_option('newsletter_user');
 		$news_pass = get_option('newsletter_pass');
 		$apikey = get_option('newsletter_apikey');
