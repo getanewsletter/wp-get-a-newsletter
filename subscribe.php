@@ -4,7 +4,7 @@ $curdomain  = str_replace("www.", "", $pageUR1);
 
 if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
 	error_reporting (E_ALL ^ E_NOTICE);
-	$post = (!empty($_POST))? true : false;
+	$post = (!empty($_POST['data']))? true : false;
 
 	if($post) {
 		$news_user = get_option('newsletter_user');
@@ -15,17 +15,17 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
 		$news_con = new GAPI($news_user, $news_pass);
 
 		$news_fname = NULL;
-		if($_POST['id_first_name']) {
-			$news_fname = stripslashes($_POST['id_first_name']);
+		if($_POST['data']['id_first_name']) {
+			$news_fname = stripslashes($_POST['data']['id_first_name']);
 		}
 
 		$news_lname = NULL;
-		if($_POST['id_last_name']) {
-			$news_lname = stripslashes($_POST['id_last_name']);
+		if($_POST['data']['id_last_name']) {
+			$news_lname = stripslashes($_POST['data']['id_last_name']);
 		}
 
 		$news_confirm = False;
-		if($_POST['confirm'] == "on") {
+		if($_POST['data']['confirm'] == "on") {
 			$news_confirm = True;
 		}
 
@@ -35,7 +35,7 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
 		);
 
 
-		if ($news_con->subscription_add($_POST['id_email'], $_POST['newsletter'], utf8_encode($news_fname), utf8_encode($news_lname), $news_confirm, $apikey)) {
+		if ($news_con->subscription_add($_POST['data']['id_email'], $_POST['data']['newsletter'], utf8_encode($news_fname), utf8_encode($news_lname), $news_confirm, $apikey)) {
 			if($news_confirm == True && get_option('newsletter_msg_confirm')) $response['message'] = '<span class="news-success">'.get_option('newsletter_msg_confirm').'</span>';
 			else $response['message'] = '<span class="news-success">'.get_option('newsletter_msg_success').'</span>';
 		}
