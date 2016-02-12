@@ -227,7 +227,11 @@ function news_js_ajax()
     		jQuery('.news-loading').hide();
 
     		jQuery('.newsletter-signup').submit(function() {
-    			var data = jQuery(this).serialize();
+                var data = jQuery(this).serializeArray().reduce(function(obj, item) {
+				    obj[item.name] = item.value;
+
+				    return obj;
+				}, {});
 
     			jQuery.ajax({
     				type: 'POST',
