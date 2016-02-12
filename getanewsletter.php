@@ -18,14 +18,14 @@ function newsletter_menu() {
 function newsletter_options() {
 ?>
 	<div class="wrap">
-	
+
 	<form method="post" action="options.php">
-	
+
 		<h2>Get a Newsletter Options</h2>
-		
+
 		<h3>Account Information</h3>
 		<p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> login details here and your API Key. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
-		
+
 		<?php wp_nonce_field('update-options'); ?>
 		<table class="form-table">
 			<tr valign="top">
@@ -33,7 +33,7 @@ function newsletter_options() {
 				<td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
 			</tr>
 		</table>
-		
+
 		<h3>Messages</h3>
 		<p>Here you can enter friendly messages that will be displayed on user-end when they interact with the form.</p>
 		<table class="form-table">
@@ -56,7 +56,7 @@ function newsletter_options() {
 				</td>
 			</tr>
 		</table>
-		
+
 		<input type="hidden" name="action" value="update" />
 		<input type="hidden" name="page_options" value="newsletter_user,newsletter_pass,newsletter_apikey,newsletter_msg_success,newsletter_msg_confirm,newsletter_msg_505,newsletter_msg_512" />
 		<p class="submit">
@@ -72,29 +72,30 @@ add_action('admin_menu', 'newsletter_menu');
 /* WIDGET */
 
 class GetaNewsletter extends WP_Widget {
-    /** constructor */
-    function GetaNewsletter() {
-        parent::WP_Widget(false, $name = 'Get a Newsletter');	
-    }
+	/** constructor */
+	function __construct() {
+		parent::__construct(false, $name = 'Get a Newsletter');
+	}
 
-    /** @see WP_Widget::widget */
-    function widget($args, $instance) {	
+	/** @see WP_Widget::widget */
+	function widget($args, $instance) {
 		$apikey = get_option('newsletter_apikey');
-		
-        extract( $args );
-        $title = apply_filters('widget_title', $instance['title']);
-		$newskey = esc_attr($instance['newskey']);
-		$fname = esc_attr($instance['fname']);
-		$fnametxt = esc_attr($instance['fnametxt']);
-		$lname = esc_attr($instance['lname']);
-		$lnametxt = esc_attr($instance['lnametxt']);
-		$submittext = esc_attr($instance['submittext']);
-        ?>
+
+		extract( $args );
+		$title = apply_filters('widget_title', empty($instance['title']) ? "" : $instance['title']);
+		$newskey = esc_attr(empty($instance['newskey']) ? "" : $instance['newskey']);
+		$fname = esc_attr(empty($instance['fname']) ? "" : $instance['fname']);
+		$fnametxt = esc_attr(empty($instance['fnametxt']) ? "" : $instance['fnametxt']);
+		$lname = esc_attr(empty($instance['lname']) ? "" : $instance['lname']);
+		$lnametxt = esc_attr(empty($instance['lnametxt']) ? "" : $instance['lnametxt']);
+		$submittext = esc_attr(empty($instance['submittext']) ? "" : $instance['submittext']);
+		?>
 		<?php echo $before_widget; ?>
 		  <?php if ( $title )
 				echo $before_title . $title . $after_title; ?>
-				
-				<form method="post" class="newsletter-signup" action="javascript:alert('success!');">
+
+				<form method="post" class="newsletter-signup" action="javascript:alert('success!');" enctype="multipart/form-data">
+					<input type="hidden" name="action" value="getanewsletter_subscribe" />
 					<?php if($fname): ?>
 					<p>
 						<label for="id_first_name"><?php if($fnametxt != ''): _e($fnametxt); else: _e('First name'); endif; ?></label><br />
@@ -113,40 +114,40 @@ class GetaNewsletter extends WP_Widget {
 					</p>
 					<p>
 						<input type="hidden" name="newsletter" value="<?php echo $newskey; ?>" id="id_newsletter" />
-						<input type="submit" value="<?php if($submittext != ''): _e($submittext); else: _e('Subscribe'); endif; ?>" /> 
-						
+						<input type="submit" value="<?php if($submittext != ''): _e($submittext); else: _e('Subscribe'); endif; ?>" />
+
 						<img src="<?php echo WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),'',plugin_basename(__FILE__)); ?>loading.gif" alt="loading" class="news-loading" />
 					</p>
 				</form>
 				<div class="news-note"></div>
-				
+
 		<?php echo $after_widget; ?>
-        <?php
-    }
+		<?php
+	}
 
-    /** @see WP_Widget::update */
-    function update($new_instance, $old_instance) {				
-        return $new_instance;
-    }
+	/** @see WP_Widget::update */
+	function update($new_instance, $old_instance) {
+		return $new_instance;
+	}
 
-    /** @see WP_Widget::form */
-    function form($instance) {
+	/** @see WP_Widget::form */
+	function form($instance) {
 		$news_pass = get_option('newsletter_pass');
-		
+
 		if($news_pass)
-		{	
-			
+		{
+
 			$news_con = new GAPI('', $news_pass);
-			
+
 			if ($news_con->check_login())
 			{
-				$title = esc_attr($instance['title']);
-				$newskey = esc_attr($instance['newskey']);
-				$fname = esc_attr($instance['fname']);
-				$fnametxt = esc_attr($instance['fnametxt']);
-				$lname = esc_attr($instance['lname']);
-				$lnametxt = esc_attr($instance['lnametxt']);
-				$submittext = esc_attr($instance['submittext']);
+				$title = esc_attr(empty($instance['title']) ? "" : $instance['title']);
+				$newskey = esc_attr(empty($instance['newskey']) ? "" : $instance['newskey']);
+				$fname = esc_attr(empty($instance['fname']) ? "" : $instance['fname']);
+				$fnametxt = esc_attr(empty($instance['fnametxt']) ? "" : $instance['fnametxt']);
+				$lname = esc_attr(empty($instance['lname']) ? "" : $instance['lname']);
+				$lnametxt = esc_attr(empty($instance['lnametxt']) ? "" : $instance['lnametxt']);
+				$submittext = esc_attr(empty($instance['submittext']) ? "" : $instance['submittext']);
 				?>
 				<p>
 					<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
@@ -196,13 +197,22 @@ class GetaNewsletter extends WP_Widget {
 		{
 			echo '<p>Enter required details in Get a Newsletter options page.</p>';
 		}
-    }
+	}
 }
 
 add_action('widgets_init', create_function('', 'return register_widget("GetaNewsletter");'));
 
 
 /* AJAX */
+
+add_action('wp_ajax_getanewsletter_subscribe', 'getanewsletter_subscribe');
+add_action('wp_ajax_nopriv_getanewsletter_subscribe', 'getanewsletter_subscribe');
+
+function getanewsletter_subscribe() {
+	require_once(plugin_dir_path( __FILE__) . '/subscribe.php');
+
+
+}
 
 add_action('wp_head', 'news_js_ajax' );
 
@@ -212,33 +222,47 @@ function news_js_ajax()
 	$pluginurl = WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__));
 	?>
 	<script type="text/javascript">
-	//<![CDATA[
-	jQuery(document).ready(function()
-	{
-		jQuery(".news-loading").hide();
-		jQuery(".newsletter-signup").submit(function(){
-			var str = jQuery(this).serialize();
+		//<![CDATA[
+		jQuery(document).ready(function()
+		{
+			jQuery('.news-loading').hide();
 
-			jQuery.ajax({
-				type: "POST",
-				url: "<?php echo $pluginurl; ?>subscribe.php",
-				data: str,
-				beforeSend: function (msg){
-				  jQuery(".news-loading").show();
-				},
-				success: function(msg){
-					jQuery(".news-note").ajaxComplete(function(event, request, settings){
-						jQuery(this).html(msg);
-						if(msg == '<span class="news-success"><?php echo get_option("newsletter_msg_success"); ?></span>' || msg == '<span class="news-success"><?php echo get_option("newsletter_msg_confirm"); ?></span>') 
-							jQuery(".newsletter-signup").hide();
-						jQuery(".news-loading").hide();
-					});
-				}
+			jQuery('.newsletter-signup').submit(function() {
+                var form = jQuery(this);
+				var data = form.serialize();
+                var resultContainer = jQuery('<span></span>');
+                var resultWrapper = jQuery('.news-note');
+                var spinner = jQuery('.news-loading');
+
+				jQuery.ajax({
+					'type': 'POST',
+					'url': '<?php echo admin_url('admin-ajax.php'); ?>',
+					'data': data,
+					'cache': false,
+					'beforeSend': function(message) {
+						spinner.show();
+					},
+					'success': function(response) {
+                        spinner.hide();
+						resultWrapper.append(
+                            resultContainer.addClass('news-success')
+                                .removeClass('news-error')
+                                .html(response.message));
+                        jQuery('.newsletter-signup').hide();
+					},
+					'error': function() {
+						spinner.hide();
+                        resultWrapper.append(
+                            resultContainer.removeClass('news-success')
+                                .addClass('news-error')
+                                .html(response.message));
+					}
+				});
+
+				return false;
 			});
-		return false;
 		});
-	});
-	//]]>
+		//]]>
 	</script>
 	<?php
 }
