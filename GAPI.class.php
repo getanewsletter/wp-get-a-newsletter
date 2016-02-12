@@ -181,6 +181,7 @@ class GAPI
      */
     protected function call_api($method, $endpoint, $args = null)
     {
+        define( 'WP_DEBUG', true );
         $uri = $this->address . '/' . $this->api_version . '/' . $endpoint;
 
         // TODO: Handle ConnectionErrorException.
@@ -194,12 +195,12 @@ class GAPI
             'body' => $args
         ));
 
-        $this->response->body = json_decode($this->response->body);
+        $this->response->body = json_decode($this->response->body, true);
 
-        if (floor($this->response->code / 100) == 2) {
+        if (floor($this->response->response->code / 100) == 2) {
             $this->result = true;
         } else {
-            $this->errorCode = $this->response->code;
+            $this->errorCode = $this->response->response->code;
             $this->errorMessage = self::parse_errors($this->response->body);
 
             $this->result = false;
