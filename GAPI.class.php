@@ -181,7 +181,6 @@ class GAPI
      */
     protected function call_api($method, $endpoint, $args = null)
     {
-        define( 'WP_DEBUG', true );
         $uri = $this->address . '/' . $this->api_version . '/' . $endpoint;
 
         // TODO: Handle ConnectionErrorException.
