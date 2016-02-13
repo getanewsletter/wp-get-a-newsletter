@@ -4,13 +4,9 @@ $curdomain  = str_replace("www.", "", $pageUR1);
 
 if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
 	error_reporting (E_ALL ^ E_NOTICE);
-	$post = (!empty($_POST))? true : false;
+	$post = (!empty($_POST)) ? true : false;
 
 	if($post) {
-		if (!function_exists('add_action')) {
-			require_once("../../../wp-config.php");
-		}
-
 		$news_user = get_option('newsletter_user');
 		$news_pass = get_option('newsletter_pass');
 		$apikey = get_option('newsletter_apikey');
@@ -33,17 +29,33 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
 			$news_confirm = True;
 		}
 
+		$response = array(
+			'status' => 'ok',
+			'message' => null
+		);
 
 		if ($news_con->subscription_add($_POST['id_email'], $_POST['newsletter'], utf8_encode($news_fname), utf8_encode($news_lname), $news_confirm, $apikey)) {
-			if($news_confirm == True && get_option('newsletter_msg_confirm')) echo '<span class="news-success">'.get_option('newsletter_msg_confirm').'</span>';
-			else echo '<span class="news-success">'.get_option('newsletter_msg_success').'</span>';
+			if($news_confirm == True && get_option('newsletter_msg_confirm')) {
+				$response['message'] = get_option('newsletter_msg_confirm');
+			} else {
+				$response['message'] = get_option('newsletter_msg_success');
+			}
+		} else {
+			$response['status'] = 'error';
+
+			if($news_con->errorCode == "505" && get_option('newsletter_msg_505')) {
+				$response['message'] = get_option('newsletter_msg_505');
+			} elseif($news_con->errorCode == "512" && get_option('newsletter_msg_512')) {
+				$response['message'] = get_option('newsletter_msg_512');
+			} else {
+				$response['message'] = $news_con->show_errors();
+			}
 		}
-		else
-		{
-			if($news_con->errorCode == "505" && get_option('newsletter_msg_505')) echo '<span class="news-error">'.get_option('newsletter_msg_505').'</span>';
-			elseif($news_con->errorCode == "512" && get_option('newsletter_msg_512')) echo '<span class="news-error">'.get_option('newsletter_msg_512').'</span>';
-			else echo '<span class="news-error">'.$news_con->show_errors().'</span>';
-		}
+
+		header("HTTP/1.0 " . $news_con->statusCode);
+		header('Content-Type: application/json');
+        echo json_encode($response, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+		wp_die();
 	}
 }
 ?>

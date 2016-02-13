@@ -2,7 +2,7 @@
 Contributors: getanewsletter
 Tags: email, marketing, newsletters
 Requires at least: 3.0.1
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,8 +14,8 @@ Website: http://www.getanewsletter.com
 
 Getting people to sign up to your newsletter has never been easier.
 Just add get a newsletter widget to your site and let people hear more from you.
-In our tool you are able to send responsive html mails, dive into reports about
-which of your subscribers reads your emails.
+In our tool you are able to send responsive HTML e-mails, dive into advanced
+delivery reports, click statistics and much more.
 
 == Installation ==
 
