@@ -4,7 +4,7 @@ $curdomain  = str_replace("www.", "", $pageUR1);
 
 if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
 	error_reporting (E_ALL ^ E_NOTICE);
-	$post = (!empty($_POST))? true : false;
+	$post = (!empty($_POST)) ? true : false;
 
 	if($post) {
 		$news_user = get_option('newsletter_user');

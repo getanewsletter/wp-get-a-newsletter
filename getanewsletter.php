@@ -210,8 +210,6 @@ add_action('wp_ajax_nopriv_getanewsletter_subscribe', 'getanewsletter_subscribe'
 
 function getanewsletter_subscribe() {
 	require_once(plugin_dir_path( __FILE__) . '/subscribe.php');
-
-
 }
 
 add_action('wp_head', 'news_js_ajax' );
