@@ -1,10 +1,13 @@
 <?php
 /*
 Plugin Name: Get a Newsletter
-Description: Plugin to add subscription form to the site using widgets. The plugin is originally created by Dream Builders and modified by Get a Newsletter Scandinavia AB (http://www.getanewsletter.com)
+Plugin URI: http://www.getanewsletter.com/
+Description: Plugin to add subscription form to the site using widgets.
+Version: 1.9
 Author: Dream Builders
-Version: 1.8
 Author URI: http://www.dreambuilders.se/
+License: GPLv2 or later
+Text Domain: getanewsletter
 */
 
 require_once("GAPI.class.php");
