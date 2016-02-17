@@ -310,18 +310,28 @@ class GAPI
 
         if ($this->contact_show($email)) {
             foreach ($this->result[0]->newsletters as $list) {
-                $lists[] = array('hash' => $list->list_id, 'confirmed' =>  true);
-                    if ($list->list_id == $list_id) {
-                        $this->errorCode = 405;
-                        $this->errorMessage = 'The subscription already exists.';
-                        return false;
-                    }
+                array_push($lists, array('hash' => $list['list_id']));
+                if ($list['list_id'] == $list_id) {
+                    $this->errorCode = 405;
+                    $this->errorMessage = 'The subscription already exists.';
+                    return false;
                 }
             }
         }
 
+        $data = array(
+            'email' => $email,
+            'first_name' => $first_name,
+            'last_name' => $last_name
+        );
+
+        if (!empty($attributes)) {
+            $data['attributes'] = $attributes;
+        }
+
+        $this->call_api('PUT', 'contacts/' . $email . '/', $data);
         return $this->call_api('POST', 'lists/' . $list_id . '/subscribers/', array('contact' => $email));
-    }
+     }
 
     /*
      * contact_delete()
