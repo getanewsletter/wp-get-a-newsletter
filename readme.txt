@@ -1,8 +1,8 @@
 === Get a Newsletter ===
-Contributors: getanewsletter
+Contributors: dreambuilder
 Tags: email, marketing, newsletters
 Requires at least: 3.0.1
-Stable tag: 1.9
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
