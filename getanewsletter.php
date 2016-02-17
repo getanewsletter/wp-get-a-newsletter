@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 1.9.2
+Version: 1.9.3
 Author: Get a Newsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
@@ -19,6 +19,12 @@ function newsletter_menu() {
 }
 
 function newsletter_options() {
+    $news_pass = get_option('newsletter_pass');
+    $ok = false;
+    if($news_pass) {
+        $conn = new GAPI('', $news_pass);
+        $ok = $conn->check_login();
+    }
 ?>
 	<div class="wrap">
 
@@ -27,7 +33,7 @@ function newsletter_options() {
 		<h2>Get a Newsletter Options</h2>
 
 		<h3>Account Information</h3>
-		<p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> login details here and your API Key. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
+		<p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
 
 		<?php wp_nonce_field('update-options'); ?>
 		<table class="form-table">
@@ -35,6 +41,10 @@ function newsletter_options() {
 				<th scope="row">API Token</th>
 				<td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
 			</tr>
+            <tr>
+                <th scope="row">Login status:</th>
+                <td><?php echo $ok == true ? 'Success' : '<span style="color: red;">Failed, please check your API Token</span>';?></td>
+            </tr>
 		</table>
 
 		<h3>Messages</h3>

@@ -2,7 +2,7 @@
 Contributors: dreambuilder
 Tags: email, marketing, newsletters
 Requires at least: 3.0.1
-Stable tag: 1.9.2
+Stable tag: 1.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,3 +29,8 @@ Signup required at (https://app.getanewsletter.com)
 6. Open wordpress settings and goto getanewsletter plugin
 7. Paste API token and fill out required information
 8. Add subscribe widget, goto Layout > widgets and look for a widget called get a newsletter
+
+Upgrading from version prior 1.7 requires use with our new tool.
+Here are some mandatory steps
+* creating API Token in our tool
+* Reconfiguring your getanewsletter widget and select the list your subscribers should end up onto.
