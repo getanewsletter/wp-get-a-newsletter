@@ -90,6 +90,61 @@ class GetaNewsletter extends WP_Widget {
 		parent::__construct(false, $name = 'Get a Newsletter');
 	}
 
+    static function install() {
+        $apikey = get_option('newsletter_apikey');
+        $password = get_option('newsletter_pass');
+        $user = get_option('newsletter_user');
+        $widgets = get_option('widget_getanewsletter');
+
+        // If we end up here we must migrate and get a API-token
+        if($apikey && $user) {
+            $conn = new GAPI('','');
+
+            // Failed to login, so we cant do much
+            if($conn->login_with_password($user, $password) == false) {
+                update_option('newsletter_pass', '');
+                update_option('newsletter_user', '');
+                update_option('newsletter_apikey', '');
+                return;
+            }
+
+            // Create a token an store it
+            if($conn->token_create('wp-getanewsletter-'.get_option('blogname'))) {
+                update_option('newsletter_pass', $conn->password);
+                update_option('newsletter_user', '');
+                update_option('newsletter_apikey', '');
+
+                // Ensure that we can login
+                if($conn->check_login() == false) {
+                    return;
+                }
+            } else {
+                //TODO: notice user that we could not create a new token
+                return;
+            }
+        }
+
+        // Ensure that we have mapped subscriptionforms
+        if(empty($conn) && !empty($password)) {
+            $conn = new GAPI('', $password);
+
+            $forms = array();
+            $widgets = get_option('widget_getanewsletter');
+            foreach($widgets as $widget) {
+                file_put_contents('php://stdout', serialize($widget));
+            }
+
+            if($conn->subscription_form_get()) {
+                foreach($conn->body->results as $form) {
+                    $forms[$form->lists[0]];
+                }
+
+                file_put_contents('php://stdout', serialize($forms));
+            }
+        }
+    }
+
+
 	/** @see WP_Widget::widget */
 	function widget($args, $instance) {
 		$apikey = get_option('newsletter_apikey');
@@ -214,7 +269,7 @@ class GetaNewsletter extends WP_Widget {
 }
 
 add_action('widgets_init', create_function('', 'return register_widget("GetaNewsletter");'));
-
+register_activation_hook(__FILE__, array('GetaNewsletter', 'install'));
 
 /* AJAX */
 

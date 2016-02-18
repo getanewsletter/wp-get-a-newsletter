@@ -11,43 +11,43 @@ class GAPI
     /*
      * The current version of the interface.
      */
-    var $version = 'v3.0';
+    private $version = 'v3.0';
 
     /*
      * The address of the API server.
      */
-    var $address = 'https://api.getanewsletter.com';
+    private $address = 'https://api.getanewsletter.com';
 
     /*
      * The version of the API.
      */
-    var $api_version = 'v3';
+    private $api_version = 'v3';
 
     /*
      * Contains the last error code.
      */
-    var $errorCode;
-    var $statusCode;
+    public $errorCode;
+    public $statusCode;
 
     /*
      * Contains the last error message.
      */
-    var $errorMessage;
+    public $errorMessage;
 
     /*
      * Contains the username. Unused in API version 3.
      */
-    var $username;
+    public $username;
 
     /*
      * Contains the API token.
      */
-    var $password;
+    public $password;
 
     /*
      * Holds the result of the last successful API call.
      */
-    var $result;
+    public $result;
 
     /*
      * Holds the response object of the last API call.
@@ -59,7 +59,7 @@ class GAPI
      */
     private $request;
 
-    private $body;
+    public $body;
 
     /*
      * GAPI()
@@ -94,6 +94,68 @@ class GAPI
     function show_errors()
     {
         return $this->errorCode . ": " . $this->errorMessage;
+    }
+
+    function login_with_password($username, $password)
+    {
+        $this->request = (object) $this->http->request($this->uri('login/'), array(
+            'method' => 'POST',
+            'headers' => array(
+                'Origin' => 'https://app.getanewsletter.com',
+                'Accept' => 'application/json',
+                'Referer' => 'https://app.getanewsletter.com/'
+            ),
+            'body' => array(
+                'username' => $username,
+                'password' => $password
+            )
+        ));
+
+        $this->parse_response();
+
+        // Login failed
+        if(!$this->result) {
+            return false;
+        }
+
+        foreach($this->request->cookies as $cookie) {
+            if($cookie->name == 'apisessionid') {
+                $this->apisessionid = $cookie->value;
+            }
+            if($cookie->name == 'csrftoken') {
+                $this->csrftoken = $cookie->value;
+            }
+        }
+
+        return true;
+    }
+
+    function token_create($name) {
+        $this->request = (object) $this->http->request($this->uri('tokens/'), array(
+            'method' => 'POST',
+            'headers' => array(
+                'Origin' => 'https://app.getanewsletter.com',
+                'Accept' => 'application/json',
+                'Referer' => 'https://app.getanewsletter.com/api/tokens/add/'
+            ),
+            'body' => array(
+                'name' => strtolower($name),
+                'description' => 'API-token created for use on your wordpress site.',
+                'csrfmiddlewaretoken' => $this->csrftoken
+            ),
+            'cookies' => array(
+                'apisessionid' => $this->apisessionid,
+                'csrftoken' => $this->csrftoken
+            )
+        ));
+        $this->parse_response();
+
+        if($this->result) {
+            $this->password = $this->body->key;
+            unset($this->username);
+        }
+
+        return $this->result;
     }
 
     /*
@@ -163,6 +225,10 @@ class GAPI
         return $errors;
     }
 
+    private function uri ($endpoint) {
+        return $this->address . '/' . $this->api_version . '/' . $endpoint;
+    }
+
     /*
      * call_api($method, $endpoint, $args=null)
      *
@@ -189,11 +255,9 @@ class GAPI
      */
     protected function call_api($method, $endpoint, $args = null)
     {
-        $uri = $this->address . '/' . $this->api_version . '/' . $endpoint;
-
         // TODO: Handle ConnectionErrorException.
         // TODO: Handle Exception: Unable to parse response as JSON and other exceptions.
-        $this->request = (object) $this->http->request($uri, array(
+        $this->request = (object) $this->http->request($this->uri($endpoint), array(
             'method' => $method,
             'headers' => array(
                 'Accept' => 'application/json',
@@ -202,6 +266,12 @@ class GAPI
             'body' => $args
         ));
 
+        $this->parse_response();
+
+        return $this->result;
+    }
+
+    protected function parse_response() {
         $this->response = $this->request->response;
         $this->body = json_decode($this->request->body);
         $this->statusCode = $this->response['code'];
@@ -213,8 +283,6 @@ class GAPI
 
             $this->result = false;
         }
-
-        return $this->result;
     }
 
     /*
@@ -331,6 +399,10 @@ class GAPI
 
         $this->call_api('PUT', 'contacts/' . $email . '/', $data);
         return $this->call_api('POST', 'lists/' . $list_id . '/subscribers/', array('contact' => $email));
+     }
+
+     function subscription_form_get() {
+         return $this->call_api('GET', 'subscription_forms/');
      }
 
     /*
