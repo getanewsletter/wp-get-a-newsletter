@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 2.0.0
+Version: 2.0.1
 Author: getanewsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
@@ -74,7 +74,7 @@ function newsletter_options() {
         <input type="hidden" name="action" value="update" />
         <input type="hidden" name="page_options" value="newsletter_user,newsletter_pass,newsletter_apikey,newsletter_msg_success,newsletter_msg_confirm,newsletter_msg_505,newsletter_msg_512" />
         <p class="submit">
-            <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+            <input type="submit" class="button-primary" value="<?php _e('Save Changes', 'getanewsletter') ?>" />
         </p>
     </form>
 <?php
@@ -170,7 +170,7 @@ function newsletter_migrate_from_old_tool($settings) {
 
     // Ensure that we can login
     if($api->check_login() == false) {
-        newsletter_notify_activation_trouble(__('Could not login'));
+        newsletter_notify_activation_trouble(__('Could not login', 'getanewsletter'));
         return;
     }
 
@@ -291,7 +291,7 @@ class GetaNewsletter extends WP_Widget {
                     ."  <p>"
                     ."      <input type=\"hidden\" name=\"form_link\" value=\"<?php echo $form_link; ?>\" id=\"id_form_link\" />"
                     ."      <input type=\"hidden\" name=\"key\" value=\"<?php echo $key; ?>\" id=\"id_key\" />"
-                    ."      <input type=\"submit\" value=\"" . $submittext != '' ?  __($submittext) : __('Subscribe', 'getanewsletter') . "\" />"
+                    ."      <input type=\"submit\" value=\"" . ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\" />"
                     ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),'',plugin_basename(__FILE__)) . "loading.gif\""
                     ."          alt=\"loading\""
                     ."          class=\"news-loading\" />"
@@ -344,7 +344,7 @@ class GetaNewsletter extends WP_Widget {
 
                 print ""
                     ."<p>"
-                    ."  <label for=\"{$this->get_field_id('title')}\">" . __('Title:') ."</label>"
+                    ."  <label for=\"{$this->get_field_id('title')}\">" . __('Title', 'getanewsletter') .":</label>"
                     ."  <input class=\"widefat\""
                     ."      id=\"{$this->get_field_id('title')}\""
                     ."      name=\"{$this->get_field_name('title')}\""
@@ -408,6 +408,10 @@ class GetaNewsletter extends WP_Widget {
 add_action('widgets_init', create_function('', 'return register_widget("GetaNewsletter");'));
 
 register_activation_hook(__FILE__, array('GetaNewsletter', 'install'));
+function getanewsletter_load_plugin_textdomain() {
+    load_plugin_textdomain( 'getanewsletter', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
+add_action( 'plugins_loaded', 'getanewsletter_load_plugin_textdomain' );
 
 /* AJAX */
 
