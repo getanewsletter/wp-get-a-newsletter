@@ -4,10 +4,11 @@ Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
 Version: 1.9.4
-Author: Get a Newsletter
+Author: getanewsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
 Text Domain: getanewsletter
+Domain Path: /languages/
 */
 
 require_once("GAPI.class.php");
@@ -258,38 +259,48 @@ class GetaNewsletter extends WP_Widget {
         ?>
         <?php echo $before_widget; ?>
           <?php if ( $title )
-                echo $before_title . $title . $after_title; ?>
+                echo $before_title . $title . $after_title;
 
-                <form method="post" class="newsletter-signup" action="javascript:alert('success!');" enctype="multipart/form-data">
-                    <input type="hidden" name="action" value="getanewsletter_subscribe" />
-                    <?php if($fname): ?>
-                    <p>
-                        <label for="id_first_name"><?php if($fnametxt != ''): _ex($fnametxt); else: _ex('First name', 'first_name'); endif; ?></label><br />
-                        <input id="id_first_name" type="text" class="text" name="id_first_name" />
-                    </p>
-                    <?php endif; ?>
-                    <?php if($lname): ?>
-                    <p>
-                        <label for="id_last_name"><?php if($lnametxt != ''): _ex($lnametxt); else: _ex('Last name', 'last_name'); endif; ?></label><br />
-                        <input id="id_last_name" type="text" class="text" name="id_last_name" />
-                    </p>
-                    <?php endif; ?>
-                    <p>
-                        <label for="id_email"><?php _ex('E-mail', 'email'); ?></label><br />
-                        <input id="id_email" type="text" class="text" name="id_email" />
-                    </p>
-                    <p>
-                        <input type="hidden" name="form_link" value="<?php echo $form_link; ?>" id="id_form_link" />
-                        <input type="hidden" name="key" value="<?php echo $key; ?>" id="id_key" />
-                        <input type="submit" value="<?php if($submittext != ''): _e($submittext); else: _e('Subscribe'); endif; ?>" />
+                print ""
+                    ."<form method=\"post\" class=\"newsletter-signup\" action=\"javascript:alert('success!');\" enctype=\"multipart/form-data\">"
+                    ."  <input type=\"hidden\" name=\"action\" value=\"getanewsletter_subscribe\" />";
 
-                        <img src="<?php echo WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),'',plugin_basename(__FILE__)); ?>loading.gif" alt="loading" class="news-loading" />
-                    </p>
-                </form>
-                <div class="news-note"></div>
+                if($fname) {
+                    print ""
+                        ."<p>"
+                        ."  <label for=\"id_first_name\">" . (!empty($fnametxt) ? $fnametxt : __('First name', 'getanewsletter')) . "</label><br />"
+                        ."  <input id=\"id_first_name\" type=\"text\" class=\"text\" name=\"id_first_name\" />"
+                        ."</p>";
+                }
 
-        <?php echo $after_widget; ?>
-        <?php
+                if($lname) {
+                    print ""
+                        ."<p>"
+                        ."  <label for=\"id_last_name\">" . (!empty($lnametxt) ? $lnametxt : __('Last name', 'getanewsletter')) . "</label><br />"
+                        ."  <input id=\"id_last_name\" type=\"text\" class=\"text\" name=\"id_last_name\" />"
+                        ."</p>";
+                }
+
+                print ""
+                    ."  <p>"
+                    ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') ."</label><br />"
+                    ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
+                    ."  </p>";
+
+                print ""
+                    ."  <p>"
+                    ."      <input type=\"hidden\" name=\"form_link\" value=\"<?php echo $form_link; ?>\" id=\"id_form_link\" />"
+                    ."      <input type=\"hidden\" name=\"key\" value=\"<?php echo $key; ?>\" id=\"id_key\" />"
+                    ."      <input type=\"submit\" value=\"" . $submittext != '' ?  __($submittext) : __('Subscribe', 'getanewsletter') . "\" />"
+                    ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),'',plugin_basename(__FILE__)) . "loading.gif\""
+                    ."          alt=\"loading\""
+                    ."          class=\"news-loading\" />"
+                    ."  </p>";
+                print ""
+                    ."</form>"
+                    ."<div class=\"news-note\"></div>";
+
+        echo $after_widget;
     }
 
     /** @see WP_Widget::update */
@@ -305,7 +316,6 @@ class GetaNewsletter extends WP_Widget {
 
     /** @see WP_Widget::form */
     function form($instance) {
-        newsletter_stdout($instance);
         $news_pass = get_option('newsletter_pass');
 
         if($news_pass) {
@@ -343,7 +353,7 @@ class GetaNewsletter extends WP_Widget {
 
                 print ""
                     ."<p>"
-                    ."  <label for=\"{$this->get_field_id('key')}\">" . __('Subscription form', 'newsletter') . ":</label>";
+                    ."  <label for=\"{$this->get_field_id('key')}\">" . __('Subscription form', 'getanewsletter') . ":</label>";
 
                     if ($news_con->subscription_form_list()) {
                         print "<select class=\"widefat\" id=\"{$this->get_field_id("key")}\" name=\"{$this->get_field_name("key")}\">";
@@ -356,35 +366,41 @@ class GetaNewsletter extends WP_Widget {
                         print "</select>";
                     }
                     else {
-                        print __('Subscription forms not created yet, create a form <a href=\"https://app.getanewsletter.com/api/forms/\">here</a>');
+                        print __("Subscription forms not created yet, create a form <a href=\"https://app.getanewsletter.com/api/forms/\">here</a>", 'getanewsletter');
                     }
+
+                print "</p>";
+
                 print ""
+                    ."<p>"
+                    ."  <input class=\"checkbox\" id=\"{$this->get_field_id('fname')}\""
+                    ."      name=\"{$this->get_field_name('fname')}\""
+                    ."      type=\"checkbox\" " . (!empty($fname) ? "checked=\"checked\"" : "") . " />"
+                    ."  <label for=\"{$this->get_field_id('fname')}\">" . __('Ask for First Name?<br>Label for First Name', 'getanewsletter'). "</label>"
+                    ."  <input size=\"15\""
+                    ."      id=\"{$this->get_field_id('fnametxt')}\""
+                    ."      name=\"{$this->get_field_name('fnametxt')}\""
+                    ."      type=\"text\" value=\"{$fnametxt}\" />"
                     ."</p>";
-                ?>
 
-                <p>
-                    <input class="checkbox" id="<?php echo $this->get_field_id('fname'); ?>" name="<?php echo $this->get_field_name('fname'); ?>" type="checkbox" <?php if($fname) echo 'checked="checked"'; ?> />
-                    <label for="<?php echo $this->get_field_id('fname'); ?>"><?php _e('Ask for First Name?<br>Label for First Name:'); ?></label>
-                    <input size="15" id="<?php echo $this->get_field_id('fnametxt'); ?>" name="<?php echo $this->get_field_name('fnametxt'); ?>" type="text" value="<?php echo $fnametxt; ?>" />
-                </p>
-                <p>
-                    <input class="checkbox" id="<?php echo $this->get_field_id('lname'); ?>" name="<?php echo $this->get_field_name('lname'); ?>" type="checkbox" <?php if($lname) echo 'checked="checked"'; ?> />
-                    <label for="<?php echo $this->get_field_id('lname'); ?>"><?php _e('Ask for Last Name?<br>Label for Last Name:'); ?></label>
-                    <input size="15" id="<?php echo $this->get_field_id('lnametxt'); ?>" name="<?php echo $this->get_field_name('lnametxt'); ?>" type="text" value="<?php echo $lnametxt; ?>" />
-                </p>
+                print ""
+                    ."<p>"
+                    ."  <input class=\"checkbox\""
+                    ."      id=\"{$this->get_field_id('lname')}\""
+                    ."      name=\"{$this->get_field_name('lname')}\""
+                    ."      type=\"checkbox\" " . (!empty($lname) ? "checked=\"checked\"" : "") . " />"
+                    ."  <label for=\"{$this->get_field_id('lname')}\">" . __('Ask for Last Name?<br>Label for Last Name', 'getanewsletter') . "</label>"
+                    ."  <input size=\"15\""
+                    ."      id=\"{$this->get_field_id('lnametxt')}\""
+                    ."      name=\"{$this->get_field_name('lnametxt')}\""
+                    ."      type=\"text\" value=\"{$lnametxt}\" />"
+                    ."</p>";
 
-<?php
-
-
+            } else {
+                print '<p>' . __('Wrong Login details. Enter correct details in Get a Newsletter options page.', 'getanewsletter') . '</p>';
             }
-            else
-            {
-                echo '<p>Wrong Login details. Enter correct details in Get a Newsletter options page.</p>';
-            }
-        }
-        else
-        {
-            echo '<p>Enter required details in Get a Newsletter options page.</p>';
+        } else {
+            print '<p>' . __('Enter required details in Get a Newsletter options page.', 'getanewsletter') . '</p>';
         }
     }
 }
