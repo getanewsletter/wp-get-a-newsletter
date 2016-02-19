@@ -130,6 +130,23 @@ class GAPI
         return true;
     }
 
+    function token_get() {
+        $this->request = (object) $this->http->request($this->uri('tokens/'), array(
+            'method' => 'GET',
+            'cookies' => array(
+                'apisessionid' => $this->apisessionid,
+                'csrftoken' => $this->csrftoken
+            )
+        ));
+
+        $this->parse_response();
+
+        if($this->result) {
+            return $this->body->results;
+        }
+        return [];
+    }
+
     function token_create($name) {
         $this->request = (object) $this->http->request($this->uri('tokens/'), array(
             'method' => 'POST',
@@ -342,67 +359,25 @@ class GAPI
         }
     }
 
-    /*
-     * subscription_add(
-     *     $email, $list_id, $first_name = null, $last_name = null, $confirmation = false, $api_key = null,
-     *     $autoresponder = true, $attributes = array()
-     * )
-     *
-     * Adds a subscriber to a list. If the contact doesn't exist it will create it.
-     * If it does exist, subscription_add() will update the contact's data.
-     *
-     * Arguments
-     * =========
-     * $email         = E-mail address of the contact.
-     * $list_id       = The newsletter's id hash. Can be obtained with newsletter_show().
-     * $first_name    = Contact's first name.
-     * $last_name     = Contact's last name.
-     * $confirmation  = Not used in the version 3 of the API.
-     * $api_key       = Not used in the version 3 of the API.
-     * $autoresponder = Not used in the version 3 of the API.
-     * $attributes    = Associative array of the contact's attributes.
-     *
-     * Only $email and $list_id are mandatory arguments.
-     *
-     * Return value
-     * ============
-     * True on success. False on error.
-     *
-     * In case of an error $errorCode and $errorMessage will be updated.
-     */
-    function subscription_add(
-        $email, $list_id, $first_name = null, $last_name = null, $confirmation = false, $api_key = null,
-        $autoresponder = true, $attributes = array()
-    ) {
-        $lists = array();
-
-        if ($this->contact_show($email)) {
-            foreach ($this->result[0]->newsletters as $list) {
-                array_push($lists, array('hash' => $list['list_id']));
-                if ($list['list_id'] == $list_id) {
-                    $this->errorCode = 405;
-                    $this->errorMessage = 'The subscription already exists.';
-                    return false;
-                }
-            }
-        }
-
-        $data = array(
-            'email' => $email,
-            'first_name' => $first_name,
-            'last_name' => $last_name
-        );
-
-        if (!empty($attributes)) {
-            $data['attributes'] = $attributes;
-        }
-
-        $this->call_api('PUT', 'contacts/' . $email . '/', $data);
-        return $this->call_api('POST', 'lists/' . $list_id . '/subscribers/', array('contact' => $email));
+     function subscription_form_list() {
+         return $this->call_api('GET', 'subscription_forms/');
      }
 
-     function subscription_form_get() {
-         return $this->call_api('GET', 'subscription_forms/');
+     function subscription_form_get($key) {
+         $ok = $this->call_api('GET', "subscription_forms/{$key}");
+
+         if(!$ok) {
+             return false;
+         }
+         if(empty($this->body->key)) {
+             return false;
+         }
+
+         return true;
+     }
+
+     function subscription_form_create($data) {
+         return $this->call_api('POST', 'subscription_forms/', $data);
      }
 
     /*
@@ -546,6 +521,15 @@ class GAPI
                 );
             }
         }
+        return $ok;
+    }
+
+    function newsletter_get($hash) {
+        $ok = $this->call_api('GET', 'lists/' . $hash . '/');
+        if($ok) {
+            $this->result = $this->body;
+        }
+
         return $ok;
     }
 
