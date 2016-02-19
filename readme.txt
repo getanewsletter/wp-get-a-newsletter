@@ -1,7 +1,7 @@
 === Get a Newsletter ===
 Tags: email, marketing, newsletter, subscription
 Requires at least: 3.0.1
-Stable tag: 1.9.4
+Stable tag: 2.0.0
 Tested up to: 4.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -36,9 +36,11 @@ Signup required at (https://app.getanewsletter.com)
 
 == Changelog ==
 
-= 1.9.4 =
+= 2.0.0 =
 * Beautiful handling of upgrading old installations
 * Convert existing widgets and create a matching subscription form.
+
+If subscription forms is new to you, here are some information about them http://help.getanewsletter.com/en/support/how-do-i-create-a-subscription-form/
 
 = 1.9.1 =
 * Bugfixes
