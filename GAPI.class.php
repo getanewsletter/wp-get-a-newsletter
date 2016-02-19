@@ -11,43 +11,43 @@ class GAPI
     /*
      * The current version of the interface.
      */
-    var $version = 'v3.0';
+    private $version = 'v3.0';
 
     /*
      * The address of the API server.
      */
-    var $address = 'https://api.getanewsletter.com';
+    private $address = 'https://api.getanewsletter.com';
 
     /*
      * The version of the API.
      */
-    var $api_version = 'v3';
+    private $api_version = 'v3';
 
     /*
      * Contains the last error code.
      */
-    var $errorCode;
-    var $statusCode;
+    public $errorCode;
+    public $statusCode;
 
     /*
      * Contains the last error message.
      */
-    var $errorMessage;
+    public $errorMessage;
 
     /*
      * Contains the username. Unused in API version 3.
      */
-    var $username;
+    public $username;
 
     /*
      * Contains the API token.
      */
-    var $password;
+    public $password;
 
     /*
      * Holds the result of the last successful API call.
      */
-    var $result;
+    public $result;
 
     /*
      * Holds the response object of the last API call.
@@ -59,7 +59,7 @@ class GAPI
      */
     private $request;
 
-    private $body;
+    public $body;
 
     /*
      * GAPI()
@@ -94,6 +94,85 @@ class GAPI
     function show_errors()
     {
         return $this->errorCode . ": " . $this->errorMessage;
+    }
+
+    function login_with_password($username, $password)
+    {
+        $this->request = (object) $this->http->request($this->uri('login/'), array(
+            'method' => 'POST',
+            'headers' => array(
+                'Origin' => 'https://app.getanewsletter.com',
+                'Accept' => 'application/json',
+                'Referer' => 'https://app.getanewsletter.com/'
+            ),
+            'body' => array(
+                'username' => $username,
+                'password' => $password
+            )
+        ));
+
+        $this->parse_response();
+
+        // Login failed
+        if(!$this->result) {
+            return false;
+        }
+
+        foreach($this->request->cookies as $cookie) {
+            if($cookie->name == 'apisessionid') {
+                $this->apisessionid = $cookie->value;
+            }
+            if($cookie->name == 'csrftoken') {
+                $this->csrftoken = $cookie->value;
+            }
+        }
+
+        return true;
+    }
+
+    function token_get() {
+        $this->request = (object) $this->http->request($this->uri('tokens/'), array(
+            'method' => 'GET',
+            'cookies' => array(
+                'apisessionid' => $this->apisessionid,
+                'csrftoken' => $this->csrftoken
+            )
+        ));
+
+        $this->parse_response();
+
+        if($this->result) {
+            return $this->body->results;
+        }
+        return [];
+    }
+
+    function token_create($name) {
+        $this->request = (object) $this->http->request($this->uri('tokens/'), array(
+            'method' => 'POST',
+            'headers' => array(
+                'Origin' => 'https://app.getanewsletter.com',
+                'Accept' => 'application/json',
+                'Referer' => 'https://app.getanewsletter.com/api/tokens/add/'
+            ),
+            'body' => array(
+                'name' => strtolower($name),
+                'description' => 'API-token created for use on your wordpress site.',
+                'csrfmiddlewaretoken' => $this->csrftoken
+            ),
+            'cookies' => array(
+                'apisessionid' => $this->apisessionid,
+                'csrftoken' => $this->csrftoken
+            )
+        ));
+        $this->parse_response();
+
+        if($this->result) {
+            $this->password = $this->body->key;
+            unset($this->username);
+        }
+
+        return $this->result;
     }
 
     /*
@@ -163,6 +242,10 @@ class GAPI
         return $errors;
     }
 
+    private function uri ($endpoint) {
+        return $this->address . '/' . $this->api_version . '/' . $endpoint;
+    }
+
     /*
      * call_api($method, $endpoint, $args=null)
      *
@@ -189,11 +272,9 @@ class GAPI
      */
     protected function call_api($method, $endpoint, $args = null)
     {
-        $uri = $this->address . '/' . $this->api_version . '/' . $endpoint;
-
         // TODO: Handle ConnectionErrorException.
         // TODO: Handle Exception: Unable to parse response as JSON and other exceptions.
-        $this->request = (object) $this->http->request($uri, array(
+        $this->request = (object) $this->http->request($this->uri($endpoint), array(
             'method' => $method,
             'headers' => array(
                 'Accept' => 'application/json',
@@ -202,19 +283,23 @@ class GAPI
             'body' => $args
         ));
 
+        $this->parse_response();
+
+        return $this->result;
+    }
+
+    protected function parse_response() {
         $this->response = $this->request->response;
         $this->body = json_decode($this->request->body);
         $this->statusCode = $this->response['code'];
         if (floor($this->response['code'] / 100) == 2) {
             $this->result = true;
         } else {
-            $this->errorCode = $this->response->code;
+            $this->errorCode = $this->response['code'];
             $this->errorMessage = self::parse_errors($this->body);
 
             $this->result = false;
         }
-
-        return $this->result;
     }
 
     /*
@@ -274,66 +359,26 @@ class GAPI
         }
     }
 
-    /*
-     * subscription_add(
-     *     $email, $list_id, $first_name = null, $last_name = null, $confirmation = false, $api_key = null,
-     *     $autoresponder = true, $attributes = array()
-     * )
-     *
-     * Adds a subscriber to a list. If the contact doesn't exist it will create it.
-     * If it does exist, subscription_add() will update the contact's data.
-     *
-     * Arguments
-     * =========
-     * $email         = E-mail address of the contact.
-     * $list_id       = The newsletter's id hash. Can be obtained with newsletter_show().
-     * $first_name    = Contact's first name.
-     * $last_name     = Contact's last name.
-     * $confirmation  = Not used in the version 3 of the API.
-     * $api_key       = Not used in the version 3 of the API.
-     * $autoresponder = Not used in the version 3 of the API.
-     * $attributes    = Associative array of the contact's attributes.
-     *
-     * Only $email and $list_id are mandatory arguments.
-     *
-     * Return value
-     * ============
-     * True on success. False on error.
-     *
-     * In case of an error $errorCode and $errorMessage will be updated.
-     */
-    function subscription_add(
-        $email, $list_id, $first_name = null, $last_name = null, $confirmation = false, $api_key = null,
-        $autoresponder = true, $attributes = array()
-    ) {
-        $lists = array();
+     function subscription_form_list() {
+         return $this->call_api('GET', 'subscription_forms/');
+     }
 
-        if ($this->contact_show($email)) {
-            foreach ($this->result[0]->newsletters as $list) {
-                $lists[] = array('hash' => $list->list_id, 'confirmed' =>  true);
-                if ($list->list_id == $list_id) {
-                    $this->errorCode = 405;
-                    $this->errorMessage = 'The subscription already exists.';
-                    return false;
-                }
-            }
-        }
+     function subscription_form_get($key) {
+         $ok = $this->call_api('GET', "subscription_forms/{$key}");
 
-        $lists[] = array('hash' => $list_id, 'confirmed' =>  true);
+         if(!$ok) {
+             return false;
+         }
+         if(empty($this->body->key)) {
+             return false;
+         }
 
-        $data = array(
-            'email' => $email,
-            'first_name' => $first_name,
-            'last_name' => $last_name,
-            'lists' => $lists
-        );
+         return true;
+     }
 
-        if (!empty($attributes)) {
-            $data['attributes'] = $attributes;
-        }
-
-        return $this->call_api('PUT', 'contacts/' . $email . '/', $data);
-    }
+     function subscription_form_create($data) {
+         return $this->call_api('POST', 'subscription_forms/', $data);
+     }
 
     /*
      * contact_delete()
@@ -476,6 +521,15 @@ class GAPI
                 );
             }
         }
+        return $ok;
+    }
+
+    function newsletter_get($hash) {
+        $ok = $this->call_api('GET', 'lists/' . $hash . '/');
+        if($ok) {
+            $this->result = $this->body;
+        }
+
         return $ok;
     }
 
