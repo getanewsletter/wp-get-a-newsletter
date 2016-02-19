@@ -29,7 +29,7 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
         if(!empty($_POST['form_link'])) {
             $form_link = str_replace('http', 'https', $_POST['form_link']);
         } else {
-            $response['message'] = __('Subscription form missing mandatory options, please contact adminitrator.');
+            $response['message'] = __('Subscription form missing mandatory options, please contact administrator.');
             $errors = true;
         }
 
@@ -50,7 +50,7 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
             if($response['status'] == 201) {
                 $response['message'] = get_option('newsletter_msg_success');
             } else {
-                $response['message'] = 'An error has occured';
+                $response['message'] = __('An error has occured', 'getanewsletter');
             }
         }
 

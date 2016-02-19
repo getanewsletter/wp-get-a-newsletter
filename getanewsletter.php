@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 2.0.1
+Version: 2.0.2
 Author: getanewsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
@@ -292,7 +292,7 @@ class GetaNewsletter extends WP_Widget {
                     ."      <input type=\"hidden\" name=\"form_link\" value=\"<?php echo $form_link; ?>\" id=\"id_form_link\" />"
                     ."      <input type=\"hidden\" name=\"key\" value=\"<?php echo $key; ?>\" id=\"id_key\" />"
                     ."      <input type=\"submit\" value=\"" . ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\" />"
-                    ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),'',plugin_basename(__FILE__)) . "loading.gif\""
+                    ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__), '', plugin_basename(__FILE__)) . "loading.gif\""
                     ."          alt=\"loading\""
                     ."          class=\"news-loading\" />"
                     ."  </p>";
@@ -409,7 +409,7 @@ add_action('widgets_init', create_function('', 'return register_widget("GetaNews
 
 register_activation_hook(__FILE__, array('GetaNewsletter', 'install'));
 function getanewsletter_load_plugin_textdomain() {
-    load_plugin_textdomain( 'getanewsletter', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+    load_plugin_textdomain('getanewsletter', FALSE, dirname(plugin_basename(__FILE__)).'/languages/');
 }
 add_action( 'plugins_loaded', 'getanewsletter_load_plugin_textdomain' );
 

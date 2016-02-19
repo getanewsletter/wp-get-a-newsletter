@@ -1,0 +1,104 @@
+# Copyright (C) 2016 Get a Newsletter
+# This file is distributed under the same license as the Get a Newsletter package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Get a Newsletter 2.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/getanewsletter\n"
+"POT-Creation-Date: 2016-02-19 19:52+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2016-02-19 20:00+0100\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: sv\n"
+
+#: getanewsletter.php:77
+msgid "Save Changes"
+msgstr "Spara ändringar"
+
+#: getanewsletter.php:173
+msgid "Could not login"
+msgstr "Inloggning misslyckades"
+
+#: getanewsletter.php:271
+msgid "First name"
+msgstr "Förnamn"
+
+#: getanewsletter.php:279
+msgid "Last name"
+msgstr "Efternamn"
+
+#: getanewsletter.php:286
+msgid "E-mail"
+msgstr "E-mail"
+
+#: getanewsletter.php:294
+msgid "Subscribe"
+msgstr "Prenumerera"
+
+#: getanewsletter.php:347
+msgid "Title"
+msgstr "Titel"
+
+#: getanewsletter.php:356
+msgid "Subscription form"
+msgstr "Prenumerationsformulär"
+
+#: getanewsletter.php:369
+msgid ""
+"Subscription forms not created yet, create a form <a href=\"https://app."
+"getanewsletter.com/api/forms/\">here</a>"
+msgstr ""
+"Inga prenumerationsformulär hittades, klicka här <a href=\"https://app."
+"getanewsletter.com/api/forms/\">här</a> att logga in och skapa"
+
+#: getanewsletter.php:379
+msgid "Ask for First Name?<br>Label for First Name"
+msgstr "Fråga efter förnamn?<br>Etikett för förnamn"
+
+#: getanewsletter.php:392
+msgid "Ask for Last Name?<br>Label for Last Name"
+msgstr "Fråga efter efternamn?<br>Etikett för efternamn"
+
+#: getanewsletter.php:400
+msgid ""
+"Wrong Login details. Enter correct details in Get a Newsletter options page."
+msgstr ""
+"Felaktiga inloggningsuppgifter, gå till inställningar för att korrigera."
+
+#: getanewsletter.php:403
+msgid "Enter required details in Get a Newsletter options page."
+msgstr ""
+"Fyll in obligatoriska uppgifter under inställningar för Get a Newsletter."
+
+#: subscribe.php:32
+msgid ""
+"Subscription form missing mandatory options, please contact administrator."
+msgstr ""
+"Prenumerationsformuläret saknar vissa uppgifter, kontakta administratör"
+
+#: subscribe.php:53
+msgid ""
+""An error has occured""
+msgstr ""
+"Ett fel uppstod"
+
+#. Plugin Name of the plugin/theme
+msgid "Get a Newsletter"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "http://www.getanewsletter.com/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Plugin to add subscription form to the site using widgets."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "getanewsletter"
+msgstr ""

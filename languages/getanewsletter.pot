@@ -1,0 +1,97 @@
+# Copyright (C) 2016 Get a Newsletter
+# This file is distributed under the same license as the Get a Newsletter package.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Get a Newsletter 2.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/getanewsletter\n"
+"POT-Creation-Date: 2016-02-19 19:52+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: Poedit 1.8.7\n"
+
+#: getanewsletter.php:77
+msgid "Save Changes"
+msgstr ""
+
+#: getanewsletter.php:173
+msgid "Could not login"
+msgstr ""
+
+#: getanewsletter.php:271
+msgid "First name"
+msgstr ""
+
+#: getanewsletter.php:279
+msgid "Last name"
+msgstr ""
+
+#: getanewsletter.php:286
+msgid "E-mail"
+msgstr ""
+
+#: getanewsletter.php:294
+msgid "Subscribe"
+msgstr ""
+
+#: getanewsletter.php:347
+msgid "Title"
+msgstr ""
+
+#: getanewsletter.php:356
+msgid "Subscription form"
+msgstr ""
+
+#: getanewsletter.php:369
+msgid ""
+"Subscription forms not created yet, create a form <a href=\"https://app."
+"getanewsletter.com/api/forms/\">here</a>"
+msgstr ""
+
+#: getanewsletter.php:379
+msgid "Ask for First Name?<br>Label for First Name"
+msgstr ""
+
+#: getanewsletter.php:392
+msgid "Ask for Last Name?<br>Label for Last Name"
+msgstr ""
+
+#: getanewsletter.php:400
+msgid ""
+"Wrong Login details. Enter correct details in Get a Newsletter options page."
+msgstr ""
+
+#: getanewsletter.php:403
+msgid "Enter required details in Get a Newsletter options page."
+msgstr ""
+
+#: subscribe.php:32
+msgid ""
+"Subscription form missing mandatory options, please contact administrator."
+msgstr ""
+
+#: subscribe.php:53
+msgid ""
+""An error has occured""
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Get a Newsletter"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "http://www.getanewsletter.com/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Plugin to add subscription form to the site using widgets."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "getanewsletter"
+msgstr ""
