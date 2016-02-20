@@ -47,6 +47,7 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
             ));
 
             $response['status'] = $request->response['code'];
+
             if($response['status'] == 201) {
                 $response['message'] = get_option('newsletter_msg_success');
             } else {

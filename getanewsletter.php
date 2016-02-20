@@ -289,8 +289,8 @@ class GetaNewsletter extends WP_Widget {
 
                 print ""
                     ."  <p>"
-                    ."      <input type=\"hidden\" name=\"form_link\" value=\"<?php echo $form_link; ?>\" id=\"id_form_link\" />"
-                    ."      <input type=\"hidden\" name=\"key\" value=\"<?php echo $key; ?>\" id=\"id_key\" />"
+                    ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form_link}\" id=\"id_form_link\" />"
+                    ."      <input type=\"hidden\" name=\"key\" value=\"{$key}\" id=\"id_key\" />"
                     ."      <input type=\"submit\" value=\"" . ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\" />"
                     ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__), '', plugin_basename(__FILE__)) . "loading.gif\""
                     ."          alt=\"loading\""
