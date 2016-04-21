@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 2.0.4
+Version: 2.0.5
 Author: getanewsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
@@ -216,8 +216,6 @@ function newsletter_upgrade_create_subscription_form($settings, $api) {
 
             $api->subscription_form_create($form);
 
-            newsletter_stdout($api->body);
-
             if($api->result) {
                 unset($widgets[$index]['newskey']);
                 $widgets[$index]['key'] = $api->body->key;
@@ -226,7 +224,7 @@ function newsletter_upgrade_create_subscription_form($settings, $api) {
             }
         }
     }
-    newsletter_stdout($widgets);
+
     update_option('widget_getanewsletter', $widgets);
 }
 
@@ -305,11 +303,14 @@ class GetaNewsletter extends WP_Widget {
 
     /** @see WP_Widget::update */
     function update($new_instance, $old_instance) {
-        if(empty($new_instance['form_link']) || $new_instance['form_link'] != $old_instance['form_link']) {
-            $api = new GAPI('', get_option('newsletter_pass'));
-            $api->subscription_form_get($new_instance['key']);
-            $new_instance['form_link'] = $api->body->form_link;
+        if(empty($new_instance['key'])) {
+            return false;
         }
+
+        $api = new GAPI('', get_option('newsletter_pass'));
+        $api->subscription_form_get($new_instance['key']);
+
+        $new_instance['form_link'] = $api->body->form_link;
 
         return $new_instance;
     }
@@ -357,7 +358,7 @@ class GetaNewsletter extends WP_Widget {
 
                     if ($news_con->subscription_form_list()) {
                         print "<select class=\"widefat\" id=\"{$this->get_field_id("key")}\" name=\"{$this->get_field_name("key")}\">";
-
+                        print "<option></option>";
                         foreach($news_con->body->results as $form) {
                             $selected_list = $key == $form->key ? "selected=\"selected\"" : "";
                             print "<option {$selected_list} value=\"{$form->key}\">{$form->name}</option>";
