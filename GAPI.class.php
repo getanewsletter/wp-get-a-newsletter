@@ -144,7 +144,7 @@ class GAPI
         if($this->result) {
             return $this->body->results;
         }
-        return [];
+        return array();
     }
 
     function token_create($name) {
@@ -459,12 +459,12 @@ class GAPI
 
             $data->newsletters = array();
             foreach ($data->lists as $list) {
-                $data->newsletters[] = array(
+                $data->newsletters = array(array(
                     'created' => $list->subscription_created,
                     'list_id' => $list->hash,
                     'cancelled' => $list->subscription_cancelled ? $list->subscription_cancelled : '',
                     'newsletter' => $list->name
-                );
+                ));
             }
             unset($data->lists);
 
@@ -512,13 +512,13 @@ class GAPI
         if ($ok) {
             $this->result = array();
             foreach ($this->body->results as $list) {
-                $this->result[] = array(
+                $this->result = array(array(
                     'newsletter' => $list->name,
                     'sender' => $list->sender.' '.$list->email,
                     'description' => $list->description ? $list->description : '<nil/>',
                     'subscribers' => $list->active_subscribers_count,
                     'list_id' => $list->hash,
-                );
+                ));
             }
         }
         return $ok;
@@ -560,11 +560,11 @@ class GAPI
         if ($ok) {
             $this->result = array();
             foreach ($this->body->results as $subs) {
-                $this->result[] = array(
+                $this->result = array(array(
                     'created' => $subs->created,
                     'cancelled' => $subs->cancelled ? $subs->cancelled : '<nil/>',
                     'email' => $subs->contact
-                );
+                ));
             }
         }
         return $ok;
@@ -712,10 +712,10 @@ class GAPI
         if ($ok) {
             $this->result = array();
             foreach ($this->body['results'] as $bounce) {
-                $this->result[] = array(
+                $this->result = array(array(
                     'status' => $bounce['status'],
                     'email' => $bounce['contact']
-                );
+                ));
             }
         }
         return $ok;
@@ -748,13 +748,13 @@ class GAPI
         if ($ok) {
             $this->result = array();
             foreach ($this->body['results'] as $link) {
-                $this->result[] = array(
+                $this->result = array(array(
                     'count' => $link['total_clicks'],
                     'url' => $link['url'],
                     'first_click'=> $link['first_click'],
                     'email' => $link['contact'],
                     'last_click' => $link['last_click']
-                );
+                ));
             }
         }
         return $ok;
@@ -787,11 +787,11 @@ class GAPI
         if ($ok) {
             $this->result = array();
             foreach ($this->body['results'] as $link) {
-                $this->result[] = array(
+                $this->result = array(array(
                     'count' => $link['unique_clicks'],
                     'link' => $link['link'],
                     'id' => $link['id']
-                );
+                ));
             }
         }
         return $ok;
@@ -820,7 +820,7 @@ class GAPI
         if ($ok) {
             $this->result = array();
             foreach ($this->body['results'] as $report) {
-                $this->result[] = array(
+                $this->result = array(array(
                   'lists' => join(', ', $report['sent_to_lists']),
                   'date' => $report['sent'],
                   'sent_to' => $report['sent_to'],
@@ -828,7 +828,7 @@ class GAPI
                   'id' => $report['id'],
                   'subject' => $report['mail_subject'],
                   'opens' => $report['total_html_opened']
-                );
+              ));
             }
         }
         return $ok;
@@ -856,12 +856,12 @@ class GAPI
         if ($ok) {
             $this->result = array();
             foreach ($this->body['results'] as $open) {
-                $this->result[] = array(
+                $this->result = array(array(
                     'count' => $open['count'],
                     'first_view' => $open['first_view'],
                     'email' => $open['contact'],
                     'last_view' => $open['last_view']
-                );
+                ));
             }
         }
         return $ok;
@@ -894,10 +894,10 @@ class GAPI
         if ($ok) {
             $this->result = array();
             foreach ($this->body['results'] as $unsub) {
-                $this->result[] = array(
+                $this->result = array(array(
                     'email' => $unsub['contact'],
                     'date' => $unsub['created']
-                );
+                ));
             }
         }
         return $ok;

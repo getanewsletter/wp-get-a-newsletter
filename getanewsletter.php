@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 2.0.2
+Version: 2.0.4
 Author: getanewsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
@@ -199,10 +199,10 @@ function newsletter_upgrade_create_subscription_form($settings, $api) {
 
             $form = array(
                 'name' => 'wp-' . strtolower($settings['blogname']) . '-' . strtolower($widget['title']),
-                'lists' => [$list->hash],
+                'lists' => array($list->hash),
                 'sender' => $list->sender,
                 'email' => $list->email,
-                'attributes' => [],
+                'attributes' => array(),
                 'verify_mail_text' => $settings['verify_mail_text'],
                 'verify_mail_subject' => $settings['verify_mail_subject']
             );
