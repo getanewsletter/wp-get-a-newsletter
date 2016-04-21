@@ -216,8 +216,6 @@ function newsletter_upgrade_create_subscription_form($settings, $api) {
 
             $api->subscription_form_create($form);
 
-            newsletter_stdout($api->body);
-
             if($api->result) {
                 unset($widgets[$index]['newskey']);
                 $widgets[$index]['key'] = $api->body->key;
@@ -226,7 +224,7 @@ function newsletter_upgrade_create_subscription_form($settings, $api) {
             }
         }
     }
-    newsletter_stdout($widgets);
+
     update_option('widget_getanewsletter', $widgets);
 }
 
