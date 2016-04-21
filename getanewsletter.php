@@ -303,11 +303,14 @@ class GetaNewsletter extends WP_Widget {
 
     /** @see WP_Widget::update */
     function update($new_instance, $old_instance) {
-        if(empty($new_instance['form_link']) || $new_instance['form_link'] != $old_instance['form_link']) {
-            $api = new GAPI('', get_option('newsletter_pass'));
-            $api->subscription_form_get($new_instance['key']);
-            $new_instance['form_link'] = $api->body->form_link;
+        if(empty($new_instance['key'])) {
+            return false;
         }
+
+        $api = new GAPI('', get_option('newsletter_pass'));
+        $api->subscription_form_get($new_instance['key']);
+
+        $new_instance['form_link'] = $api->body->form_link;
 
         return $new_instance;
     }
@@ -355,7 +358,7 @@ class GetaNewsletter extends WP_Widget {
 
                     if ($news_con->subscription_form_list()) {
                         print "<select class=\"widefat\" id=\"{$this->get_field_id("key")}\" name=\"{$this->get_field_name("key")}\">";
-
+                        print "<option></option>";
                         foreach($news_con->body->results as $form) {
                             $selected_list = $key == $form->key ? "selected=\"selected\"" : "";
                             print "<option {$selected_list} value=\"{$form->key}\">{$form->name}</option>";
