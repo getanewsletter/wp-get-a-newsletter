@@ -458,12 +458,12 @@ function news_js_ajax()
                                 .html(response.message));
                         jQuery('.newsletter-signup').hide();
                     },
-                    'error': function() {
+                    'error': function(response) {
                         spinner.hide();
                         resultWrapper.append(
                             resultContainer.removeClass('news-success')
                                 .addClass('news-error')
-                                .html(response.message));
+                                .html(response.responseJSON.message));
                     }
                 });
 

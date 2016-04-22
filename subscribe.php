@@ -41,8 +41,8 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
                 'method' => 'POST',
                 'body' => array(
                     'email' => $_POST['id_email'],
-                    'first_name' => utf8_encode($news_fname),
-                    'last_name' => utf8_encode($news_lname)
+                    'first_name' => $news_fname,
+                    'last_name' => $news_lname
                 )
             ));
 
