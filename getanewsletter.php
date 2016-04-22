@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 2.0.5
+Version: 2.0.6
 Author: getanewsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
