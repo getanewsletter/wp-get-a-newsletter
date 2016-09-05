@@ -307,6 +307,7 @@ class GetaNewsletter extends WP_Widget {
             $api = new GAPI('', get_option('newsletter_pass'));
             $api->subscription_form_get($new_instance['key']);
             $new_instance['form_link'] = $api->body->form_link;
+            $new_instance['submittext'] = $api->body->button_text;
         }
 
         return $new_instance;
