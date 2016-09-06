@@ -312,6 +312,11 @@ class GetaNewsletter extends WP_Widget {
 
         $new_instance['form_link'] = $api->body->form_link;
 
+        // If submittext is empty we take the one from app, otherwise we use local stored.
+        if (empty($new_instance['submittext'])) {
+            $new_instance['submittext'] = $api->body->button_text;
+        }
+
         return $new_instance;
     }
 
@@ -395,6 +400,15 @@ class GetaNewsletter extends WP_Widget {
                     ."      id=\"{$this->get_field_id('lnametxt')}\""
                     ."      name=\"{$this->get_field_name('lnametxt')}\""
                     ."      type=\"text\" value=\"{$lnametxt}\" />"
+                    ."</p>";
+
+                print ""
+                    ."<p>"
+                    ."  <label for=\"{$this->get_field_id('submittext')}\">" . __('Knapptext', 'getanewsletter') . ":</label>"
+                    ."  <input class=\"widefat\""
+                    ."      id=\"{$this->get_field_id('submittext')}\""
+                    ."      name=\"{$this->get_field_name('submittext')}\""
+                    ."      type=\"text\" value=\"{$submittext}\" />"
                     ."</p>";
 
             } else {
