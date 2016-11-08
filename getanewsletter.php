@@ -404,7 +404,7 @@ class GetaNewsletter extends WP_Widget {
 
                 print ""
                     ."<p>"
-                    ."  <label for=\"{$this->get_field_id('submittext')}\">" . __('Knapptext', 'getanewsletter') . ":</label>"
+                    ."  <label for=\"{$this->get_field_id('submittext')}\">" . __('Submit text', 'getanewsletter') . ":</label>"
                     ."  <input class=\"widefat\""
                     ."      id=\"{$this->get_field_id('submittext')}\""
                     ."      name=\"{$this->get_field_name('submittext')}\""
