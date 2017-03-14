@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 2.0.6
+Version: 2.0.7
 Author: getanewsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
@@ -39,7 +39,7 @@ function newsletter_options() {
         <?php wp_nonce_field('update-options'); ?>
         <table class="form-table">
             <tr valign="top">
-                <th scope="row">API Token</th>
+                <th scope="row">API Token</th
                 <td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
             </tr>
             <tr>
@@ -56,17 +56,15 @@ function newsletter_options() {
                 <td><input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /></td>
             </tr>
             <tr valign="top">
-                <th scope="row">Message - 505:</th>
+                <th scope="row">Invalid email address:</th>
                 <td>
                     <input type="text" class="regular-text" name="newsletter_msg_505" value="<?php echo get_option('newsletter_msg_505', 'Invalid e-mail'); ?>" />
-                    <br/> <span class="small">Invalid email address</span>
                 </td>
             </tr>
             <tr valign="top">
-                <th scope="row">Message - 512:</th>
+                <th scope="row">Subscription already exists:</th>
                 <td>
                     <input type="text" class="regular-text" name="newsletter_msg_512" value="<?php echo get_option('newsletter_msg_512', 'Subscription already exists'); ?>" />
-                    <br/> <span class="small">Subscription already exists</span>
                 </td>
             </tr>
         </table>
@@ -282,14 +280,15 @@ class GetaNewsletter extends WP_Widget {
                 print ""
                     ."  <p>"
                     ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') ."</label><br />"
-                    ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
+                    ."      <input id=\"id_email\" type=\"email\"  class=\"text\" name=\"id_email\" />"
+
                     ."  </p>";
 
                 print ""
                     ."  <p>"
                     ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form_link}\" id=\"id_form_link\" />"
                     ."      <input type=\"hidden\" name=\"key\" value=\"{$key}\" id=\"id_key\" />"
-                    ."      <input type=\"submit\" value=\"" . ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\" />"
+                    ."      <button type=\"submit\" id=\"id_submit\" value=\"" . ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\">" . ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "</button>"
                     ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__), '', plugin_basename(__FILE__)) . "loading.gif\""
                     ."          alt=\"loading\""
                     ."          class=\"news-loading\" />"
@@ -449,37 +448,69 @@ function news_js_ajax()
         jQuery(document).ready(function() {
             jQuery('.news-loading').hide();
 
+            jQuery.fn.extend({
+               qcss: function(css) {
+                  return jQuery(this).queue(function(next) {
+                     jQuery(this).css(css);
+                     next();
+                  });
+               }
+            });
+
             jQuery('.newsletter-signup').submit(function() {
                 var form = jQuery(this);
                 var data = form.serialize();
                 var resultContainer = jQuery('<span></span>');
                 var resultWrapper = jQuery('.news-note');
                 var spinner = jQuery('.news-loading');
+                var is_form_valid = false;
 
-                jQuery.ajax({
-                    'type': 'POST',
-                    'url': '<?php echo admin_url('admin-ajax.php'); ?>',
-                    'data': data,
-                    'cache': false,
-                    'beforeSend': function(message) {
-                        spinner.show();
-                    },
-                    'success': function(response) {
-                        spinner.hide();
-                        resultWrapper.append(
-                            resultContainer.addClass('news-success')
-                                .removeClass('news-error')
-                                .html(response.message));
-                        jQuery('.newsletter-signup').hide();
-                    },
-                    'error': function(response) {
-                        spinner.hide();
-                        resultWrapper.append(
-                            resultContainer.removeClass('news-success')
-                                .addClass('news-error')
-                                .html(response.responseJSON.message));
-                    }
-                });
+                function validateEmail(email) {
+                  var re = /[^ @]*@[^ @]*/;
+                  return re.test(email);
+                }
+
+                if (validateEmail(jQuery("#id_email").val())) {
+                    is_form_valid = true;
+                } else {
+                    is_form_valid = false;
+                }
+
+                if (is_form_valid) {
+                    jQuery.ajax({
+                        'type': 'POST',
+                        'url': '<?php echo admin_url('admin-ajax.php'); ?>',
+                        'data': data,
+                        'cache': false,
+                        'beforeSend': function(message) {
+                            spinner.show();
+                        },
+                        'success': function(response) {
+                            console.log(response);
+                            spinner.hide();
+                            jQuery("#id_email").css("border-color", "green");
+                            resultWrapper.append(
+                                resultContainer.addClass('news-success')
+                                    .removeClass('news-error')
+                                    .html(response.message));
+                            jQuery("#id_email").val("");
+                            jQuery("#id_email").qcss({ 'border-color': 'green' })
+                                               .delay(1000)
+                                               .qcss({ 'border-color': 'unset' });
+                            // jQuery('.newsletter-signup').hide();
+                        },
+                        'error': function(response) {
+                            spinner.hide();
+                            resultWrapper.append(
+                                resultContainer.removeClass('news-success')
+                                    .addClass('news-error')
+                                    .html(response.responseJSON.message));
+                        }
+                    });
+                } else {
+                    jQuery("#id_email").css("border-color", "red");
+                }
+                
 
                 return false;
             });

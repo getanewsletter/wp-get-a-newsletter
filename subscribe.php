@@ -49,7 +49,11 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
             $response['status'] = $request->response['code'];
 
             if($response['status'] == 201) {
-                $response['message'] = get_option('newsletter_msg_success');
+                $response['message'] = get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.');
+            } elseif ($response['status'] == 505) {
+                $response['message'] = get_option('newsletter_msg_505', 'Invalid e-mail');
+            } elseif ($response['status'] == 512) {
+                $response['message'] = get_option('newsletter_msg_512', 'Subscription already exists');
             } else {
                 $response['message'] = __('An error has occured', 'getanewsletter');
             }
