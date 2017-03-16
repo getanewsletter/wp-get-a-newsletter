@@ -39,7 +39,7 @@ function newsletter_options() {
         <?php wp_nonce_field('update-options'); ?>
         <table class="form-table">
             <tr valign="top">
-                <th scope="row">API Token</th
+                <th scope="row">API Token</th>
                 <td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
             </tr>
             <tr>
