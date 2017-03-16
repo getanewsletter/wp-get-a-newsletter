@@ -542,6 +542,12 @@ function news_js_ajax()
                             jQuery("#respond_message").html("&nbsp");
                         },
                         'success': function(response) {
+                            if (jQuery("#id_first_name").val()) {
+                                jQuery("#id_first_name").val("");
+                            }
+                            if (jQuery("#id_last_name").val()) {
+                                jQuery("#id_last_name").val("");
+                            }
                             jQuery("#respond_message").html(success_message);
                             jQuery("#id_email").val("");
                             jQuery("#id_email").qcss({ 'border-color': 'unset' });
