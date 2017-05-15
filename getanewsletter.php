@@ -295,7 +295,7 @@ class GetaNewsletter extends WP_Widget {
                 print ""
                     ."  <p>"
                     ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') . (($fname || $lname) ? "*" : "") ."</label>"
-                    ."      <input id=\"id_email\" type=\"email\"  class=\"text\" name=\"id_email\" />"
+                    ."      <input type=\"email\"  class=\"text\" />"
 
                     ."  </p>";
 
@@ -336,7 +336,7 @@ class GetaNewsletter extends WP_Widget {
                 }
 
                 print ""
-                    ."<div style=\"padding-top:9px;\" id=\"respond_message\">"
+                    ."<div style=\"padding-top:9px;\" class=\"respond_message\">"
                     ."&nbsp"
                     ."</div>";
 
@@ -517,40 +517,46 @@ function news_js_ajax()
                 return re.test(email);
             }
 
-            jQuery("#id_email").keyup(function () {
-                if (is_email_valid(jQuery("#id_email").val())){
-                    jQuery("#id_email").css('border-color','green');
+            jQuery("input[type='email']").keyup(function () {
+                var email_field = jQuery(this);
+                var email_val = email_field.val();
+                if (is_email_valid(email_val)){
+                    jQuery(email_field).css('border-color','green');
                 } else {
-                    jQuery("#id_email").css('border-color','red');
+                    jQuery(email_field).css('border-color','red');
                 }
             });
 
             jQuery('.newsletter-signup').submit(function() {
                 var form = jQuery(this);
+                var email_field = form.find("input[type='email']");
+                var first_name_field = form.find("input[name='id_first_name']");
+                var last_name_field = form.find("input[name='id_last_name']");
+                var respond_message_field = form.find(".respond_message");
                 var data = form.serialize();
                 var is_form_valid = false;
                 var success_message = '<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>';
                 var error_message = '<?php echo get_option('error_msg', 'Something wrong on our side. Please contact us directly if error continues.'); ?>';
 
-                if (is_email_valid(jQuery("#id_email").val())) {
+                if (is_email_valid(email_field.val())) {
                     jQuery.ajax({
                         'type': 'POST',
                         'url': '<?php echo admin_url('admin-ajax.php'); ?>',
                         'data': data,
                         'cache': false,
                         'beforeSend': function(message) {
-                            jQuery("#respond_message").html("&nbsp");
+                            respond_message_field.html("&nbsp");
                         },
                         'success': function(response) {
-                            if (jQuery("#id_first_name").val()) {
-                                jQuery("#id_first_name").val("");
+                            if (first_name_field.val()) {
+                                first_name_field.val("");
                             }
-                            if (jQuery("#id_last_name").val()) {
-                                jQuery("#id_last_name").val("");
+                            if (last_name_field.val()) {
+                                last_name_field.val("");
                             }
-                            jQuery("#respond_message").html(success_message);
-                            jQuery("#id_email").val("");
-                            jQuery("#id_email").qcss({ 'border-color': 'unset' });
+                            respond_message_field.html(success_message);
+                            email_field.val("");
+                            email_field.qcss({ 'border-color': 'unset' });
                         },
                         'error': function(response) {
                             resultWrapper.append(
@@ -560,7 +566,7 @@ function news_js_ajax()
                         }
                     });
                 } else {
-                    jQuery("#id_email").css("border-color", "red");
+                    email_field.css("border-color", "red");
                 }
                 
 
