@@ -49,22 +49,22 @@ function newsletter_options() {
         </table>
         <hr>
         <h3>Messages</h3>
-        <p>Here you can enter friendly messages that will be displayed on user-end when they interact with the form.</p>
+        <p>Add messages for successful and failed submissions. This will be displayed to the user when interacting with the form.</p>
         <table class="form-table">
             <tr valign="top">
-                <th scope="row">Successfull submission:</th>
-                <td><input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /></td>
+                <th scope="row">Successful submission:</th>
+                <td><input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thanks for your subscription.'); ?>" /></td>
             </tr>
             <tr valign="top">
                 <th scope="row">Error:</th>
                 <td>
-                    <input type="text" class="regular-text" name="error_msg" value="<?php echo get_option('error_msg', 'Something wrong on our side. Please contact us directly if error continues.'); ?>" />
+                    <input type="text" class="regular-text" name="error_msg" value="<?php echo get_option('error_msg', 'An error occured.'); ?>" />
                 </td>
             </tr>
         </table>
         <hr>
         <h3>Design</h3>
-        <p>Submit button align.</p>
+        <p>Submit button positioning</p>
         <div style="padding-bottom:9px;">
             <h4 style="display:inline;">Left</h4>
             <input type="radio" class="regular-text" name="align" value="left" <?php checked('left',get_option('align')); ?> />
@@ -74,13 +74,13 @@ function newsletter_options() {
             <input type="radio" class="regular-text" name="align" value="right" <?php checked('right',get_option('align')); ?> />
         </div>
         <div style="padding-bottom:9px;">
-            <h4 style="display:inline;">Centered</h4>
+            <h4 style="display:inline;">Center</h4>
             <input type="radio" class="regular-text" name="align" value="center" <?php checked('center',get_option('align')); ?> />
         </div>
-        <p>Submit button size.</p>
+        <p>Submit button size</p>
         <div style="padding-bottom:9px;">
             <h4 style="display:inline;">Full width</h4>
-            <input type="checkbox" class="regular-text" name="fullwidth" value="100%" <?php checked('100%',get_option('fullwidth')); ?> /> 
+            <input type="checkbox" class="regular-text" name="fullwidth" value="100%" <?php checked('100%',get_option('fullwidth')); ?> />
         </div>
         <hr>
 
@@ -299,12 +299,6 @@ class GetaNewsletter extends WP_Widget {
 
                     ."  </p>";
 
-                if ($fname || $lname) {
-                    print ""
-                    ."* - required field";
-                }
-
-
                 print ""
                     ."  <p>"
                     ."      <span id=\"message_text\"></span>"
@@ -317,10 +311,10 @@ class GetaNewsletter extends WP_Widget {
                     ."  </p>";
 
                 if (get_option('fullwidth') == '100%') {
-                    
+
                     print ""
                         ."<div>"
-                        ."      <button style=\"width:100%;\" type=\"submit\" id=\"id_submit\" value=\"" 
+                        ."      <button style=\"width:100%;\" type=\"submit\" id=\"id_submit\" value=\""
                         .       ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\"> <i style=\"margin-right: 7px;\" class=\"fa fa-envelope\" aria-hidden=\"true\"></i>"
 
                         .       ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "</button>"
@@ -328,7 +322,7 @@ class GetaNewsletter extends WP_Widget {
                 } else {
                     print ""
                         ."<div style=\"text-align:" .get_option('align'). "\" >"
-                        ."      <button type=\"submit\" id=\"id_submit\" value=\"" 
+                        ."      <button type=\"submit\" id=\"id_submit\" value=\""
                         .       ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\"> <i style=\"margin-right: 7px;\" class=\"fa fa-envelope\" aria-hidden=\"true\"></i>"
 
                         .       ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "</button>"
@@ -568,7 +562,7 @@ function news_js_ajax()
                 } else {
                     email_field.css("border-color", "red");
                 }
-                
+
 
                 return false;
             });
