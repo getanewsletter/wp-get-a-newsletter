@@ -295,7 +295,7 @@ class GetaNewsletter extends WP_Widget {
                 print ""
                     ."  <p>"
                     ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') . (($fname || $lname) ? "*" : "") ."</label>"
-                    ."      <input type=\"email\"  class=\"text\" />"
+                    ."      <input id=\"id_email\"type=\"email\"  class=\"text\" name=\"id_email\" />"
 
                     ."  </p>";
 
