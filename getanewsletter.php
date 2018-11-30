@@ -420,7 +420,10 @@ class GetaNewsletter extends WP_Widget {
     }
 }
 
-add_action('widgets_init', create_function('', 'return register_widget("GetaNewsletter");'));
+function gan_register_widgets() {
+    register_widget( 'GetaNewsletter' );
+}
+add_action( 'widgets_init', 'gan_register_widgets' );
 
 register_activation_hook(__FILE__, array('GetaNewsletter', 'install'));
 function getanewsletter_load_plugin_textdomain() {
