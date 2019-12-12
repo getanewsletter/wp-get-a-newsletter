@@ -13,6 +13,16 @@ Domain Path: /languages/
 
 require_once("GAPI.class.php");
 
+add_action('admin_init', function() {
+    register_setting('getanewsletter', 'newsletter_user');
+    register_setting('getanewsletter', 'newsletter_pass');
+    register_setting('getanewsletter', 'newsletter_apikey');
+    register_setting('getanewsletter', 'newsletter_msg_success');
+    register_setting('getanewsletter', 'newsletter_msg_confirm');
+    register_setting('getanewsletter', 'newsletter_msg_505');
+    register_setting('getanewsletter', 'newsletter_msg_512');
+});
+
 /* ADMIN PANEL */
 
 function newsletter_menu() {
@@ -29,7 +39,7 @@ function newsletter_options() {
 ?>
     <div class="wrap">
 
-    <form method="post" action="options.php">
+    <form method="post">
 
         <h2>Get a Newsletter Options</h2>
 
@@ -420,7 +430,9 @@ class GetaNewsletter extends WP_Widget {
     }
 }
 
-add_action('widgets_init', create_function('', 'return register_widget("GetaNewsletter");'));
+add_action('widgets_init', function() {
+    register_widget("GetaNewsletter");
+});
 
 register_activation_hook(__FILE__, array('GetaNewsletter', 'install'));
 function getanewsletter_load_plugin_textdomain() {

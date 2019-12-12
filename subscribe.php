@@ -27,7 +27,7 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
             $news_lname = stripslashes($_POST['id_last_name']);
         }
         if(!empty($_POST['form_link'])) {
-            $form_link = str_replace('http', 'https', $_POST['form_link']);
+            $form_link = str_replace('http:', 'https:', $_POST['form_link']);
         } else {
             $response['message'] = __('Subscription form missing mandatory options, please contact administrator.');
             $errors = true;
