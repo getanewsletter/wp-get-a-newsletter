@@ -22,11 +22,17 @@ add_action('admin_init', function() {
     register_setting('newsletter', 'newsletter_msg_505');
     register_setting('newsletter', 'newsletter_msg_512');
 });
-
 /* ADMIN PANEL */
 
 function newsletter_menu() {
-  add_options_page('Get a Newsletter', 'Get a Newsletter', 'administrator', 'newsletter', 'newsletter_options');
+  add_menu_page('Get a Newsletter', 'Get a Newsletter', 'administrator', 'newsletter', 'newsletter_options');
+  add_submenu_page('newsletter', 'Subscription forms', 'Subscription forms', 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
+  remove_submenu_page('newsletter', 'newsletter');
+  add_submenu_page('newsletter', 'Settings', 'Settings', 'administrator', 'newsletter', 'newsletter_options');
+}
+
+function newsletter_subscription_forms() {
+
 }
 
 function newsletter_options() {
