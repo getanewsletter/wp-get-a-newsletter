@@ -14,13 +14,13 @@ Domain Path: /languages/
 require_once("GAPI.class.php");
 
 add_action('admin_init', function() {
-    register_setting('getanewsletter', 'newsletter_user');
-    register_setting('getanewsletter', 'newsletter_pass');
-    register_setting('getanewsletter', 'newsletter_apikey');
-    register_setting('getanewsletter', 'newsletter_msg_success');
-    register_setting('getanewsletter', 'newsletter_msg_confirm');
-    register_setting('getanewsletter', 'newsletter_msg_505');
-    register_setting('getanewsletter', 'newsletter_msg_512');
+    register_setting('newsletter', 'newsletter_user');
+    register_setting('newsletter', 'newsletter_pass');
+    register_setting('newsletter', 'newsletter_apikey');
+    register_setting('newsletter', 'newsletter_msg_success');
+    register_setting('newsletter', 'newsletter_msg_confirm');
+    register_setting('newsletter', 'newsletter_msg_505');
+    register_setting('newsletter', 'newsletter_msg_512');
 });
 
 /* ADMIN PANEL */
@@ -39,14 +39,14 @@ function newsletter_options() {
 ?>
     <div class="wrap">
 
-    <form method="post">
+    <form method="post" action="options.php?option_page=newsletter">
 
         <h2>Get a Newsletter Options</h2>
 
         <h3>Account Information</h3>
         <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
 
-        <?php wp_nonce_field('update-options'); ?>
+        <?php wp_nonce_field('newsletter-options'); ?>
         <table class="form-table">
             <tr valign="top">
                 <th scope="row">API Token</th>
