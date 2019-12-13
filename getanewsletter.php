@@ -32,7 +32,66 @@ function newsletter_menu() {
 }
 
 function newsletter_subscription_forms() {
+    $news_pass = get_option('newsletter_pass');
+    try {
+        $forms = get_subscription_forms_list($news_pass);
+        $connectionSucceeded = true;
+    } catch (\RuntimeException $e) {
+        $connectionSucceeded = false;
+        $forms = [];
+    }
 
+    ?>
+    <div class="wrap">
+        <h1 class="wp-heading-inline">Your subscription forms</h1>
+        <a href="#" class="page-title-action">Add New</a>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th class="manage-column">Name</th>
+                    <th class="manage-column">Lists</th>
+                    <th class="manage-column">Shortcode</th>
+                    <th class="manage-column">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (!$connectionSucceeded) {
+                    ?>
+                    <tr>
+                        <td colspan="4">
+                            <span style="color: red">Cannot connect to Get A Newsletter API. Please verify your API Token</span>
+                        </td>
+                    </tr>
+                    <?php
+                } else {
+                    foreach ($forms as $form) {
+                        ?>
+                        <tr>
+                            <td><?= $form->name ?></td>
+                            <td><?= $form->lists_names ?></td>
+                            <td><code>[gan-form id=<?= $form->key ?>]</code></td>
+                            <td><a href="#" class="page-title-action">Edit</a><a href="#" class="page-title-action">Delete</a></td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
+
+function get_subscription_forms_list($news_pass): array {
+    $conn = new GAPI('', $news_pass);
+    if ($conn->check_login()) {
+        $conn->subscription_form_list();
+        $forms = $conn->body->results;
+        return $forms;
+    } else {
+        throw new \RuntimeException('Cannot connect to Get A Newsletter API');
+    }
 }
 
 function newsletter_options() {
@@ -95,7 +154,6 @@ function newsletter_options() {
     </form>
 <?php
 }
-
 
 add_action('admin_menu', 'newsletter_menu');
 
