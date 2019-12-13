@@ -13,7 +13,10 @@ Domain Path: /languages/
 
 require_once("GAPI.class.php");
 
+class GetANewsletterException extends \RuntimeException { }
+
 add_action('admin_init', function() {
+    session_start();
     register_setting('newsletter', 'newsletter_user');
     register_setting('newsletter', 'newsletter_pass');
     register_setting('newsletter', 'newsletter_apikey');
@@ -31,20 +34,71 @@ function newsletter_menu() {
   add_submenu_page('newsletter', 'Settings', 'Settings', 'administrator', 'newsletter', 'newsletter_options');
 }
 
+function set_newsletter_flash_message($msg, $type) {
+    $_SESSION['newsletter_message'] = [
+        'msg' => $msg,
+        'type' => $type
+    ];
+}
+
+function get_newsletter_flash_message() {
+    if (isset($_SESSION['newsletter_message'])) {
+        $message = $_SESSION['newsletter_message'];
+        unset($_SESSION['newsletter_message']);
+    } else {
+        $message = null;
+    }
+
+    return $message;
+}
+
 function newsletter_subscription_forms() {
     $news_pass = get_option('newsletter_pass');
-    try {
-        $forms = get_subscription_forms_list($news_pass);
-        $connectionSucceeded = true;
-    } catch (\RuntimeException $e) {
-        $connectionSucceeded = false;
-        $forms = [];
+    $action = $_GET['action'] ?? 'list';
+    $connectionSucceeded = null;
+    switch ($action) {
+        case 'delete':
+            try {
+                if (isset($_GET['form_id'])) {
+                    delete_subscription_form($_GET['form_id'], $news_pass);
+                    set_newsletter_flash_message('Form has been deleted', 'updated');
+                    wp_redirect('?page=newsletter_subscription_forms');
+                    exit;
+                } else {
+                    throw new GetANewsletterException("Invalid form id");
+                }
+            } catch (GetANewsletterException $e) {
+                set_newsletter_flash_message($e->getMessage(), 'error');
+                wp_redirect('?page=newsletter_subscription_forms');
+                exit;
+            }
+        case 'list':
+        default:
+            try {
+                $forms = get_subscription_forms_list($news_pass);
+                $connectionSucceeded = true;
+                break;
+            } catch (GetANewsletterException $e) {
+                $forms = [];
+                $connectionSucceeded = false;
+            }
     }
 
     ?>
     <div class="wrap">
         <h1 class="wp-heading-inline">Your subscription forms</h1>
         <a href="#" class="page-title-action">Add New</a>
+        <?php
+        if (!$connectionSucceeded) {
+            ?>
+            <h2 style="color: red">Cannot connect to Get A Newsletter API. Please verify your API Token</h2>
+            <?
+        } elseif ($message = get_newsletter_flash_message()) {
+            ?>
+            <div class="<?= $message['type'] ?> notice is-dismissable"><?= $message['msg'] ?></div>
+            <?
+        }
+        ?>
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
@@ -56,31 +110,33 @@ function newsletter_subscription_forms() {
             </thead>
             <tbody>
                 <?php
-                if (!$connectionSucceeded) {
+                foreach ($forms as $form) {
                     ?>
                     <tr>
-                        <td colspan="4">
-                            <span style="color: red">Cannot connect to Get A Newsletter API. Please verify your API Token</span>
-                        </td>
+                        <td><?= $form->name ?></td>
+                        <td><?= $form->lists_names ?></td>
+                        <td><code>[gan-form id=<?= $form->key ?>]</code></td>
+                        <td><a href="#" class="page-title-action">Edit</a><a href="?page=newsletter_subscription_forms&action=delete&form_id=<?= $form->key ?>&noheader=true" class="page-title-action">Delete</a></td>
                     </tr>
                     <?php
-                } else {
-                    foreach ($forms as $form) {
-                        ?>
-                        <tr>
-                            <td><?= $form->name ?></td>
-                            <td><?= $form->lists_names ?></td>
-                            <td><code>[gan-form id=<?= $form->key ?>]</code></td>
-                            <td><a href="#" class="page-title-action">Edit</a><a href="#" class="page-title-action">Delete</a></td>
-                        </tr>
-                        <?php
-                    }
                 }
                 ?>
             </tbody>
         </table>
     </div>
     <?php
+}
+
+function delete_subscription_form($formId, $news_pass) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $result = $conn->subscription_form_delete($formId);
+    if (!$result) {
+        throw new GetANewsletterException('Cannot delete a form');
+    }
 }
 
 function get_subscription_forms_list($news_pass): array {
@@ -90,7 +146,7 @@ function get_subscription_forms_list($news_pass): array {
         $forms = $conn->body->results;
         return $forms;
     } else {
-        throw new \RuntimeException('Cannot connect to Get A Newsletter API');
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
     }
 }
 

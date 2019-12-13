@@ -376,6 +376,16 @@ class GAPI
          return true;
      }
 
+    function subscription_form_delete($key) {
+        $ok = $this->call_api('DELETE', "subscription_forms/{$key}");
+
+        if(!$ok) {
+            return false;
+        }
+
+        return true;
+    }
+
      function subscription_form_create($data) {
          return $this->call_api('POST', 'subscription_forms/', $data);
      }
