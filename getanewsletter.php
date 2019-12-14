@@ -727,6 +727,22 @@ function newsletter_upgrade_create_subscription_form($settings, $api) {
     update_option('widget_getanewsletter', $widgets);
 }
 
+function gan_shortcode( $atts ) {
+    $a = shortcode_atts( array(
+        'id' => null,
+    ), $atts );
+
+    if (null === $a['id']) {
+        return '';
+    }
+
+    $news_pass = get_option('newsletter_pass');
+    $form = get_subscription_form($news_pass, $a['id']);
+
+    return $form['form'] ?? '';
+}
+add_shortcode( 'gan-form', 'gan_shortcode' );
+
 
 /* WIDGET */
 
