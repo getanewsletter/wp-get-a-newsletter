@@ -290,7 +290,7 @@ class GAPI
 
     protected function parse_response() {
         $this->response = $this->request->response;
-        $this->body = json_decode($this->request->body);
+        $this->body = json_decode($this->request->body, true);
         $this->statusCode = $this->response['code'];
         if (floor($this->response['code'] / 100) == 2) {
             $this->result = true;
@@ -387,7 +387,9 @@ class GAPI
     }
 
      function subscription_form_create($data) {
-         return $this->call_api('POST', 'subscription_forms/', $data);
+         $result = $this->call_api('POST', 'subscription_forms/', $data);
+         $this->parse_response();
+         return $result;
      }
 
     /*
@@ -910,6 +912,16 @@ class GAPI
                 ));
             }
         }
+        return $ok;
+    }
+
+    function subscription_lists_list()
+    {
+        $ok = $this->call_api('GET', 'lists/');
+        if ($ok) {
+            $this->result = $this->body['results'];
+        }
+
         return $ok;
     }
 }

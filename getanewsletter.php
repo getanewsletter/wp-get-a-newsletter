@@ -34,21 +34,31 @@ function newsletter_menu() {
   add_submenu_page('newsletter', 'Settings', 'Settings', 'administrator', 'newsletter', 'newsletter_options');
 }
 
-function set_newsletter_flash_message($msg, $type) {
-    $_SESSION['newsletter_message'] = [
-        'msg' => $msg,
-        'type' => $type
-    ];
+function set_session_data($key, $data) {
+    $_SESSION[$key] = $data;
 }
 
-function get_newsletter_flash_message() {
-    if (isset($_SESSION['newsletter_message'])) {
-        $message = $_SESSION['newsletter_message'];
-        unset($_SESSION['newsletter_message']);
+function get_session_data($key, $default = null) {
+    if (isset($_SESSION[$key])) {
+        $data = $_SESSION[$key];
+        unset($_SESSION[$key]);
     } else {
-        $message = null;
+        $data = $default;
     }
 
+    return $data;
+}
+
+function set_newsletter_flash_message($msg, $type) {
+    set_session_data('newsletter_message', [
+        'msg' => $msg,
+        'type' => $type
+    ]);
+}
+
+
+function get_newsletter_flash_message() {
+    $message = get_session_data('newsletter_message');
     return $message;
 }
 
@@ -72,57 +82,307 @@ function newsletter_subscription_forms() {
                 wp_redirect('?page=newsletter_subscription_forms');
                 exit;
             }
+        case 'create':
+            if (!empty($_POST)) {
+                try {
+                    $result = create_subscription_form($news_pass, $_POST);
+                    if (empty($result)) {
+                        wp_redirect('?page=newsletter_subscription_forms');
+                        exit;
+                    } else {
+                        set_newsletter_flash_message('Please correct errors', 'error');
+                        set_session_data('newsletter_form_data', $_POST);
+                        set_session_data('newsletter_form_errors', $result);
+                        wp_redirect('?page=newsletter_subscription_forms&action=create');
+                        exit;
+                    }
+                } catch (\GetANewsletterException $e) {
+                    set_newsletter_flash_message($e->getMessage(), 'error');
+                }
+            }
+            $attributes = get_subscription_attributes($news_pass);
+            $lists = get_subscription_lists($news_pass);
+            display_subscription_form($attributes, $lists);
+            break;
         case 'list':
         default:
             try {
                 $forms = get_subscription_forms_list($news_pass);
                 $connectionSucceeded = true;
-                break;
             } catch (GetANewsletterException $e) {
                 $forms = [];
                 $connectionSucceeded = false;
             }
+            display_subscription_forms_list($connectionSucceeded, $forms);
+            break;
+    }
+}
+
+function create_subscription_form($news_pass, $postdata) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
     }
 
+    wp_verify_nonce('newsletter-create-form');
+
+    $data = [
+        'attributes' => $postdata['attributes'] ?? [],
+        'email' => $postdata['sender_email'] ?? '',
+        'first_name' => isset($postdata['first_name']),
+        'lists' => [ $postdata['list'] ?? '' ],
+        'last_name' => isset($postdata['last_name']),
+        'name' => $postdata['name'] ?? '',
+        'sender' => $postdata['sender_name'] ?? '',
+        'verify_mail_subject' => $postdata['confirmation_email_subject'] ?? '',
+        'verify_mail_text' => $postdata['confirmation_email_message'] ?? '',
+        'next_url' => $postdata['next_url'] ?? '',
+        'button_text' => $postdata['button_text'] ?? '',
+    ];
+
+    $result = $conn->subscription_form_create($data);
+    if ($result) {
+        return [];
+    }
+
+    if ($conn->errorCode == 400) {
+        return $conn->body;
+    } else {
+        throw new GetANewsletterException('Unknown error');
+    }
+}
+
+function display_newsletter_flash_message($message) {
+    ?><div class="<?= $message['type'] ?> notice is-dismissable"><?= $message['msg'] ?></div><?php
+}
+
+function display_newsletter_form_errors(array $errors) {
+    return '<span class="error notice notice-error">' . implode(', ', $errors) . '</span>';
+}
+
+function display_subscription_forms_list($connectionSucceeded, $forms) {
     ?>
     <div class="wrap">
         <h1 class="wp-heading-inline">Your subscription forms</h1>
-        <a href="#" class="page-title-action">Add New</a>
+        <a href="?page=newsletter_subscription_forms&action=create" class="page-title-action">Add New</a>
         <?php
         if (!$connectionSucceeded) {
             ?>
             <h2 style="color: red">Cannot connect to Get A Newsletter API. Please verify your API Token</h2>
             <?
         } elseif ($message = get_newsletter_flash_message()) {
-            ?>
-            <div class="<?= $message['type'] ?> notice is-dismissable"><?= $message['msg'] ?></div>
-            <?
+            display_newsletter_flash_message($message);
         }
         ?>
         <table class="wp-list-table widefat fixed striped">
             <thead>
-                <tr>
-                    <th class="manage-column">Name</th>
-                    <th class="manage-column">Lists</th>
-                    <th class="manage-column">Shortcode</th>
-                    <th class="manage-column">Actions</th>
-                </tr>
+            <tr>
+                <th class="manage-column">Name</th>
+                <th class="manage-column">Lists</th>
+                <th class="manage-column">Shortcode</th>
+                <th class="manage-column">Actions</th>
+            </tr>
             </thead>
             <tbody>
+            <?php
+            foreach ($forms as $form) {
+                ?>
+                <tr>
+                    <td><?= $form['name'] ?></td>
+                    <td><?= $form['lists_names'] ?></td>
+                    <td><code>[gan-form id=<?= $form['key'] ?>]</code></td>
+                    <td><a href="#" class="page-title-action">Edit</a><a href="?page=newsletter_subscription_forms&action=delete&form_id=<?= $form['key'] ?>&noheader=true" class="page-title-action">Delete</a></td>
+                </tr>
                 <?php
-                foreach ($forms as $form) {
+            }
+            ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
+
+function display_subscription_form($attributes, $lists) {
+    $currentFormData = get_session_data('newsletter_form_data', []);
+    $currentErrors = get_session_data('newsletter_form_errors', []);
+    ?>
+    <style>
+        <?php
+        if (!isset($currentFormData['send_advanced_settings']) || $currentFormData['send_advanced_settings'] == 0) {
+            ?>
+            .advanced-settings { display: none; }
+            <?php
+        }
+        ?>
+        th { padding-bottom: 5px !important; padding-top: 5px !important }
+        td { padding-bottom: 5px !important; padding-top: 5px !important }
+    </style>
+    <script type="text/javascript">
+        jQuery(function($) {
+            $('.btn-show-advanced').click(function() {
+                $('.advanced-settings').show();
+                $('input[name="send_advanced_settings"]').val(1);
+                $(this).hide();
+            });
+        });
+    </script>
+    <div class="wrap">
+        <form method="post" action="?page=newsletter_subscription_forms&action=create&noheader=true">
+            <h1>Get a Newsletter - new form</h1>
+            <?php
+            if ($message = get_newsletter_flash_message()) {
+                display_newsletter_flash_message($message);
+            }
+            ?>
+
+            <?php wp_nonce_field('newsletter-create-form'); ?>
+            <h2>Name your form</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Form name</th>
+                    <td><input type="text" name="name" value="<?= $currentFormData['name'] ?? '' ?>" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['name'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['name']) ?></td></tr><?php
+                }
+                ?>
+            </table>
+
+            <h2>Contact fields</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Email</th>
+                    <td><input type="checkbox" name="email" value="1" checked="checked" disabled="disabled" /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">First name</th>
+                    <td><input type="checkbox" name="first_name" value="1" <?= isset($currentFormData['first_name']) ? 'checked="checked"' : '' ?> /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Last name</th>
+                    <td><input type="checkbox" name="last_name" value="1" <?= isset($currentFormData['last_name']) ? 'checked="checked"' : '' ?> /></td>
+                </tr>
+            </table>
+
+            <h2>Attributes fields</h2>
+            <table class="form-table">
+                <?php
+                foreach ($attributes as $attribute) {
                     ?>
-                    <tr>
-                        <td><?= $form->name ?></td>
-                        <td><?= $form->lists_names ?></td>
-                        <td><code>[gan-form id=<?= $form->key ?>]</code></td>
-                        <td><a href="#" class="page-title-action">Edit</a><a href="?page=newsletter_subscription_forms&action=delete&form_id=<?= $form->key ?>&noheader=true" class="page-title-action">Delete</a></td>
+                    <tr valign="top">
+                        <th scope="row"><?= $attribute['name'] ?></th>
+                        <td><input type="checkbox" name="attributes[]" value="<?= $attribute['name'] ?>" <?= in_array($attribute['name'], ($currentFormData['attributes'] ?? [])) ? 'selected="selected"' : '' ?> /></td>
                     </tr>
                     <?php
                 }
                 ?>
-            </tbody>
-        </table>
+            </table>
+
+            <h2>List and Sender</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Choose list</th>
+                    <td>
+                        <select name="list">
+                            <?php
+                            foreach ($lists as $list) {
+                                ?>
+                                <option value="<?= $list['hash'] ?>" <?= $list['hash'] = ($currentFormData['list'] ?? '') ? 'selected="selected"' : '' ?>><?= $list['name'] ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Sender name</th>
+                    <td><input type="text" name="sender_name" <?= $currentFormData['sender_name'] ?? '' ?> /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['sender'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['sender']) ?></td></tr><?php
+                }
+                ?>
+                <tr valign="top">
+                    <th scope="row">Sender email</th>
+                    <td><input type="text" name="sender_email" <?= $currentFormData['sender_email'] ?? '' ?> /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['email'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['email']) ?></td></tr><?php
+                }
+                ?>
+            </table>
+
+            <a class="btn-show-advanced page-title-action" <?= isset($currentFormData['send_advanced_settings']) && $currentFormData['send_advanced_settings'] == 1 ? 'style="display: none;"' : '' ?>>Show Advanced Settings</a>
+            <div class="advanced-settings">
+                <input type="hidden" name="send_advanced_settings" value="<?= $currentFormData['send_advanced_settings'] ?? '0' ?>" />
+                <h2>Confirmation email</h2>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Subject</th>
+                        <td><input type="text" name="confirmation_email_subject" value="<?= $currentFormData['confirmation_email_subject'] ?? 'Welcome as a subscriber to ##list_name##' ?>" style="width: 600px" /></td>
+                    </tr>
+                    <?php
+                    if (isset($currentErrors['verify_mail_subject'])) {
+                        ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
+                    }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">Message</th>
+                        <td>
+                            <textarea type="text" name="confirmation_email_message" style="width: 600px; height: 250px;">
+<?= $currentFormData['confirmation_email_message'] ??
+    'Hello!
+
+You have been added as a subscriber to ##list_name##. Before you can receive our newsletter, please confirm your subscription by clicking the following link:
+
+##confirmation_link##
+
+Best regards
+##sendername##
+
+Ps. If you don\'t want our newsletter in the future, you can easily unsubscribe with the link provided in every newsletter.' ?>
+                            </textarea>
+                        </td>
+                    </tr>
+                    <?php
+                    if (isset($currentErrors['verify_mail_text'])) {
+                        ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
+                    }
+                    ?>
+                </table>
+
+                <h2>Form Settings</h2>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Next URL</th>
+                        <td><input type="text" name="next_url" value="<?= $currentFormData['next_url'] ?? '' ?>" /></td>
+                    </tr>
+                    <?php
+                    if (isset($currentErrors['next_url'])) {
+                        ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
+                    }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">Button Text</th>
+                        <td><input type="text" name="button_text" value="<?= $currentFormData['button_text'] ?? 'Subscribe' ?>" /></td>
+                    </tr>
+                    <?php
+                    if (isset($currentErrors['button_text'])) {
+                        ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['button_text']) ?></td></tr><?php
+                    }
+                    ?>
+                </table>
+            </div>
+
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Save and return" />
+                <a class="button button-cancel" href="?page=newsletter_subscription_forms">Cancel</a>
+            </p>
+
+        </form>
     </div>
     <?php
 }
@@ -139,11 +399,31 @@ function delete_subscription_form($formId, $news_pass) {
     }
 }
 
+function get_subscription_attributes($news_pass) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $conn->attribute_listing();
+    return $conn->body['results'];
+}
+
+function get_subscription_lists($news_pass) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $conn->subscription_lists_list();
+    return $conn->body['results'];
+}
+
 function get_subscription_forms_list($news_pass): array {
     $conn = new GAPI('', $news_pass);
     if ($conn->check_login()) {
         $conn->subscription_form_list();
-        $forms = $conn->body->results;
+        $forms = $conn->body['results'];
         return $forms;
     } else {
         throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
