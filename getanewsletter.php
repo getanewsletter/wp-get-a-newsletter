@@ -102,7 +102,36 @@ function newsletter_subscription_forms() {
             }
             $attributes = get_subscription_attributes($news_pass);
             $lists = get_subscription_lists($news_pass);
-            display_subscription_form($attributes, $lists);
+            display_subscription_form($attributes, $lists, []);
+            break;
+        case 'edit':
+            $form_id = $_GET['form_id'] ?? '';
+            if (!empty($_POST)) {
+                try {
+                    $result = update_subscription_form($news_pass, $_POST, $form_id);
+                    if (empty($result)) {
+                        wp_redirect('?page=newsletter_subscription_forms');
+                        exit;
+                    } else {
+                        set_newsletter_flash_message('Please correct errors', 'error');
+                        set_session_data('newsletter_form_data', $_POST);
+                        set_session_data('newsletter_form_errors', $result);
+                        wp_redirect('?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id);
+                        exit;
+                    }
+                } catch (\GetANewsletterException $e) {
+                    set_newsletter_flash_message($e->getMessage(), 'error');
+                }
+            }
+            try {
+                $attributes = get_subscription_attributes($news_pass);
+                $lists = get_subscription_lists($news_pass);
+                $currentFormData = get_session_data('newsletter_form_data', transform_form_data(get_subscription_form($news_pass, $form_id)));
+                display_subscription_form($attributes, $lists, $currentFormData, $form_id);
+            } catch (\GetANewsletterException $e) {
+                set_newsletter_flash_message($e->getMessage(), 'error');
+                wp_redirect('?page=newsletter_subscription_forms');
+            }
             break;
         case 'list':
         default:
@@ -116,6 +145,23 @@ function newsletter_subscription_forms() {
             display_subscription_forms_list($connectionSucceeded, $forms);
             break;
     }
+}
+
+function transform_form_data($form_data) {
+    return [
+        'attributes' => $form_data['attributes'],
+        'sender_email' => $form_data['email'],
+        'first_name' => (int)$form_data['first_name'],
+        'list' => $form_data['lists'],
+        'last_name' => (int)$form_data['last_name'],
+        'name' => $form_data['name'],
+        'sender_name' => $form_data['sender'],
+        'confirmation_email_subject' => $form_data['verify_mail_subject'],
+        'confirmation_email_message' => $form_data['verify_mail_text'],
+        'next_url' => $form_data['next_url'],
+        'button_text' => $form_data['button_text'],
+        'send_advanced_settings' => 1
+    ];
 }
 
 function create_subscription_form($news_pass, $postdata) {
@@ -141,6 +187,40 @@ function create_subscription_form($news_pass, $postdata) {
     ];
 
     $result = $conn->subscription_form_create($data);
+    if ($result) {
+        return [];
+    }
+
+    if ($conn->errorCode == 400) {
+        return $conn->body;
+    } else {
+        throw new GetANewsletterException('Unknown error');
+    }
+}
+
+function update_subscription_form($news_pass, $postdata, $form_id) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    wp_verify_nonce('newsletter-create-form');
+
+    $data = [
+        'attributes' => $postdata['attributes'] ?? [],
+        'email' => $postdata['sender_email'] ?? '',
+        'first_name' => isset($postdata['first_name']),
+        'lists' => [ $postdata['list'] ?? '' ],
+        'last_name' => isset($postdata['last_name']),
+        'name' => $postdata['name'] ?? '',
+        'sender' => $postdata['sender_name'] ?? '',
+        'verify_mail_subject' => $postdata['confirmation_email_subject'] ?? '',
+        'verify_mail_text' => $postdata['confirmation_email_message'] ?? '',
+        'next_url' => $postdata['next_url'] ?? '',
+        'button_text' => $postdata['button_text'] ?? '',
+    ];
+
+    $result = $conn->subscription_form_update($data, $form_id);
     if ($result) {
         return [];
     }
@@ -191,7 +271,7 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
                     <td><?= $form['name'] ?></td>
                     <td><?= $form['lists_names'] ?></td>
                     <td><code>[gan-form id=<?= $form['key'] ?>]</code></td>
-                    <td><a href="#" class="page-title-action">Edit</a><a href="?page=newsletter_subscription_forms&action=delete&form_id=<?= $form['key'] ?>&noheader=true" class="page-title-action">Delete</a></td>
+                    <td><a href="?page=newsletter_subscription_forms&action=edit&form_id=<?= $form['key'] ?>" class="page-title-action">Edit</a><a href="?page=newsletter_subscription_forms&action=delete&form_id=<?= $form['key'] ?>&noheader=true" class="page-title-action">Delete</a></td>
                 </tr>
                 <?php
             }
@@ -202,8 +282,7 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
     <?php
 }
 
-function display_subscription_form($attributes, $lists) {
-    $currentFormData = get_session_data('newsletter_form_data', []);
+function display_subscription_form($attributes, $lists, $currentFormData, $form_id = null) {
     $currentErrors = get_session_data('newsletter_form_errors', []);
     ?>
     <style>
@@ -227,7 +306,7 @@ function display_subscription_form($attributes, $lists) {
         });
     </script>
     <div class="wrap">
-        <form method="post" action="?page=newsletter_subscription_forms&action=create&noheader=true">
+        <form method="post" action="<?= $form_id ? '?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id . '&noheader=true' : '?page=newsletter_subscription_forms&action=create&noheader=true' ?>">
             <h1>Get a Newsletter - new form</h1>
             <?php
             if ($message = get_newsletter_flash_message()) {
@@ -257,11 +336,11 @@ function display_subscription_form($attributes, $lists) {
                 </tr>
                 <tr valign="top">
                     <th scope="row">First name</th>
-                    <td><input type="checkbox" name="first_name" value="1" <?= isset($currentFormData['first_name']) ? 'checked="checked"' : '' ?> /></td>
+                    <td><input type="checkbox" name="first_name" value="1" <?= isset($currentFormData['first_name']) && $currentFormData['first_name'] ? 'checked="checked"' : '' ?> /></td>
                 </tr>
                 <tr valign="top">
                     <th scope="row">Last name</th>
-                    <td><input type="checkbox" name="last_name" value="1" <?= isset($currentFormData['last_name']) ? 'checked="checked"' : '' ?> /></td>
+                    <td><input type="checkbox" name="last_name" value="1" <?= isset($currentFormData['last_name']) && $currentFormData['last_name'] ? 'checked="checked"' : '' ?> /></td>
                 </tr>
             </table>
 
@@ -272,7 +351,7 @@ function display_subscription_form($attributes, $lists) {
                     ?>
                     <tr valign="top">
                         <th scope="row"><?= $attribute['name'] ?></th>
-                        <td><input type="checkbox" name="attributes[]" value="<?= $attribute['name'] ?>" <?= in_array($attribute['name'], ($currentFormData['attributes'] ?? [])) ? 'selected="selected"' : '' ?> /></td>
+                        <td><input type="checkbox" name="attributes[]" value="<?= $attribute['name'] ?>" <?= in_array($attribute['name'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?> /></td>
                     </tr>
                     <?php
                 }
@@ -297,7 +376,7 @@ function display_subscription_form($attributes, $lists) {
                 </tr>
                 <tr valign="top">
                     <th scope="row">Sender name</th>
-                    <td><input type="text" name="sender_name" <?= $currentFormData['sender_name'] ?? '' ?> /></td>
+                    <td><input type="text" name="sender_name" value="<?= $currentFormData['sender_name'] ?? '' ?>" /></td>
                 </tr>
                 <?php
                 if (isset($currentErrors['sender'])) {
@@ -306,7 +385,7 @@ function display_subscription_form($attributes, $lists) {
                 ?>
                 <tr valign="top">
                     <th scope="row">Sender email</th>
-                    <td><input type="text" name="sender_email" <?= $currentFormData['sender_email'] ?? '' ?> /></td>
+                    <td><input type="text" name="sender_email"  value="<?= $currentFormData['sender_email'] ?? '' ?>" /></td>
                 </tr>
                 <?php
                 if (isset($currentErrors['email'])) {
@@ -417,6 +496,16 @@ function get_subscription_lists($news_pass) {
 
     $conn->subscription_lists_list();
     return $conn->body['results'];
+}
+
+function get_subscription_form($news_pass, $form_id) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $conn->subscription_form_get($form_id);
+    return $conn->body;
 }
 
 function get_subscription_forms_list($news_pass): array {

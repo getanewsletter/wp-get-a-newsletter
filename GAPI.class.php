@@ -392,6 +392,12 @@ class GAPI
          return $result;
      }
 
+    function subscription_form_update($data, $key) {
+        $result = $this->call_api('PUT', 'subscription_forms/' . $key, $data);
+        $this->parse_response();
+        return $result;
+    }
+
     /*
      * contact_delete()
      *
