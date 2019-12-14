@@ -64,6 +64,10 @@ function get_newsletter_flash_message() {
 
 function newsletter_subscription_forms() {
     $news_pass = get_option('newsletter_pass');
+    if (!$news_pass) {
+        display_api_key_form();
+        return;
+    }
     $action = $_GET['action'] ?? 'list';
     $connectionSucceeded = null;
     switch ($action) {
@@ -519,12 +523,38 @@ function get_subscription_forms_list($news_pass): array {
     }
 }
 
+function display_api_key_form() {
+    ?>
+    <div class="wrap">
+        <form method="post" action="options.php?option_page=newsletter">
+            <h2>Get Started</h2>
+            <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
+            <?php wp_nonce_field('newsletter-options'); ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">API Token</th>
+                    <td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
+                </tr>
+                <input type="hidden" name="action" value="update" />
+                <input type="hidden" name="page_options" value="newsletter_pass" />
+            </table>
+            <p class="submit">
+                <input type="submit" class="button-primary" value="<?php _e('Save Changes', 'getanewsletter') ?>" />
+            </p>
+        </form>
+    </div>
+    <?php
+}
+
 function newsletter_options() {
     $news_pass = get_option('newsletter_pass');
     $ok = false;
     if($news_pass) {
         $conn = new GAPI('', $news_pass);
         $ok = $conn->check_login();
+    } else {
+        display_api_key_form();
+        return;
     }
 ?>
     <div class="wrap">
