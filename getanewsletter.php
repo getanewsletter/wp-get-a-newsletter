@@ -355,7 +355,7 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                     ?>
                     <tr valign="top">
                         <th scope="row"><?= $attribute['name'] ?></th>
-                        <td><input type="checkbox" name="attributes[]" value="<?= $attribute['name'] ?>" <?= in_array($attribute['name'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?> /></td>
+                        <td><input type="checkbox" name="attributes[]" value="<?= $attribute['code'] ?>" <?= in_array($attribute['code'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?> /></td>
                     </tr>
                     <?php
                 }
@@ -769,10 +769,71 @@ function gan_shortcode( $atts ) {
     $news_pass = get_option('newsletter_pass');
     $form = get_subscription_form($news_pass, $a['id']);
 
-    return $form['form'] ?? '';
+    $apikey = get_option('newsletter_apikey');
+
+    $customAttributes = get_subscription_attributes(get_option('newsletter_pass'));
+
+    print ""
+        ."<form method=\"post\" class=\"newsletter-signup\" action=\"javascript:alert('success!');\" enctype=\"multipart/form-data\">"
+        ."  <input type=\"hidden\" name=\"action\" value=\"getanewsletter_subscribe\" />";
+
+    if($form['first_name']) {
+        print ""
+            ."<p>"
+            ."  <label for=\"id_first_name\">" . (!empty($form['first_name_label']) ? $form['first_name_label'] : __('First name', 'getanewsletter')) . "</label><br />"
+            ."  <input id=\"id_first_name\" type=\"text\" class=\"text\" name=\"id_first_name\" />"
+            ."</p>";
+    }
+
+    if($form['last_name']) {
+        print ""
+            ."<p>"
+            ."  <label for=\"id_last_name\">" . (!empty($form['last_name_label']) ? $form['last_name_label'] : __('Last name', 'getanewsletter')) . "</label><br />"
+            ."  <input id=\"id_last_name\" type=\"text\" class=\"text\" name=\"id_last_name\" />"
+            ."</p>";
+    }
+
+    print ""
+        ."  <p>"
+        ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') ."</label><br />"
+        ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
+        ."  </p>";
+
+    foreach ($customAttributes as $attribute) {
+        if (!in_array($attribute['code'], $form['attributes'])) {
+            continue;
+        }
+        print ""
+            ."  <p>"
+            ."      <label for=\"attr_${attribute['code']}\">". $attribute['name'] ."</label><br />"
+            ."      <input id=\"attr_${attribute['code']}\" type=\"text\" class=\"text\" name=\"attributes[{$attribute['code']}]\" />"
+            ."  </p>";
+    }
+
+    print ""
+        ."  <p>"
+        ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form['form_link']}\" id=\"id_form_link\" />"
+        ."      <input type=\"hidden\" name=\"key\" value=\"{$form['key']}\" id=\"id_key\" />"
+        ."      <input type=\"submit\" value=\"" . ($form['button_text'] != '' ?  __($form['button_text'], 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\" />"
+        ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__), '', plugin_basename(__FILE__)) . "loading.gif\""
+        ."          alt=\"loading\""
+        ."          class=\"news-loading\" />"
+        ."  </p>";
+    print ""
+        ."</form>"
+        ."<div class=\"news-note\"></div>";
 }
 add_shortcode( 'gan-form', 'gan_shortcode' );
 
+add_action( 'wp_ajax_newsletter_get_form', function() {
+    $formId = $_GET['formId'];
+
+    $news_pass = get_option('newsletter_pass');
+    $form = get_subscription_form($news_pass, $formId);
+
+    echo json_encode($form);
+    wp_die();
+});
 
 /* WIDGET */
 
@@ -795,10 +856,11 @@ class GetaNewsletter extends WP_Widget {
         $key = esc_attr(empty($instance['key']) ? "" : $instance['key']);
         $form_link = empty($instance['form_link']) ? "" : $instance['form_link'];
         $fname = esc_attr(empty($instance['fname']) ? "" : $instance['fname']);
-        $fnametxt = esc_attr(empty($instance['fnametxt']) ? "" : $instance['fnametxt']);
         $lname = esc_attr(empty($instance['lname']) ? "" : $instance['lname']);
-        $lnametxt = esc_attr(empty($instance['lnametxt']) ? "" : $instance['lnametxt']);
         $submittext = esc_attr(empty($instance['submittext']) ? "" : $instance['submittext']);
+
+        $customAttributes = get_subscription_attributes(get_option('newsletter_pass'));
+
         ?>
         <?php echo $before_widget; ?>
           <?php if ( $title )
@@ -830,6 +892,17 @@ class GetaNewsletter extends WP_Widget {
                     ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
                     ."  </p>";
 
+                foreach ($customAttributes as $attribute) {
+                    if (!isset($instance[$attribute['code']]) || !$instance[$attribute['code']]) {
+                        continue;
+                    }
+                    print ""
+                        ."  <p>"
+                        ."      <label for=\"attr_${attribute['code']}\">". $attribute['name'] ."</label><br />"
+                        ."      <input id=\"attr_${attribute['code']}\" type=\"text\" class=\"text\" name=\"attributes[{$attribute['code']}]\" />"
+                        ."  </p>";
+                }
+
                 print ""
                     ."  <p>"
                     ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form_link}\" id=\"id_form_link\" />"
@@ -855,11 +928,11 @@ class GetaNewsletter extends WP_Widget {
         $api = new GAPI('', get_option('newsletter_pass'));
         $api->subscription_form_get($new_instance['key']);
 
-        $new_instance['form_link'] = $api->body->form_link;
+        $new_instance['form_link'] = $api->body['form_link'];
 
         // If submittext is empty we take the one from app, otherwise we use local stored.
         if (empty($new_instance['submittext'])) {
-            $new_instance['submittext'] = $api->body->button_text;
+            $new_instance['submittext'] = $api->body['button_text'];
         }
 
         return $new_instance;
@@ -868,7 +941,6 @@ class GetaNewsletter extends WP_Widget {
     /** @see WP_Widget::form */
     function form($instance) {
         $news_pass = get_option('newsletter_pass');
-
         if($news_pass) {
 
             $news_con = new GAPI('', $news_pass);
@@ -877,10 +949,13 @@ class GetaNewsletter extends WP_Widget {
                 $title = esc_attr(empty($instance['title']) ? "" : $instance['title']);
                 $key = esc_attr(empty($instance['key']) ? null : $instance['key']);
                 $fname = esc_attr(empty($instance['fname']) ? "" : $instance['fname']);
-                $fnametxt = esc_attr(empty($instance['fnametxt']) ? "" : $instance['fnametxt']);
                 $lname = esc_attr(empty($instance['lname']) ? "" : $instance['lname']);
-                $lnametxt = esc_attr(empty($instance['lnametxt']) ? "" : $instance['lnametxt']);
                 $submittext = esc_attr(empty($instance['submittext']) ? "" : $instance['submittext']);
+
+                $customAttributes = get_subscription_attributes($news_pass);
+                foreach ($customAttributes as $attribute) {
+                    ${$attribute['code']} = $instance[$attribute['code']] ?? false;
+                }
 
                 if($key) {
                     if($news_con->subscription_form_get($key)) {
@@ -907,11 +982,11 @@ class GetaNewsletter extends WP_Widget {
                     ."  <label for=\"{$this->get_field_id('key')}\">" . __('Subscription form', 'getanewsletter') . ":</label>";
 
                     if ($news_con->subscription_form_list()) {
-                        print "<select class=\"widefat\" id=\"{$this->get_field_id("key")}\" name=\"{$this->get_field_name("key")}\">";
+                        print "<select data-widget-id='{$this->number}' class=\"widefat\" id=\"{$this->get_field_id("key")}\" name=\"{$this->get_field_name("key")}\">";
                         print "<option></option>";
-                        foreach($news_con->body->results as $form) {
-                            $selected_list = $key == $form->key ? "selected=\"selected\"" : "";
-                            print "<option {$selected_list} value=\"{$form->key}\">{$form->name}</option>";
+                        foreach($news_con->body['results'] as $form) {
+                            $selected_list = $key == $form['key'] ? "selected=\"selected\"" : "";
+                            print "<option {$selected_list} value=\"{$form['key']}\">{$form['name']}</option>";
                         }
 
                         print "</select>";
@@ -922,35 +997,49 @@ class GetaNewsletter extends WP_Widget {
 
                 print "</p>";
 
-                print ""
-                    ."<p>"
-                    ."  <input class=\"checkbox\" id=\"{$this->get_field_id('fname')}\""
-                    ."      name=\"{$this->get_field_name('fname')}\""
-                    ."      type=\"checkbox\" " . (!empty($fname) ? "checked=\"checked\"" : "") . " />"
-                    ."  <label for=\"{$this->get_field_id('fname')}\">" . __('Ask for First Name?<br>Label for First Name', 'getanewsletter'). "</label>"
-                    ."  <input size=\"15\""
-                    ."      id=\"{$this->get_field_id('fnametxt')}\""
-                    ."      name=\"{$this->get_field_name('fnametxt')}\""
-                    ."      type=\"text\" value=\"{$fnametxt}\" />"
-                    ."</p>";
+                print '<h3>Attribute fields</h3>';
+                print '<span style="text-style: italic">Choose which fields to include for this widget. Current options are copied from original form</span>';
 
                 print ""
                     ."<p>"
                     ."  <input class=\"checkbox\""
-                    ."      id=\"{$this->get_field_id('lname')}\""
-                    ."      name=\"{$this->get_field_name('lname')}\""
-                    ."      type=\"checkbox\" " . (!empty($lname) ? "checked=\"checked\"" : "") . " />"
-                    ."  <label for=\"{$this->get_field_id('lname')}\">" . __('Ask for Last Name?<br>Label for Last Name', 'getanewsletter') . "</label>"
-                    ."  <input size=\"15\""
-                    ."      id=\"{$this->get_field_id('lnametxt')}\""
-                    ."      name=\"{$this->get_field_name('lnametxt')}\""
-                    ."      type=\"text\" value=\"{$lnametxt}\" />"
+                    .""
+                    ."      type=\"checkbox\" checked='checked' disabled='disabled' />"
+                    ."  <label for=\"{$this->get_field_id('email')}\">" . __('Email <span style="font-style: italic">Required</span>', 'getanewsletter'). "</label>"
                     ."</p>";
 
                 print ""
                     ."<p>"
+                    ."  <input data-newsletter-field-name='fname-{$this->number}' class=\"checkbox\" id=\"{$this->get_field_id('fname')}\""
+                    ."      name=\"{$this->get_field_name('fname')}\""
+                    ."      type=\"checkbox\" " . (!empty($fname) ? "checked=\"checked\"" : "") . " />"
+                    ."  <label for=\"{$this->get_field_id('fname')}\">" . __('First Name', 'getanewsletter'). "</label>"
+                    ."</p>";
+
+                print ""
+                    ."<p>"
+                    ."  <input data-newsletter-field-name='lname-{$this->number}' class=\"checkbox\""
+                    ."      id=\"{$this->get_field_id('lname')}\""
+                    ."      name=\"{$this->get_field_name('lname')}\""
+                    ."      type=\"checkbox\" " . (!empty($lname) ? "checked=\"checked\"" : "") . " />"
+                    ."  <label for=\"{$this->get_field_id('lname')}\">" . __('Last Name', 'getanewsletter') . "</label>"
+                    ."</p>";
+
+                foreach ($customAttributes as $attribute) {
+                    print ""
+                        ."<p>"
+                        ."  <input class=\"checkbox\" data-attribute-name='{$attribute['code']}-{$this->number}' rel='newsletter_attribute' data-attribute-name='{$attribute['code']}'"
+                        ."      id=\"{$this->get_field_id($attribute['code'])}\""
+                        ."      name=\"{$this->get_field_name($attribute['code'])}\""
+                        ."      type=\"checkbox\" " . (!empty(${$attribute['code']}) ? "checked=\"checked\"" : "") . " />"
+                        ."  <label for=\"{$this->get_field_id($attribute['code'])}\">" . $attribute['name'] . "</label>"
+                        ."</p>";
+                }
+
+                print ""
+                    ."<p>"
                     ."  <label for=\"{$this->get_field_id('submittext')}\">" . __('Submit text', 'getanewsletter') . ":</label>"
-                    ."  <input class=\"widefat\""
+                    ."  <input data-newsletter-field-name='submit-text-{$this->number}' class=\"widefat\""
                     ."      id=\"{$this->get_field_id('submittext')}\""
                     ."      name=\"{$this->get_field_name('submittext')}\""
                     ."      type=\"text\" value=\"{$submittext}\" />"
@@ -967,6 +1056,52 @@ class GetaNewsletter extends WP_Widget {
 
 add_action('widgets_init', function() {
     register_widget("GetaNewsletter");
+});
+
+add_action('admin_footer', function() {
+    print "
+                <script type=\"text/javascript\">
+                    $(function() {
+                        $('.widget-liquid-right').on('change', 'select[data-widget-id]', function() {
+                            var widgetId = $(this).attr('data-widget-id');
+                            $.ajax(ajaxurl, {
+                                method: 'GET',
+                                data: {
+                                    action: 'newsletter_get_form',
+                                    formId: $(this).val()
+                                },
+                                success: function(response) {
+                                    response = $.parseJSON(response);
+                                    if (response.first_name) {
+                                        $('input[data-newsletter-field-name=fname-' + widgetId + ']').prop('checked', true);
+                                    } else {
+                                        $('input[data-newsletter-field-name=fname-' + widgetId + ']').prop('checked', false);
+                                    }
+                                    
+                                    if (response.last_name) {
+                                        $('input[data-newsletter-field-name=lname-' + widgetId + ']').prop('checked', true);
+                                    } else {
+                                        $('input[data-newsletter-field-name=lname-' + widgetId + ']').prop('checked', false);
+                                    }
+                                    
+                                    var i;
+                                    var \$attributes = $('input[rel=newsletter_attribute-' + widgetId + ']');
+                                    for (i = 0; i < \$attributes.length; i++) {
+                                        attr = \$attributes[i];
+                                        $(attr).prop('checked', false);
+                                    }
+                                    
+                                    for (i = 0; i < response.attributes.length; i++) {
+                                        attr = response.attributes[i];
+                                        $('input[data-attribute-name=' + attr + '-' + widgetId + ']').prop('checked', true);
+                                    }
+                                    
+                                    $('input[data-newsletter-field-name=submit-text-' + widgetId + ']').val(response.button_text);
+                                }
+                            });
+                        });
+                    });
+                </script>";
 });
 
 register_activation_hook(__FILE__, array('GetaNewsletter', 'install'));
