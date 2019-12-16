@@ -348,19 +348,27 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                 </tr>
             </table>
 
-            <h2>Attributes fields</h2>
-            <table class="form-table">
-                <?php
-                foreach ($attributes as $attribute) {
-                    ?>
-                    <tr valign="top">
-                        <th scope="row"><?= $attribute['name'] ?></th>
-                        <td><input type="checkbox" name="attributes[]" value="<?= $attribute['code'] ?>" <?= in_array($attribute['code'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?> /></td>
-                    </tr>
-                    <?php
-                }
+            <?php
+            if (isset($attributes) && is_array($attributes) && !empty($attributes)) {
                 ?>
-            </table>
+                <h2>Attributes fields</h2>
+                <table class="form-table">
+                    <?php
+                    foreach ($attributes as $attribute) {
+                        ?>
+                        <tr valign="top">
+                            <th scope="row"><?= $attribute['name'] ?></th>
+                            <td><input type="checkbox" name="attributes[]" value="<?= $attribute['code'] ?>"
+                                       <?= in_array($attribute['code'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?>/>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </table>
+                <?php
+            }
+            ?>
 
             <h2>List and Sender</h2>
             <table class="form-table">
