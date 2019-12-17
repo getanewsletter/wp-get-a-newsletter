@@ -777,16 +777,13 @@ function gan_shortcode( $atts ) {
     $news_pass = get_option('newsletter_pass');
     $form = get_subscription_form($news_pass, $a['id']);
 
-    $apikey = get_option('newsletter_apikey');
-
     $customAttributes = get_subscription_attributes(get_option('newsletter_pass'));
-
-    print ""
+    $content = ""
         ."<form method=\"post\" class=\"newsletter-signup\" action=\"javascript:alert('success!');\" enctype=\"multipart/form-data\">"
         ."  <input type=\"hidden\" name=\"action\" value=\"getanewsletter_subscribe\" />";
 
     if($form['first_name']) {
-        print ""
+        $content .= ""
             ."<p>"
             ."  <label for=\"id_first_name\">" . (!empty($form['first_name_label']) ? $form['first_name_label'] : __('First name', 'getanewsletter')) . "</label><br />"
             ."  <input id=\"id_first_name\" type=\"text\" class=\"text\" name=\"id_first_name\" />"
@@ -794,14 +791,14 @@ function gan_shortcode( $atts ) {
     }
 
     if($form['last_name']) {
-        print ""
+        $content .=  ""
             ."<p>"
             ."  <label for=\"id_last_name\">" . (!empty($form['last_name_label']) ? $form['last_name_label'] : __('Last name', 'getanewsletter')) . "</label><br />"
             ."  <input id=\"id_last_name\" type=\"text\" class=\"text\" name=\"id_last_name\" />"
             ."</p>";
     }
 
-    print ""
+    $content .=  ""
         ."  <p>"
         ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') ."</label><br />"
         ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
@@ -811,14 +808,14 @@ function gan_shortcode( $atts ) {
         if (!in_array($attribute['code'], $form['attributes'])) {
             continue;
         }
-        print ""
+        $content .=  ""
             ."  <p>"
             ."      <label for=\"attr_${attribute['code']}\">". $attribute['name'] ."</label><br />"
             ."      <input id=\"attr_${attribute['code']}\" type=\"text\" class=\"text\" name=\"attributes[{$attribute['code']}]\" />"
             ."  </p>";
     }
 
-    print ""
+    $content .=  ""
         ."  <p>"
         ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form['form_link']}\" id=\"id_form_link\" />"
         ."      <input type=\"hidden\" name=\"key\" value=\"{$form['key']}\" id=\"id_key\" />"
@@ -827,9 +824,11 @@ function gan_shortcode( $atts ) {
         ."          alt=\"loading\""
         ."          class=\"news-loading\" />"
         ."  </p>";
-    print ""
+    $content .=  ""
         ."</form>"
         ."<div class=\"news-note\"></div>";
+
+    return $content;
 }
 add_shortcode( 'gan-form', 'gan_shortcode' );
 
