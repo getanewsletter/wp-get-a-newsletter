@@ -1069,7 +1069,7 @@ add_action('widgets_init', function() {
 add_action('admin_footer', function() {
     print "
                 <script type=\"text/javascript\">
-                    $(function() {
+                    jQuery(function($) {
                         $('.widget-liquid-right').on('change', 'select[data-widget-id]', function() {
                             var widgetId = $(this).attr('data-widget-id');
                             $.ajax(ajaxurl, {
