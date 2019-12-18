@@ -971,7 +971,10 @@ class GetaNewsletter extends WP_Widget {
 
                     if ($news_con->subscription_form_list()) {
                         print "<select data-widget-id='{$this->number}' class=\"widefat\" id=\"{$this->get_field_id("key")}\" name=\"{$this->get_field_name("key")}\">";
-                        print "<option></option>";
+
+                        if (empty($key)) {
+                            print "<option value=''></option>";
+                        }
                         foreach($news_con->body['results'] as $form) {
                             $selected_list = $key == $form['key'] ? "selected=\"selected\"" : "";
                             print "<option {$selected_list} value=\"{$form['key']}\">{$form['name']}</option>";
@@ -1052,6 +1055,7 @@ add_action('admin_footer', function() {
                     jQuery(function($) {
                         $('.widget-liquid-right').on('change', 'select[data-widget-id]', function() {
                             var widgetId = $(this).attr('data-widget-id');
+                            $(this).find('option[value=\"\"]').remove();
                             $.ajax(ajaxurl, {
                                 method: 'GET',
                                 data: {
