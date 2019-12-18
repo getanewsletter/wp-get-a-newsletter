@@ -106,7 +106,7 @@ function newsletter_subscription_forms() {
             }
             $attributes = get_subscription_attributes($news_pass);
             $lists = get_subscription_lists($news_pass);
-            display_subscription_form($attributes, $lists, []);
+            display_subscription_form($attributes, $lists, get_session_data('newsletter_form_data', []));
             break;
         case 'edit':
             $form_id = $_GET['form_id'] ?? '';
@@ -163,8 +163,7 @@ function transform_form_data($form_data) {
         'confirmation_email_subject' => $form_data['verify_mail_subject'],
         'confirmation_email_message' => $form_data['verify_mail_text'],
         'next_url' => $form_data['next_url'],
-        'button_text' => $form_data['button_text'],
-        'send_advanced_settings' => 1
+        'button_text' => $form_data['button_text']
     ];
 }
 
@@ -290,25 +289,9 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
     $currentErrors = get_session_data('newsletter_form_errors', []);
     ?>
     <style>
-        <?php
-        if (!isset($currentFormData['send_advanced_settings']) || $currentFormData['send_advanced_settings'] == 0) {
-            ?>
-            .advanced-settings { display: none; }
-            <?php
-        }
-        ?>
         th { padding-bottom: 5px !important; padding-top: 5px !important }
         td { padding-bottom: 5px !important; padding-top: 5px !important }
     </style>
-    <script type="text/javascript">
-        jQuery(function($) {
-            $('.btn-show-advanced').click(function() {
-                $('.advanced-settings').show();
-                $('input[name="send_advanced_settings"]').val(1);
-                $(this).hide();
-            });
-        });
-    </script>
     <div class="wrap">
         <form method="post" action="<?= $form_id ? '?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id . '&noheader=true' : '?page=newsletter_subscription_forms&action=create&noheader=true' ?>">
             <h1>Get a Newsletter - new form</h1>
@@ -406,26 +389,23 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                 ?>
             </table>
 
-            <a class="btn-show-advanced page-title-action" <?= isset($currentFormData['send_advanced_settings']) && $currentFormData['send_advanced_settings'] == 1 ? 'style="display: none;"' : '' ?>>Show Advanced Settings</a>
-            <div class="advanced-settings">
-                <input type="hidden" name="send_advanced_settings" value="<?= $currentFormData['send_advanced_settings'] ?? '0' ?>" />
-                <h2>Confirmation email</h2>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">Subject</th>
-                        <td><input type="text" name="confirmation_email_subject" value="<?= $currentFormData['confirmation_email_subject'] ?? 'Welcome as a subscriber to ##list_name##' ?>" style="width: 600px" /></td>
-                    </tr>
-                    <?php
-                    if (isset($currentErrors['verify_mail_subject'])) {
-                        ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
-                    }
-                    ?>
-                    <tr valign="top">
-                        <th scope="row">Message</th>
-                        <td>
-                            <textarea type="text" name="confirmation_email_message" style="width: 600px; height: 250px;">
+            <h2>Confirmation email</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Subject</th>
+                    <td><input type="text" name="confirmation_email_subject" value="<?= $currentFormData['confirmation_email_subject'] ?? 'Welcome as a subscriber to ##list_name##' ?>" style="width: 600px" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['verify_mail_subject'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
+                }
+                ?>
+                <tr valign="top">
+                    <th scope="row">Message</th>
+                    <td>
+                        <textarea type="text" name="confirmation_email_message" style="width: 600px; height: 250px;">
 <?= $currentFormData['confirmation_email_message'] ??
-    'Hello!
+'Hello!
 
 You have been added as a subscriber to ##list_name##. Before you can receive our newsletter, please confirm your subscription by clicking the following link:
 
@@ -435,38 +415,37 @@ Best regards
 ##sendername##
 
 Ps. If you don\'t want our newsletter in the future, you can easily unsubscribe with the link provided in every newsletter.' ?>
-                            </textarea>
-                        </td>
-                    </tr>
-                    <?php
-                    if (isset($currentErrors['verify_mail_text'])) {
-                        ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
-                    }
-                    ?>
-                </table>
+                        </textarea>
+                    </td>
+                </tr>
+                <?php
+                if (isset($currentErrors['verify_mail_text'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
+                }
+                ?>
+            </table>
 
-                <h2>Form Settings</h2>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">Next URL</th>
-                        <td><input type="text" name="next_url" value="<?= $currentFormData['next_url'] ?? '' ?>" /></td>
-                    </tr>
-                    <?php
-                    if (isset($currentErrors['next_url'])) {
-                        ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
-                    }
-                    ?>
-                    <tr valign="top">
-                        <th scope="row">Button Text</th>
-                        <td><input type="text" name="button_text" value="<?= $currentFormData['button_text'] ?? 'Subscribe' ?>" /></td>
-                    </tr>
-                    <?php
-                    if (isset($currentErrors['button_text'])) {
-                        ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['button_text']) ?></td></tr><?php
-                    }
-                    ?>
-                </table>
-            </div>
+            <h2>Form Settings</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Next URL</th>
+                    <td><input type="text" name="next_url" value="<?= $currentFormData['next_url'] ?? '' ?>" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['next_url'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
+                }
+                ?>
+                <tr valign="top">
+                    <th scope="row">Button Text</th>
+                    <td><input type="text" name="button_text" value="<?= $currentFormData['button_text'] ?? 'Subscribe' ?>" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['button_text'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['button_text']) ?></td></tr><?php
+                }
+                ?>
+            </table>
 
             <p class="submit">
                 <input type="submit" class="button-primary" value="Save and return" />
