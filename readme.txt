@@ -1,8 +1,9 @@
 === Get a Newsletter ===
 Tags: email, marketing, newsletter, subscription
-Requires at least: 3.0.1
-Stable tag: 2.0.6
-Tested up to: 4.4.2
+Requires at least: 5.2.0
+Stable tag: 3.0.0
+Tested up to: 5.3.1
+Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Contributors: dreambuilder
@@ -35,6 +36,12 @@ Signup required at (https://app.getanewsletter.com)
 
 
 == Changelog ==
+
+= 3.0.0 =
+PHP 7.2 and Wordpress 5.2 fixes
+Making possible to create/edit subscription forms in WordPress admin
+Added shortcode for subscription forms
+Some minor enhancements
 
 = 2.0.5 =
 Saving widget fixes

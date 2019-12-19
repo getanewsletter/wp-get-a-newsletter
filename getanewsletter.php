@@ -3,7 +3,9 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 2.0.6
+Version: 3.0.0
+Requires at least: 5.2.0
+Requires PHP: 7.2
 Author: getanewsletter
 Author URI: http://www.getanewsletter.com/
 License: GPLv2 or later
@@ -13,10 +15,524 @@ Domain Path: /languages/
 
 require_once("GAPI.class.php");
 
+class GetANewsletterException extends \RuntimeException { }
+
+add_action('admin_init', function() {
+    session_start();
+    register_setting('newsletter', 'newsletter_user');
+    register_setting('newsletter', 'newsletter_pass');
+    register_setting('newsletter', 'newsletter_apikey');
+    register_setting('newsletter', 'newsletter_msg_success');
+    register_setting('newsletter', 'newsletter_msg_confirm');
+    register_setting('newsletter', 'newsletter_msg_505');
+    register_setting('newsletter', 'newsletter_msg_512');
+});
 /* ADMIN PANEL */
 
 function newsletter_menu() {
-  add_options_page('Get a Newsletter', 'Get a Newsletter', 'administrator', 'newsletter', 'newsletter_options');
+  add_menu_page('Get a Newsletter', 'Get a Newsletter', 'administrator', 'newsletter', 'newsletter_options');
+  add_submenu_page('newsletter', 'Subscription forms', 'Subscription forms', 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
+  remove_submenu_page('newsletter', 'newsletter');
+  add_submenu_page('newsletter', 'Settings', 'Settings', 'administrator', 'newsletter', 'newsletter_options');
+}
+
+function set_session_data($key, $data) {
+    $_SESSION[$key] = $data;
+}
+
+function get_session_data($key, $default = null) {
+    if (isset($_SESSION[$key])) {
+        $data = $_SESSION[$key];
+        unset($_SESSION[$key]);
+    } else {
+        $data = $default;
+    }
+
+    return $data;
+}
+
+function set_newsletter_flash_message($msg, $type) {
+    set_session_data('newsletter_message', [
+        'msg' => $msg,
+        'type' => $type
+    ]);
+}
+
+
+function get_newsletter_flash_message() {
+    $message = get_session_data('newsletter_message');
+    return $message;
+}
+
+function newsletter_subscription_forms() {
+    $news_pass = get_option('newsletter_pass');
+    if (!$news_pass) {
+        display_api_key_form();
+        return;
+    }
+    $action = $_GET['action'] ?? 'list';
+    $connectionSucceeded = null;
+    switch ($action) {
+        case 'delete':
+            try {
+                if (isset($_GET['form_id'])) {
+                    delete_subscription_form($_GET['form_id'], $news_pass);
+                    set_newsletter_flash_message('Form has been deleted', 'updated');
+                    wp_redirect('?page=newsletter_subscription_forms');
+                    exit;
+                } else {
+                    throw new GetANewsletterException("Invalid form id");
+                }
+            } catch (GetANewsletterException $e) {
+                set_newsletter_flash_message($e->getMessage(), 'error');
+                wp_redirect('?page=newsletter_subscription_forms');
+                exit;
+            }
+        case 'create':
+            if (!empty($_POST)) {
+                try {
+                    $result = create_subscription_form($news_pass, $_POST);
+                    if (empty($result)) {
+                        wp_redirect('?page=newsletter_subscription_forms');
+                        exit;
+                    } else {
+                        set_newsletter_flash_message('Please correct errors', 'error');
+                        set_session_data('newsletter_form_data', $_POST);
+                        set_session_data('newsletter_form_errors', $result);
+                        wp_redirect('?page=newsletter_subscription_forms&action=create');
+                        exit;
+                    }
+                } catch (\GetANewsletterException $e) {
+                    set_newsletter_flash_message($e->getMessage(), 'error');
+                }
+            }
+            $attributes = get_subscription_attributes($news_pass);
+            $lists = get_subscription_lists($news_pass);
+            display_subscription_form($attributes, $lists, get_session_data('newsletter_form_data', []));
+            break;
+        case 'edit':
+            $form_id = $_GET['form_id'] ?? '';
+            if (!empty($_POST)) {
+                try {
+                    $result = update_subscription_form($news_pass, $_POST, $form_id);
+                    if (empty($result)) {
+                        wp_redirect('?page=newsletter_subscription_forms');
+                        exit;
+                    } else {
+                        set_newsletter_flash_message('Please correct errors', 'error');
+                        set_session_data('newsletter_form_data', $_POST);
+                        set_session_data('newsletter_form_errors', $result);
+                        wp_redirect('?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id);
+                        exit;
+                    }
+                } catch (\GetANewsletterException $e) {
+                    set_newsletter_flash_message($e->getMessage(), 'error');
+                }
+            }
+            try {
+                $attributes = get_subscription_attributes($news_pass);
+                $lists = get_subscription_lists($news_pass);
+                $currentFormData = get_session_data('newsletter_form_data', transform_form_data(get_subscription_form($news_pass, $form_id)));
+                display_subscription_form($attributes, $lists, $currentFormData, $form_id);
+            } catch (\GetANewsletterException $e) {
+                set_newsletter_flash_message($e->getMessage(), 'error');
+                wp_redirect('?page=newsletter_subscription_forms');
+            }
+            break;
+        case 'list':
+        default:
+            try {
+                $forms = get_subscription_forms_list($news_pass);
+                $connectionSucceeded = true;
+            } catch (GetANewsletterException $e) {
+                $forms = [];
+                $connectionSucceeded = false;
+            }
+            display_subscription_forms_list($connectionSucceeded, $forms);
+            break;
+    }
+}
+
+function transform_form_data($form_data) {
+    return [
+        'attributes' => $form_data['attributes'],
+        'sender_email' => $form_data['email'],
+        'first_name' => (int)$form_data['first_name'],
+        'list' => $form_data['lists'],
+        'last_name' => (int)$form_data['last_name'],
+        'name' => $form_data['name'],
+        'sender_name' => $form_data['sender'],
+        'confirmation_email_subject' => $form_data['verify_mail_subject'],
+        'confirmation_email_message' => $form_data['verify_mail_text'],
+        'next_url' => $form_data['next_url'],
+        'button_text' => $form_data['button_text']
+    ];
+}
+
+function create_subscription_form($news_pass, $postdata) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    wp_verify_nonce('newsletter-create-form');
+
+    $data = [
+        'attributes' => $postdata['attributes'] ?? [],
+        'email' => $postdata['sender_email'] ?? '',
+        'first_name' => isset($postdata['first_name']),
+        'lists' => [ $postdata['list'] ?? '' ],
+        'last_name' => isset($postdata['last_name']),
+        'name' => $postdata['name'] ?? '',
+        'sender' => $postdata['sender_name'] ?? '',
+        'verify_mail_subject' => $postdata['confirmation_email_subject'] ?? '',
+        'verify_mail_text' => $postdata['confirmation_email_message'] ?? '',
+        'next_url' => $postdata['next_url'] ?? '',
+        'button_text' => $postdata['button_text'] ?? '',
+    ];
+
+    $result = $conn->subscription_form_create($data);
+    if ($result) {
+        return [];
+    }
+
+    if ($conn->errorCode == 400) {
+        return $conn->body;
+    } else {
+        throw new GetANewsletterException('Unknown error');
+    }
+}
+
+function update_subscription_form($news_pass, $postdata, $form_id) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    wp_verify_nonce('newsletter-create-form');
+
+    $data = [
+        'attributes' => $postdata['attributes'] ?? [],
+        'email' => $postdata['sender_email'] ?? '',
+        'first_name' => isset($postdata['first_name']),
+        'lists' => [ $postdata['list'] ?? '' ],
+        'last_name' => isset($postdata['last_name']),
+        'name' => $postdata['name'] ?? '',
+        'sender' => $postdata['sender_name'] ?? '',
+        'verify_mail_subject' => $postdata['confirmation_email_subject'] ?? '',
+        'verify_mail_text' => $postdata['confirmation_email_message'] ?? '',
+        'next_url' => $postdata['next_url'] ?? '',
+        'button_text' => $postdata['button_text'] ?? '',
+    ];
+
+    $result = $conn->subscription_form_update($data, $form_id);
+    if ($result) {
+        return [];
+    }
+
+    if ($conn->errorCode == 400) {
+        return $conn->body;
+    } else {
+        throw new GetANewsletterException('Unknown error');
+    }
+}
+
+function display_newsletter_flash_message($message) {
+    ?><div class="<?= $message['type'] ?> notice is-dismissable"><?= $message['msg'] ?></div><?php
+}
+
+function display_newsletter_form_errors(array $errors) {
+    return '<span class="error notice notice-error">' . implode(', ', $errors) . '</span>';
+}
+
+function display_subscription_forms_list($connectionSucceeded, $forms) {
+    ?>
+    <div class="wrap">
+        <h1 class="wp-heading-inline">Your subscription forms</h1>
+        <a href="?page=newsletter_subscription_forms&action=create" class="page-title-action">Add New</a>
+        <?php
+        if (!$connectionSucceeded) {
+            ?>
+            <h2 style="color: red">Cannot connect to Get A Newsletter API. Please verify your API Token</h2>
+            <?
+        } elseif ($message = get_newsletter_flash_message()) {
+            display_newsletter_flash_message($message);
+        }
+        ?>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+            <tr>
+                <th class="manage-column">Name</th>
+                <th class="manage-column">Lists</th>
+                <th class="manage-column">Shortcode</th>
+                <th class="manage-column">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach ($forms as $form) {
+                ?>
+                <tr>
+                    <td><?= $form['name'] ?></td>
+                    <td><?= $form['lists_names'] ?></td>
+                    <td><code>[gan-form id=<?= $form['key'] ?>]</code></td>
+                    <td><a href="?page=newsletter_subscription_forms&action=edit&form_id=<?= $form['key'] ?>" class="page-title-action">Edit</a><a href="?page=newsletter_subscription_forms&action=delete&form_id=<?= $form['key'] ?>&noheader=true" class="page-title-action">Delete</a></td>
+                </tr>
+                <?php
+            }
+            ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
+
+function display_subscription_form($attributes, $lists, $currentFormData, $form_id = null) {
+    $currentErrors = get_session_data('newsletter_form_errors', []);
+    ?>
+    <style>
+        th { padding-bottom: 5px !important; padding-top: 5px !important }
+        td { padding-bottom: 5px !important; padding-top: 5px !important }
+    </style>
+    <div class="wrap">
+        <form method="post" action="<?= $form_id ? '?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id . '&noheader=true' : '?page=newsletter_subscription_forms&action=create&noheader=true' ?>">
+            <h1>Get a Newsletter - new form</h1>
+            <?php
+            if ($message = get_newsletter_flash_message()) {
+                display_newsletter_flash_message($message);
+            }
+            ?>
+
+            <?php wp_nonce_field('newsletter-create-form'); ?>
+            <h2>Name your form</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Form name</th>
+                    <td><input type="text" name="name" value="<?= $currentFormData['name'] ?? '' ?>" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['name'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['name']) ?></td></tr><?php
+                }
+                ?>
+            </table>
+
+            <h2>Contact fields</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Email</th>
+                    <td><input type="checkbox" name="email" value="1" checked="checked" disabled="disabled" /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">First name</th>
+                    <td><input type="checkbox" name="first_name" value="1" <?= isset($currentFormData['first_name']) && $currentFormData['first_name'] ? 'checked="checked"' : '' ?> /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Last name</th>
+                    <td><input type="checkbox" name="last_name" value="1" <?= isset($currentFormData['last_name']) && $currentFormData['last_name'] ? 'checked="checked"' : '' ?> /></td>
+                </tr>
+            </table>
+
+            <?php
+            if (isset($attributes) && is_array($attributes) && !empty($attributes)) {
+                ?>
+                <h2>Attributes fields</h2>
+                <table class="form-table">
+                    <?php
+                    foreach ($attributes as $attribute) {
+                        ?>
+                        <tr valign="top">
+                            <th scope="row"><?= $attribute['name'] ?></th>
+                            <td><input type="checkbox" name="attributes[]" value="<?= $attribute['code'] ?>"
+                                       <?= in_array($attribute['code'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?>/>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </table>
+                <?php
+            }
+            ?>
+
+            <h2>List and Sender</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Choose list</th>
+                    <td>
+                        <select name="list">
+                            <?php
+                            foreach ($lists as $list) {
+                                ?>
+                                <option value="<?= $list['hash'] ?>" <?= $list['hash'] = ($currentFormData['list'] ?? '') ? 'selected="selected"' : '' ?>><?= $list['name'] ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Sender name</th>
+                    <td><input type="text" name="sender_name" value="<?= $currentFormData['sender_name'] ?? '' ?>" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['sender'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['sender']) ?></td></tr><?php
+                }
+                ?>
+                <tr valign="top">
+                    <th scope="row">Sender email</th>
+                    <td><input type="text" name="sender_email"  value="<?= $currentFormData['sender_email'] ?? '' ?>" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['email'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['email']) ?></td></tr><?php
+                }
+                ?>
+            </table>
+
+            <h2>Confirmation email</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Subject</th>
+                    <td><input type="text" name="confirmation_email_subject" value="<?= $currentFormData['confirmation_email_subject'] ?? 'Welcome as a subscriber to ##list_name##' ?>" style="width: 600px" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['verify_mail_subject'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
+                }
+                ?>
+                <tr valign="top">
+                    <th scope="row">Message</th>
+                    <td>
+                        <textarea type="text" name="confirmation_email_message" style="width: 600px; height: 250px;">
+<?= $currentFormData['confirmation_email_message'] ??
+'Hello!
+
+You have been added as a subscriber to ##list_name##. Before you can receive our newsletter, please confirm your subscription by clicking the following link:
+
+##confirmation_link##
+
+Best regards
+##sendername##
+
+Ps. If you don\'t want our newsletter in the future, you can easily unsubscribe with the link provided in every newsletter.' ?>
+                        </textarea>
+                    </td>
+                </tr>
+                <?php
+                if (isset($currentErrors['verify_mail_text'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
+                }
+                ?>
+            </table>
+
+            <h2>Form Settings</h2>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Next URL</th>
+                    <td><input type="text" name="next_url" value="<?= $currentFormData['next_url'] ?? '' ?>" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['next_url'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
+                }
+                ?>
+                <tr valign="top">
+                    <th scope="row">Button Text</th>
+                    <td><input type="text" name="button_text" value="<?= $currentFormData['button_text'] ?? 'Subscribe' ?>" /></td>
+                </tr>
+                <?php
+                if (isset($currentErrors['button_text'])) {
+                    ?><tr><td></td><td><?=  display_newsletter_form_errors($currentErrors['button_text']) ?></td></tr><?php
+                }
+                ?>
+            </table>
+
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Save and return" />
+                <a class="button button-cancel" href="?page=newsletter_subscription_forms">Cancel</a>
+            </p>
+
+        </form>
+    </div>
+    <?php
+}
+
+function delete_subscription_form($formId, $news_pass) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $result = $conn->subscription_form_delete($formId);
+    if (!$result) {
+        throw new GetANewsletterException('Cannot delete a form');
+    }
+}
+
+function get_subscription_attributes($news_pass) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $conn->attribute_listing();
+    return $conn->body['results'];
+}
+
+function get_subscription_lists($news_pass) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $conn->subscription_lists_list();
+    return $conn->body['results'];
+}
+
+function get_subscription_form($news_pass, $form_id) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $conn->subscription_form_get($form_id);
+    return $conn->body;
+}
+
+function get_subscription_forms_list($news_pass): array {
+    $conn = new GAPI('', $news_pass);
+    if ($conn->check_login()) {
+        $conn->subscription_form_list();
+        $forms = $conn->body['results'];
+        return $forms;
+    } else {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+}
+
+function display_api_key_form() {
+    ?>
+    <div class="wrap">
+        <form method="post" action="options.php?option_page=newsletter">
+            <h2>Get Started</h2>
+            <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
+            <?php wp_nonce_field('newsletter-options'); ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">API Token</th>
+                    <td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
+                </tr>
+                <input type="hidden" name="action" value="update" />
+                <input type="hidden" name="page_options" value="newsletter_pass" />
+            </table>
+            <p class="submit">
+                <input type="submit" class="button-primary" value="<?php _e('Save Changes', 'getanewsletter') ?>" />
+            </p>
+        </form>
+    </div>
+    <?php
 }
 
 function newsletter_options() {
@@ -25,18 +541,21 @@ function newsletter_options() {
     if($news_pass) {
         $conn = new GAPI('', $news_pass);
         $ok = $conn->check_login();
+    } else {
+        display_api_key_form();
+        return;
     }
 ?>
     <div class="wrap">
 
-    <form method="post" action="options.php">
+    <form method="post" action="options.php?option_page=newsletter">
 
         <h2>Get a Newsletter Options</h2>
 
         <h3>Account Information</h3>
         <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
 
-        <?php wp_nonce_field('update-options'); ?>
+        <?php wp_nonce_field('newsletter-options'); ?>
         <table class="form-table">
             <tr valign="top">
                 <th scope="row">API Token</th>
@@ -79,7 +598,6 @@ function newsletter_options() {
     </form>
 <?php
 }
-
 
 add_action('admin_menu', 'newsletter_menu');
 
@@ -228,6 +746,82 @@ function newsletter_upgrade_create_subscription_form($settings, $api) {
     update_option('widget_getanewsletter', $widgets);
 }
 
+function gan_shortcode( $atts ) {
+    $a = shortcode_atts( array(
+        'id' => null,
+    ), $atts );
+
+    if (null === $a['id']) {
+        return '';
+    }
+
+    $news_pass = get_option('newsletter_pass');
+    $form = get_subscription_form($news_pass, $a['id']);
+
+    $customAttributes = get_subscription_attributes(get_option('newsletter_pass'));
+    $content = ""
+        ."<form method=\"post\" class=\"newsletter-signup\" action=\"javascript:alert('success!');\" enctype=\"multipart/form-data\">"
+        ."  <input type=\"hidden\" name=\"action\" value=\"getanewsletter_subscribe\" />";
+
+    if($form['first_name']) {
+        $content .= ""
+            ."<p>"
+            ."  <label for=\"id_first_name\">" . (!empty($form['first_name_label']) ? $form['first_name_label'] : __('First name', 'getanewsletter')) . "</label><br />"
+            ."  <input id=\"id_first_name\" type=\"text\" class=\"text\" name=\"id_first_name\" />"
+            ."</p>";
+    }
+
+    if($form['last_name']) {
+        $content .=  ""
+            ."<p>"
+            ."  <label for=\"id_last_name\">" . (!empty($form['last_name_label']) ? $form['last_name_label'] : __('Last name', 'getanewsletter')) . "</label><br />"
+            ."  <input id=\"id_last_name\" type=\"text\" class=\"text\" name=\"id_last_name\" />"
+            ."</p>";
+    }
+
+    $content .=  ""
+        ."  <p>"
+        ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') ."</label><br />"
+        ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
+        ."  </p>";
+
+    foreach ($customAttributes as $attribute) {
+        if (!in_array($attribute['code'], $form['attributes'])) {
+            continue;
+        }
+        $content .=  ""
+            ."  <p>"
+            ."      <label for=\"attr_${attribute['code']}\">". $attribute['name'] ."</label><br />"
+            ."      <input id=\"attr_${attribute['code']}\" type=\"text\" class=\"text\" name=\"attributes[{$attribute['code']}]\" />"
+            ."  </p>";
+    }
+
+    $content .=  ""
+        ."  <p>"
+        ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form['form_link']}\" id=\"id_form_link\" />"
+        ."      <input type=\"hidden\" name=\"key\" value=\"{$form['key']}\" id=\"id_key\" />"
+        ."      <input type=\"submit\" value=\"" . ($form['button_text'] != '' ?  __($form['button_text'], 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\" />"
+        ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__), '', plugin_basename(__FILE__)) . "loading.gif\""
+        ."          alt=\"loading\""
+        ."          class=\"news-loading\" />"
+        ."  </p>";
+    $content .=  ""
+        ."</form>"
+        ."<div class=\"news-note\"></div>";
+
+    return $content;
+}
+add_shortcode( 'gan-form', 'gan_shortcode' );
+
+add_action( 'wp_ajax_newsletter_get_form', function() {
+    $formId = $_GET['formId'];
+
+    $news_pass = get_option('newsletter_pass');
+    $form = get_subscription_form($news_pass, $formId);
+
+    echo json_encode($form);
+    wp_die();
+});
 
 /* WIDGET */
 
@@ -250,10 +844,11 @@ class GetaNewsletter extends WP_Widget {
         $key = esc_attr(empty($instance['key']) ? "" : $instance['key']);
         $form_link = empty($instance['form_link']) ? "" : $instance['form_link'];
         $fname = esc_attr(empty($instance['fname']) ? "" : $instance['fname']);
-        $fnametxt = esc_attr(empty($instance['fnametxt']) ? "" : $instance['fnametxt']);
         $lname = esc_attr(empty($instance['lname']) ? "" : $instance['lname']);
-        $lnametxt = esc_attr(empty($instance['lnametxt']) ? "" : $instance['lnametxt']);
         $submittext = esc_attr(empty($instance['submittext']) ? "" : $instance['submittext']);
+
+        $customAttributes = get_subscription_attributes(get_option('newsletter_pass'));
+
         ?>
         <?php echo $before_widget; ?>
           <?php if ( $title )
@@ -285,6 +880,17 @@ class GetaNewsletter extends WP_Widget {
                     ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
                     ."  </p>";
 
+                foreach ($customAttributes as $attribute) {
+                    if (!isset($instance[$attribute['code']]) || !$instance[$attribute['code']]) {
+                        continue;
+                    }
+                    print ""
+                        ."  <p>"
+                        ."      <label for=\"attr_${attribute['code']}\">". $attribute['name'] ."</label><br />"
+                        ."      <input id=\"attr_${attribute['code']}\" type=\"text\" class=\"text\" name=\"attributes[{$attribute['code']}]\" />"
+                        ."  </p>";
+                }
+
                 print ""
                     ."  <p>"
                     ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form_link}\" id=\"id_form_link\" />"
@@ -310,11 +916,11 @@ class GetaNewsletter extends WP_Widget {
         $api = new GAPI('', get_option('newsletter_pass'));
         $api->subscription_form_get($new_instance['key']);
 
-        $new_instance['form_link'] = $api->body->form_link;
+        $new_instance['form_link'] = $api->body['form_link'];
 
         // If submittext is empty we take the one from app, otherwise we use local stored.
         if (empty($new_instance['submittext'])) {
-            $new_instance['submittext'] = $api->body->button_text;
+            $new_instance['submittext'] = $api->body['button_text'];
         }
 
         return $new_instance;
@@ -323,7 +929,6 @@ class GetaNewsletter extends WP_Widget {
     /** @see WP_Widget::form */
     function form($instance) {
         $news_pass = get_option('newsletter_pass');
-
         if($news_pass) {
 
             $news_con = new GAPI('', $news_pass);
@@ -332,10 +937,13 @@ class GetaNewsletter extends WP_Widget {
                 $title = esc_attr(empty($instance['title']) ? "" : $instance['title']);
                 $key = esc_attr(empty($instance['key']) ? null : $instance['key']);
                 $fname = esc_attr(empty($instance['fname']) ? "" : $instance['fname']);
-                $fnametxt = esc_attr(empty($instance['fnametxt']) ? "" : $instance['fnametxt']);
                 $lname = esc_attr(empty($instance['lname']) ? "" : $instance['lname']);
-                $lnametxt = esc_attr(empty($instance['lnametxt']) ? "" : $instance['lnametxt']);
                 $submittext = esc_attr(empty($instance['submittext']) ? "" : $instance['submittext']);
+
+                $customAttributes = get_subscription_attributes($news_pass);
+                foreach ($customAttributes as $attribute) {
+                    ${$attribute['code']} = $instance[$attribute['code']] ?? false;
+                }
 
                 if($key) {
                     if($news_con->subscription_form_get($key)) {
@@ -362,11 +970,14 @@ class GetaNewsletter extends WP_Widget {
                     ."  <label for=\"{$this->get_field_id('key')}\">" . __('Subscription form', 'getanewsletter') . ":</label>";
 
                     if ($news_con->subscription_form_list()) {
-                        print "<select class=\"widefat\" id=\"{$this->get_field_id("key")}\" name=\"{$this->get_field_name("key")}\">";
-                        print "<option></option>";
-                        foreach($news_con->body->results as $form) {
-                            $selected_list = $key == $form->key ? "selected=\"selected\"" : "";
-                            print "<option {$selected_list} value=\"{$form->key}\">{$form->name}</option>";
+                        print "<select data-widget-id='{$this->number}' class=\"widefat\" id=\"{$this->get_field_id("key")}\" name=\"{$this->get_field_name("key")}\">";
+
+                        if (empty($key)) {
+                            print "<option value=''></option>";
+                        }
+                        foreach($news_con->body['results'] as $form) {
+                            $selected_list = $key == $form['key'] ? "selected=\"selected\"" : "";
+                            print "<option {$selected_list} value=\"{$form['key']}\">{$form['name']}</option>";
                         }
 
                         print "</select>";
@@ -377,35 +988,49 @@ class GetaNewsletter extends WP_Widget {
 
                 print "</p>";
 
-                print ""
-                    ."<p>"
-                    ."  <input class=\"checkbox\" id=\"{$this->get_field_id('fname')}\""
-                    ."      name=\"{$this->get_field_name('fname')}\""
-                    ."      type=\"checkbox\" " . (!empty($fname) ? "checked=\"checked\"" : "") . " />"
-                    ."  <label for=\"{$this->get_field_id('fname')}\">" . __('Ask for First Name?<br>Label for First Name', 'getanewsletter'). "</label>"
-                    ."  <input size=\"15\""
-                    ."      id=\"{$this->get_field_id('fnametxt')}\""
-                    ."      name=\"{$this->get_field_name('fnametxt')}\""
-                    ."      type=\"text\" value=\"{$fnametxt}\" />"
-                    ."</p>";
+                print '<h3>Attribute fields</h3>';
+                print '<span style="text-style: italic">Choose which fields to include for this widget. Current options are copied from original form</span>';
 
                 print ""
                     ."<p>"
                     ."  <input class=\"checkbox\""
-                    ."      id=\"{$this->get_field_id('lname')}\""
-                    ."      name=\"{$this->get_field_name('lname')}\""
-                    ."      type=\"checkbox\" " . (!empty($lname) ? "checked=\"checked\"" : "") . " />"
-                    ."  <label for=\"{$this->get_field_id('lname')}\">" . __('Ask for Last Name?<br>Label for Last Name', 'getanewsletter') . "</label>"
-                    ."  <input size=\"15\""
-                    ."      id=\"{$this->get_field_id('lnametxt')}\""
-                    ."      name=\"{$this->get_field_name('lnametxt')}\""
-                    ."      type=\"text\" value=\"{$lnametxt}\" />"
+                    .""
+                    ."      type=\"checkbox\" checked='checked' disabled='disabled' />"
+                    ."  <label for=\"{$this->get_field_id('email')}\">" . __('Email <span style="font-style: italic">Required</span>', 'getanewsletter'). "</label>"
                     ."</p>";
 
                 print ""
                     ."<p>"
+                    ."  <input data-newsletter-field-name='fname-{$this->number}' class=\"checkbox\" id=\"{$this->get_field_id('fname')}\""
+                    ."      name=\"{$this->get_field_name('fname')}\""
+                    ."      type=\"checkbox\" " . (!empty($fname) ? "checked=\"checked\"" : "") . " />"
+                    ."  <label for=\"{$this->get_field_id('fname')}\">" . __('First Name', 'getanewsletter'). "</label>"
+                    ."</p>";
+
+                print ""
+                    ."<p>"
+                    ."  <input data-newsletter-field-name='lname-{$this->number}' class=\"checkbox\""
+                    ."      id=\"{$this->get_field_id('lname')}\""
+                    ."      name=\"{$this->get_field_name('lname')}\""
+                    ."      type=\"checkbox\" " . (!empty($lname) ? "checked=\"checked\"" : "") . " />"
+                    ."  <label for=\"{$this->get_field_id('lname')}\">" . __('Last Name', 'getanewsletter') . "</label>"
+                    ."</p>";
+
+                foreach ($customAttributes as $attribute) {
+                    print ""
+                        ."<p>"
+                        ."  <input class=\"checkbox\" data-attribute-name='{$attribute['code']}-{$this->number}' rel='newsletter_attribute' data-attribute-name='{$attribute['code']}'"
+                        ."      id=\"{$this->get_field_id($attribute['code'])}\""
+                        ."      name=\"{$this->get_field_name($attribute['code'])}\""
+                        ."      type=\"checkbox\" " . (!empty(${$attribute['code']}) ? "checked=\"checked\"" : "") . " />"
+                        ."  <label for=\"{$this->get_field_id($attribute['code'])}\">" . $attribute['name'] . "</label>"
+                        ."</p>";
+                }
+
+                print ""
+                    ."<p>"
                     ."  <label for=\"{$this->get_field_id('submittext')}\">" . __('Submit text', 'getanewsletter') . ":</label>"
-                    ."  <input class=\"widefat\""
+                    ."  <input data-newsletter-field-name='submit-text-{$this->number}' class=\"widefat\""
                     ."      id=\"{$this->get_field_id('submittext')}\""
                     ."      name=\"{$this->get_field_name('submittext')}\""
                     ."      type=\"text\" value=\"{$submittext}\" />"
@@ -420,7 +1045,56 @@ class GetaNewsletter extends WP_Widget {
     }
 }
 
-add_action('widgets_init', create_function('', 'return register_widget("GetaNewsletter");'));
+add_action('widgets_init', function() {
+    register_widget("GetaNewsletter");
+});
+
+add_action('admin_footer', function() {
+    print "
+                <script type=\"text/javascript\">
+                    jQuery(function($) {
+                        $('.widget-liquid-right').on('change', 'select[data-widget-id]', function() {
+                            var widgetId = $(this).attr('data-widget-id');
+                            $(this).find('option[value=\"\"]').remove();
+                            $.ajax(ajaxurl, {
+                                method: 'GET',
+                                data: {
+                                    action: 'newsletter_get_form',
+                                    formId: $(this).val()
+                                },
+                                success: function(response) {
+                                    response = $.parseJSON(response);
+                                    if (response.first_name) {
+                                        $('input[data-newsletter-field-name=fname-' + widgetId + ']').prop('checked', true);
+                                    } else {
+                                        $('input[data-newsletter-field-name=fname-' + widgetId + ']').prop('checked', false);
+                                    }
+                                    
+                                    if (response.last_name) {
+                                        $('input[data-newsletter-field-name=lname-' + widgetId + ']').prop('checked', true);
+                                    } else {
+                                        $('input[data-newsletter-field-name=lname-' + widgetId + ']').prop('checked', false);
+                                    }
+                                    
+                                    var i;
+                                    var \$attributes = $('input[rel=newsletter_attribute-' + widgetId + ']');
+                                    for (i = 0; i < \$attributes.length; i++) {
+                                        attr = \$attributes[i];
+                                        $(attr).prop('checked', false);
+                                    }
+                                    
+                                    for (i = 0; i < response.attributes.length; i++) {
+                                        attr = response.attributes[i];
+                                        $('input[data-attribute-name=' + attr + '-' + widgetId + ']').prop('checked', true);
+                                    }
+                                    
+                                    $('input[data-newsletter-field-name=submit-text-' + widgetId + ']').val(response.button_text);
+                                }
+                            });
+                        });
+                    });
+                </script>";
+});
 
 register_activation_hook(__FILE__, array('GetaNewsletter', 'install'));
 function getanewsletter_load_plugin_textdomain() {

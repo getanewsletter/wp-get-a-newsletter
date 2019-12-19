@@ -72,7 +72,7 @@ class GAPI
      * $password  = The API token.
      *
      */
-    function GAPI($username, $password)
+    function __construct($username, $password)
     {
         $this->username = $username;
         $this->password = $password;
@@ -290,7 +290,7 @@ class GAPI
 
     protected function parse_response() {
         $this->response = $this->request->response;
-        $this->body = json_decode($this->request->body);
+        $this->body = json_decode($this->request->body, true);
         $this->statusCode = $this->response['code'];
         if (floor($this->response['code'] / 100) == 2) {
             $this->result = true;
@@ -376,9 +376,27 @@ class GAPI
          return true;
      }
 
+    function subscription_form_delete($key) {
+        $ok = $this->call_api('DELETE', "subscription_forms/{$key}");
+
+        if(!$ok) {
+            return false;
+        }
+
+        return true;
+    }
+
      function subscription_form_create($data) {
-         return $this->call_api('POST', 'subscription_forms/', $data);
+         $result = $this->call_api('POST', 'subscription_forms/', $data);
+         $this->parse_response();
+         return $result;
      }
+
+    function subscription_form_update($data, $key) {
+        $result = $this->call_api('PUT', 'subscription_forms/' . $key, $data);
+        $this->parse_response();
+        return $result;
+    }
 
     /*
      * contact_delete()
@@ -900,6 +918,16 @@ class GAPI
                 ));
             }
         }
+        return $ok;
+    }
+
+    function subscription_lists_list()
+    {
+        $ok = $this->call_api('GET', 'lists/');
+        if ($ok) {
+            $this->result = $this->body['results'];
+        }
+
         return $ok;
     }
 }

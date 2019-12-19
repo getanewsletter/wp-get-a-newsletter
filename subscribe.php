@@ -26,8 +26,21 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
         if(!empty($_POST['id_last_name'])) {
             $news_lname = stripslashes($_POST['id_last_name']);
         }
+
+        $body = array(
+            'email' => $_POST['id_email'],
+            'first_name' => $news_fname,
+            'last_name' => $news_lname,
+            'gan_repeat_email' => '',
+        );
+
+        if (!empty($_POST['attributes'])) {
+            foreach ($_POST['attributes'] as $name => $value) {
+                $body[$name] = $value;
+            }
+        }
         if(!empty($_POST['form_link'])) {
-            $form_link = str_replace('http', 'https', $_POST['form_link']);
+            $form_link = str_replace('http:', 'https:', $_POST['form_link']);
         } else {
             $response['message'] = __('Subscription form missing mandatory options, please contact administrator.');
             $errors = true;
@@ -39,11 +52,7 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
                     'Accept' => 'application/json'
                 ),
                 'method' => 'POST',
-                'body' => array(
-                    'email' => $_POST['id_email'],
-                    'first_name' => $news_fname,
-                    'last_name' => $news_lname
-                )
+                'body' => $body
             ));
 
             $response['status'] = $request->response['code'];
