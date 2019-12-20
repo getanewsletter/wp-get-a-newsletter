@@ -1,7 +1,7 @@
 === Get a Newsletter ===
 Tags: email, marketing, newsletter, subscription
 Requires at least: 5.2.0
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 Tested up to: 5.3.1
 Requires PHP: 7.2
 License: GPLv2 or later
@@ -36,6 +36,9 @@ Signup required at (https://app.getanewsletter.com)
 
 
 == Changelog ==
+
+= 3.0.1 =
+Removed use of short_open_tag
 
 = 3.0.0 =
 PHP 7.2 and Wordpress 5.2 fixes
