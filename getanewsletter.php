@@ -518,17 +518,17 @@ function display_api_key_form() {
         <form method="post" action="options.php?option_page=newsletter">
             <h2>Get Started</h2>
             <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
-             echo wp_nonce_field('newsletter-options'); ?>
+            <?php echo wp_nonce_field('newsletter-options'); ?>
             <table class="form-table">
                 <tr valign="top">
                     <th scope="row">API Token</th>
-                    <td><input type="password" name="newsletter_pass" value="<?php get_option('newsletter_pass'); ?>" /></td>
+                    <td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
                 </tr>
                 <input type="hidden" name="action" value="update" />
                 <input type="hidden" name="page_options" value="newsletter_pass" />
             </table>
             <p class="submit">
-                <input type="submit" class="button-primary" value="<?php _e('Save Changes', 'getanewsletter') ?>" />
+                <input type="submit" class="button-primary" value="<?php echo _e('Save Changes', 'getanewsletter') ?>" />
             </p>
         </form>
     </div>
