@@ -303,7 +303,7 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
             }
             ?>
 
-            <?php wp_nonce_field('newsletter-create-form'); ?>
+            <?php echo wp_nonce_field('newsletter-create-form'); ?>
             <h2>Name your form</h2>
             <table class="form-table">
                 <tr valign="top">
@@ -312,7 +312,7 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                 </tr>
                 <?php
                 if (isset($currentErrors['name'])) {
-                    ?><tr><td></td><td><?php display_newsletter_form_errors($currentErrors['name']) ?></td></tr><?php
+                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['name']) ?></td></tr><?php
                 }
                 ?>
             </table>
@@ -325,11 +325,11 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                 </tr>
                 <tr valign="top">
                     <th scope="row">First name</th>
-                    <td><input type="checkbox" name="first_name" value="1" <?php isset($currentFormData['first_name']) && $currentFormData['first_name'] ? 'checked="checked"' : '' ?> /></td>
+                    <td><input type="checkbox" name="first_name" value="1" <?php echo isset($currentFormData['first_name']) && $currentFormData['first_name'] ? 'checked="checked"' : '' ?> /></td>
                 </tr>
                 <tr valign="top">
                     <th scope="row">Last name</th>
-                    <td><input type="checkbox" name="last_name" value="1" <?php isset($currentFormData['last_name']) && $currentFormData['last_name'] ? 'checked="checked"' : '' ?> /></td>
+                    <td><input type="checkbox" name="last_name" value="1" <?php echo isset($currentFormData['last_name']) && $currentFormData['last_name'] ? 'checked="checked"' : '' ?> /></td>
                 </tr>
             </table>
 
@@ -344,7 +344,7 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                         <tr valign="top">
                             <th scope="row"><?php echo $attribute['name'] ?></th>
                             <td><input type="checkbox" name="attributes[]" value="<?php echo $attribute['code'] ?>"
-                                       <?php in_array($attribute['code'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?>/>
+                                       <?php echo in_array($attribute['code'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?>/>
                             </td>
                         </tr>
                         <?php
@@ -377,7 +377,7 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                 </tr>
                 <?php
                 if (isset($currentErrors['sender'])) {
-                    ?><tr><td></td><td><?php display_newsletter_form_errors($currentErrors['sender']) ?></td></tr><?php
+                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['sender']) ?></td></tr><?php
                 }
                 ?>
                 <tr valign="top">
@@ -386,7 +386,7 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                 </tr>
                 <?php
                 if (isset($currentErrors['email'])) {
-                    ?><tr><td></td><td><?php display_newsletter_form_errors($currentErrors['email']) ?></td></tr><?php
+                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['email']) ?></td></tr><?php
                 }
                 ?>
             </table>
@@ -399,7 +399,7 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                 </tr>
                 <?php
                 if (isset($currentErrors['verify_mail_subject'])) {
-                    ?><tr><td></td><td><?php display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
+                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
                 }
                 ?>
                 <tr valign="top">
@@ -422,7 +422,7 @@ Ps. If you don\'t want our newsletter in the future, you can easily unsubscribe 
                 </tr>
                 <?php
                 if (isset($currentErrors['verify_mail_text'])) {
-                    ?><tr><td></td><td><?php display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
+                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
                 }
                 ?>
             </table>
@@ -435,7 +435,7 @@ Ps. If you don\'t want our newsletter in the future, you can easily unsubscribe 
                 </tr>
                 <?php
                 if (isset($currentErrors['next_url'])) {
-                    ?><tr><td></td><td><?php display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
+                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
                 }
                 ?>
                 <tr valign="top">
@@ -444,7 +444,7 @@ Ps. If you don\'t want our newsletter in the future, you can easily unsubscribe 
                 </tr>
                 <?php
                 if (isset($currentErrors['button_text'])) {
-                    ?><tr><td></td><td><?php display_newsletter_form_errors($currentErrors['button_text']) ?></td></tr><?php
+                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['button_text']) ?></td></tr><?php
                 }
                 ?>
             </table>
@@ -518,7 +518,7 @@ function display_api_key_form() {
         <form method="post" action="options.php?option_page=newsletter">
             <h2>Get Started</h2>
             <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
-            <?php wp_nonce_field('newsletter-options'); ?>
+             echo wp_nonce_field('newsletter-options'); ?>
             <table class="form-table">
                 <tr valign="top">
                     <th scope="row">API Token</th>
@@ -555,11 +555,11 @@ function newsletter_options() {
         <h3>Account Information</h3>
         <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
 
-        <?php wp_nonce_field('newsletter-options'); ?>
+        <?php echo wp_nonce_field('newsletter-options'); ?>
         <table class="form-table">
             <tr valign="top">
                 <th scope="row">API Token</th>
-                <td><input type="password" name="newsletter_pass" value="<?php get_option('newsletter_pass'); ?>" /></td>
+                <td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
             </tr>
             <tr>
                 <th scope="row">Login status:</th>
@@ -572,19 +572,19 @@ function newsletter_options() {
         <table class="form-table">
             <tr valign="top">
                 <th scope="row">Successfull submission:</th>
-                <td><input type="text" class="regular-text" name="newsletter_msg_success" value="<?php get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /></td>
+                <td><input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /></td>
             </tr>
             <tr valign="top">
                 <th scope="row">Message - 505:</th>
                 <td>
-                    <input type="text" class="regular-text" name="newsletter_msg_505" value="<?php get_option('newsletter_msg_505', 'Invalid e-mail'); ?>" />
+                    <input type="text" class="regular-text" name="newsletter_msg_505" value="<?php echo get_option('newsletter_msg_505', 'Invalid e-mail'); ?>" />
                     <br/> <span class="small">Invalid email address</span>
                 </td>
             </tr>
             <tr valign="top">
                 <th scope="row">Message - 512:</th>
                 <td>
-                    <input type="text" class="regular-text" name="newsletter_msg_512" value="<?php get_option('newsletter_msg_512', 'Subscription already exists'); ?>" />
+                    <input type="text" class="regular-text" name="newsletter_msg_512" value="<?php echo get_option('newsletter_msg_512', 'Subscription already exists'); ?>" />
                     <br/> <span class="small">Subscription already exists</span>
                 </td>
             </tr>
@@ -593,7 +593,7 @@ function newsletter_options() {
         <input type="hidden" name="action" value="update" />
         <input type="hidden" name="page_options" value="newsletter_user,newsletter_pass,newsletter_apikey,newsletter_msg_success,newsletter_msg_confirm,newsletter_msg_505,newsletter_msg_512" />
         <p class="submit">
-            <input type="submit" class="button-primary" value="<?php _e('Save Changes', 'getanewsletter') ?>" />
+            <input type="submit" class="button-primary" value="<?php echo _e('Save Changes', 'getanewsletter') ?>" />
         </p>
     </form>
 <?php
