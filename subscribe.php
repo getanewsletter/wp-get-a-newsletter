@@ -55,6 +55,22 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
                 'body' => $body
             ));
 
+            if (
+                $request instanceof WP_Error &&
+                property_exists($request, 'errors') &&
+                $request->errors &&
+                $request->errors['http_request_failed']
+            ) {
+                $form_link = str_replace('https:', 'http:', $_POST['form_link']);
+                $request = (object) $http->request($form_link, array(
+                    'headers' => array(
+                        'Accept' => 'application/json'
+                    ),
+                    'method' => 'POST',
+                    'body' => $body
+                ));
+            }
+
             $response['status'] = $request->response['code'];
 
             if($response['status'] == 201) {
