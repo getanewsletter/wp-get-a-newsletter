@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 3.0.2
+Version: 3.0.3
 Requires at least: 5.2.0
 Requires PHP: 7.2
 Author: getanewsletter
@@ -26,6 +26,7 @@ add_action('admin_init', function() {
     register_setting('newsletter', 'newsletter_msg_confirm');
     register_setting('newsletter', 'newsletter_msg_505');
     register_setting('newsletter', 'newsletter_msg_512');
+    session_write_close();
 });
 /* ADMIN PANEL */
 
