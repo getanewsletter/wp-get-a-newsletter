@@ -1,8 +1,8 @@
 === Get a Newsletter ===
 Tags: email, marketing, newsletter, subscription
 Requires at least: 5.2.0
-Stable tag: 3.0.2
-Tested up to: 5.3.1
+Stable tag: 3.0.3
+Tested up to: 5.5.3
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -36,6 +36,9 @@ Signup required at (https://app.getanewsletter.com)
 
 
 == Changelog ==
+
+= 3.0.3 =
+Fix for WP Site Health warning(Active PHP session detected)
 
 = 3.0.2 =
 Add fallback to http if https API request fail
