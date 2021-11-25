@@ -1,8 +1,8 @@
 === Get a Newsletter ===
 Tags: email, marketing, newsletter, subscription
 Requires at least: 5.2.0
-Stable tag: 3.0.3
-Tested up to: 5.5.3
+Stable tag: 3.0.4
+Tested up to: 5.8.2
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,12 +12,15 @@ Email marketing made simple.
 
 == Description ==
 
-Website: http://www.getanewsletter.com
+With Get a Newsletter's WordPress plugin you can easily get more people to subscribe to your newsletter. Add a new form as a widget or use the shortcode to include a form in your blog posts or pages and wait for the subscribers to roll in.
 
-Getting people to sign up to your newsletter has never been easier.
-Just add get a newsletter widget to your site and let people hear more from you.
-In our tool you are able to send responsive HTML e-mails, dive into advanced
-delivery reports, click statistics and much more.
+Plugin features:
+
+* Create new forms in the Wordpress admin panel
+* Add forms using shortcodes in blog posts or pages
+* Add forms using widgets to the sidebar or in the footer
+
+Website: http://www.getanewsletter.com
 
 == Installation ==
 
@@ -25,17 +28,20 @@ Signup required at (https://app.getanewsletter.com)
 
 1. Install wordpress plugin
 2. Login to your account on https://app.getanewsletter.com
-3. Goto Contacts > API & Forms > API Tokens
-4. Create API token
-5. Copy API token
-6. Goto Contacts > API & Forms > Forms & Links
-7. Create a new subscription form
+3. Go to My account > API > API Tokens
+4. Create a new API token
+5. Copy the API token
+6. Go to Contacts > Forms
+7. Create a new subscription form(We only support embedded forms via the plugin for now)
 8. Open wordpress settings and goto getanewsletter plugin
 9. Paste API token and fill out required information
 10. Add subscribe widget, goto Layout > widgets and look for a widget called get a newsletter
 
 
 == Changelog ==
+
+= 3.0.4 =
+Updated documentation and tested on latest wordpress version
 
 = 3.0.3 =
 Fix for WP Site Health warning(Active PHP session detected)
