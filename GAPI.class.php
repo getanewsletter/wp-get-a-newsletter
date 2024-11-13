@@ -363,6 +363,10 @@ class GAPI
          return $this->call_api('GET', 'subscription_forms/');
      }
 
+    function get_senders() {
+        return $this->call_api('GET', 'senders/');
+    }
+
      function subscription_form_get($key) {
          $ok = $this->call_api('GET', "subscription_forms/{$key}");
 
