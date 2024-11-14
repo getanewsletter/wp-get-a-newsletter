@@ -40,6 +40,9 @@ Signup required at (https://app.getanewsletter.com)
 
 == Changelog ==
 
+= 3.0.5 =
+Fixed bug caused by changed API for choosing sender when creating a subscription form
+
 = 3.0.4 =
 Updated documentation and tested on latest wordpress version
 
