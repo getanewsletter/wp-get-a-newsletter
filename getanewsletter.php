@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 3.0.4
+Version: 3.0.5
 Requires at least: 5.2.0
 Requires PHP: 7.2
 Author: getanewsletter
@@ -111,7 +111,13 @@ function newsletter_subscription_forms() {
             $attributes = get_subscription_attributes($news_pass);
             $lists = get_subscription_lists($news_pass);
             $senders = get_senders($news_pass);
-            display_subscription_form($attributes, $lists, get_session_data('newsletter_form_data', []), null, $senders);
+            display_subscription_form(array(
+                'attributes' => $attributes, 
+                'lists' => $lists, 
+                'currentFormData' => get_session_data('newsletter_form_data', []), 
+                'form_id' => null, 
+                'senders' => $senders
+            ));
             break;
         case 'edit':
             $form_id = $_GET['form_id'] ?? '';
@@ -137,7 +143,13 @@ function newsletter_subscription_forms() {
                 $lists = get_subscription_lists($news_pass);
                 $senders = get_senders($news_pass);
                 $currentFormData = get_session_data('newsletter_form_data', transform_form_data(get_subscription_form($news_pass, $form_id)));
-                display_subscription_form($attributes, $lists, $currentFormData, $form_id, $senders);
+                display_subscription_form(array(
+                    'attributes' => $attributes, 
+                    'lists' => $lists, 
+                    'currentFormData' => $currentFormData, 
+                    'form_id' => $form_id, 
+                    'senders' => $senders
+                ));
             } catch (\GetANewsletterException $e) {
                 set_newsletter_flash_message($e->getMessage(), 'error');
                 wp_redirect('?page=newsletter_subscription_forms');
@@ -175,7 +187,6 @@ function transform_form_data($form_data) {
 function create_subscription_form($news_pass, $postdata) {
     $conn = new GAPI('', $news_pass);
     if (!$conn->check_login()) {
-        getanewsletter_log_message( 'Cannot connect to Get A Newsletter API' );
         throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
     }
 
@@ -290,7 +301,14 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
     <?php
 }
 
-function display_subscription_form($attributes, $lists, $currentFormData, $form_id = null, $senders) {
+function display_subscription_form($params) {
+    $default_params = array(
+        'form_id' => null
+    );
+
+    $params = array_merge($default_params, $params);
+    extract($params);
+
     $currentErrors = get_session_data('newsletter_form_errors', []);
     ?>
     <style>
