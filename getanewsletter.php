@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 3.0.4
+Version: 3.0.5
 Requires at least: 5.2.0
 Requires PHP: 7.2
 Author: getanewsletter
@@ -73,6 +73,7 @@ function newsletter_subscription_forms() {
     }
     $action = $_GET['action'] ?? 'list';
     $connectionSucceeded = null;
+
     switch ($action) {
         case 'delete':
             try {
@@ -109,7 +110,14 @@ function newsletter_subscription_forms() {
             }
             $attributes = get_subscription_attributes($news_pass);
             $lists = get_subscription_lists($news_pass);
-            display_subscription_form($attributes, $lists, get_session_data('newsletter_form_data', []));
+            $senders = get_senders($news_pass);
+            display_subscription_form(array(
+                'attributes' => $attributes, 
+                'lists' => $lists, 
+                'currentFormData' => get_session_data('newsletter_form_data', []), 
+                'form_id' => null, 
+                'senders' => $senders
+            ));
             break;
         case 'edit':
             $form_id = $_GET['form_id'] ?? '';
@@ -133,8 +141,15 @@ function newsletter_subscription_forms() {
             try {
                 $attributes = get_subscription_attributes($news_pass);
                 $lists = get_subscription_lists($news_pass);
+                $senders = get_senders($news_pass);
                 $currentFormData = get_session_data('newsletter_form_data', transform_form_data(get_subscription_form($news_pass, $form_id)));
-                display_subscription_form($attributes, $lists, $currentFormData, $form_id);
+                display_subscription_form(array(
+                    'attributes' => $attributes, 
+                    'lists' => $lists, 
+                    'currentFormData' => $currentFormData, 
+                    'form_id' => $form_id, 
+                    'senders' => $senders
+                ));
             } catch (\GetANewsletterException $e) {
                 set_newsletter_flash_message($e->getMessage(), 'error');
                 wp_redirect('?page=newsletter_subscription_forms');
@@ -157,16 +172,15 @@ function newsletter_subscription_forms() {
 function transform_form_data($form_data) {
     return [
         'attributes' => $form_data['attributes'],
-        'sender_email' => $form_data['email'],
         'first_name' => (int)$form_data['first_name'],
         'list' => $form_data['lists'],
         'last_name' => (int)$form_data['last_name'],
         'name' => $form_data['name'],
-        'sender_name' => $form_data['sender'],
         'confirmation_email_subject' => $form_data['verify_mail_subject'],
         'confirmation_email_message' => $form_data['verify_mail_text'],
         'next_url' => $form_data['next_url'],
-        'button_text' => $form_data['button_text']
+        'button_text' => $form_data['button_text'],
+        'sender_id' => $form_data['sender_id'],
     ];
 }
 
@@ -180,19 +194,19 @@ function create_subscription_form($news_pass, $postdata) {
 
     $data = [
         'attributes' => $postdata['attributes'] ?? [],
-        'email' => $postdata['sender_email'] ?? '',
         'first_name' => isset($postdata['first_name']),
         'lists' => [ $postdata['list'] ?? '' ],
         'last_name' => isset($postdata['last_name']),
         'name' => $postdata['name'] ?? '',
-        'sender' => $postdata['sender_name'] ?? '',
         'verify_mail_subject' => $postdata['confirmation_email_subject'] ?? '',
         'verify_mail_text' => $postdata['confirmation_email_message'] ?? '',
         'next_url' => $postdata['next_url'] ?? '',
         'button_text' => $postdata['button_text'] ?? '',
+        'sender_id' => $postdata['sender_id']
     ];
 
     $result = $conn->subscription_form_create($data);
+
     if ($result) {
         return [];
     }
@@ -214,16 +228,15 @@ function update_subscription_form($news_pass, $postdata, $form_id) {
 
     $data = [
         'attributes' => $postdata['attributes'] ?? [],
-        'email' => $postdata['sender_email'] ?? '',
         'first_name' => isset($postdata['first_name']),
         'lists' => [ $postdata['list'] ?? '' ],
         'last_name' => isset($postdata['last_name']),
         'name' => $postdata['name'] ?? '',
-        'sender' => $postdata['sender_name'] ?? '',
         'verify_mail_subject' => $postdata['confirmation_email_subject'] ?? '',
         'verify_mail_text' => $postdata['confirmation_email_message'] ?? '',
         'next_url' => $postdata['next_url'] ?? '',
         'button_text' => $postdata['button_text'] ?? '',
+        'sender_id' => $postdata['sender_id']
     ];
 
     $result = $conn->subscription_form_update($data, $form_id);
@@ -288,7 +301,14 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
     <?php
 }
 
-function display_subscription_form($attributes, $lists, $currentFormData, $form_id = null) {
+function display_subscription_form($params) {
+    $default_params = array(
+        'form_id' => null
+    );
+
+    $params = array_merge($default_params, $params);
+    extract($params);
+
     $currentErrors = get_session_data('newsletter_form_errors', []);
     ?>
     <style>
@@ -365,31 +385,30 @@ function display_subscription_form($attributes, $lists, $currentFormData, $form_
                             <?php
                             foreach ($lists as $list) {
                                 ?>
-                                <option value="<?php echo $list['hash'] ?>" <?php echo $list['hash'] = ($currentFormData['list'] ?? '') ? 'selected="selected"' : '' ?>><?php echo $list['name'] ?></option>
+                                <?php $is_selected_list = isset( $currentFormData['list'] ) && $currentFormData['list'][0] == $list['hash'] ?>
+                                <option value="<?php echo $list['hash'] ?>" <?php echo $is_selected_list ? 'selected="selected"' : '' ?>><?php echo $list['name'] ?></option>
                                 <?php
                             }
                             ?>
                         </select>
                     </td>
                 </tr>
+                
                 <tr valign="top">
-                    <th scope="row">Sender name</th>
-                    <td><input type="text" name="sender_name" value="<?php echo $currentFormData['sender_name'] ?? '' ?>" /></td>
+                    <th scope="row">Choose sender</th>
+                    <td>
+                        <select name="sender_id">
+                            <?php
+                            foreach ($senders as $sender) {
+                                ?>
+                                <?php $is_selected_sender = isset( $currentFormData['sender_id'] ) && $currentFormData['sender_id'] == $sender['id'] ?>
+                                <option value="<?php echo $sender['id'] ?>" <?php echo $is_selected_sender ? 'selected="selected"' : '' ?>><?php echo $sender['email'] ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </td>
                 </tr>
-                <?php
-                if (isset($currentErrors['sender'])) {
-                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['sender']) ?></td></tr><?php
-                }
-                ?>
-                <tr valign="top">
-                    <th scope="row">Sender email</th>
-                    <td><input type="text" name="sender_email"  value="<?php echo $currentFormData['sender_email'] ?? '' ?>" /></td>
-                </tr>
-                <?php
-                if (isset($currentErrors['email'])) {
-                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['email']) ?></td></tr><?php
-                }
-                ?>
             </table>
 
             <h2>Confirmation email</h2>
@@ -489,6 +508,16 @@ function get_subscription_lists($news_pass) {
     }
 
     $conn->subscription_lists_list();
+    return $conn->body['results'];
+}
+
+function get_senders($news_pass) {
+    $conn = new GAPI('', $news_pass);
+    if (!$conn->check_login()) {
+        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+    }
+
+    $conn->get_senders();
     return $conn->body['results'];
 }
 
