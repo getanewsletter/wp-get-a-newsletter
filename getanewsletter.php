@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 3.0.5
+Version: 3.1
 Requires at least: 5.2.0
 Requires PHP: 7.2
 Author: getanewsletter
@@ -30,6 +30,17 @@ add_action('admin_init', function() {
 });
 /* ADMIN PANEL */
 
+add_action('admin_enqueue_scripts', 'gan_enqueue_admin_assets');
+function gan_enqueue_admin_assets() {
+    if ( ! isset( $_GET['page'] ) || ! $_GET['page'] === 'newsletter_subscription_forms' ) {
+        return;
+    }
+
+    $plugin_dir = plugin_dir_url( __FILE__ );
+    wp_enqueue_style( 'gan-admin-styles', $plugin_dir . 'assets/admin/css/styles.css' );
+    wp_enqueue_script( 'gan-admin-scripts', $plugin_dir . 'assets/admin/js/scripts.js', array('jquery'), null, true );
+}
+
 function newsletter_menu() {
   add_menu_page('Get a Newsletter', 'Get a Newsletter', 'administrator', 'newsletter', 'newsletter_options');
   add_submenu_page('newsletter', 'Subscription forms', 'Subscription forms', 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
@@ -53,15 +64,17 @@ function get_session_data($key, $default = null) {
 }
 
 function set_newsletter_flash_message($msg, $type) {
-    set_session_data('newsletter_message', [
+    set_transient('newsletter_flash_message', [
         'msg' => $msg,
         'type' => $type
-    ]);
+    ], 30);
 }
 
-
 function get_newsletter_flash_message() {
-    $message = get_session_data('newsletter_message');
+    $message = get_transient('newsletter_flash_message');
+    if ($message) {
+        delete_transient('newsletter_flash_message');
+    }
     return $message;
 }
 
@@ -78,15 +91,15 @@ function newsletter_subscription_forms() {
         case 'delete':
             try {
                 if (isset($_GET['form_id'])) {
-                    delete_subscription_form($_GET['form_id'], $news_pass);
-                    set_newsletter_flash_message('Form has been deleted', 'updated');
+                    delete_subscription_form($_GET['form_id'], $news_pass);     
+                    set_newsletter_flash_message('Form has been deleted', 'notice-success');
                     wp_redirect('?page=newsletter_subscription_forms');
                     exit;
                 } else {
                     throw new GetANewsletterException("Invalid form id");
                 }
             } catch (GetANewsletterException $e) {
-                set_newsletter_flash_message($e->getMessage(), 'error');
+                set_newsletter_flash_message($e->getMessage(), 'notice-error');
                 wp_redirect('?page=newsletter_subscription_forms');
                 exit;
             }
@@ -95,17 +108,19 @@ function newsletter_subscription_forms() {
                 try {
                     $result = create_subscription_form($news_pass, $_POST);
                     if (empty($result)) {
+                        set_newsletter_flash_message('The form has been created', 'notice-success');
                         wp_redirect('?page=newsletter_subscription_forms');
                         exit;
                     } else {
-                        set_newsletter_flash_message('Please correct errors', 'error');
+                        $errors_string = stringify_api_errors( $result );
+                        set_newsletter_flash_message('Please correct errors: ' . $errors_string, 'notice-error');
                         set_session_data('newsletter_form_data', $_POST);
                         set_session_data('newsletter_form_errors', $result);
                         wp_redirect('?page=newsletter_subscription_forms&action=create');
                         exit;
                     }
                 } catch (\GetANewsletterException $e) {
-                    set_newsletter_flash_message($e->getMessage(), 'error');
+                    set_newsletter_flash_message($e->getMessage(), 'notice-error');
                 }
             }
             $attributes = get_subscription_attributes($news_pass);
@@ -125,17 +140,19 @@ function newsletter_subscription_forms() {
                 try {
                     $result = update_subscription_form($news_pass, $_POST, $form_id);
                     if (empty($result)) {
+                        set_newsletter_flash_message('The form has been updated', 'notice-success');
                         wp_redirect('?page=newsletter_subscription_forms');
                         exit;
                     } else {
-                        set_newsletter_flash_message('Please correct errors', 'error');
+                        $errors_string = stringify_api_errors( $result );
+                        set_newsletter_flash_message('Please correct errors: ' . $errors_string, 'notice-error');
                         set_session_data('newsletter_form_data', $_POST);
                         set_session_data('newsletter_form_errors', $result);
                         wp_redirect('?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id);
                         exit;
                     }
                 } catch (\GetANewsletterException $e) {
-                    set_newsletter_flash_message($e->getMessage(), 'error');
+                    set_newsletter_flash_message($e->getMessage(), 'notice-error');
                 }
             }
             try {
@@ -151,7 +168,7 @@ function newsletter_subscription_forms() {
                     'senders' => $senders
                 ));
             } catch (\GetANewsletterException $e) {
-                set_newsletter_flash_message($e->getMessage(), 'error');
+                set_newsletter_flash_message($e->getMessage(), 'notice-error');
                 wp_redirect('?page=newsletter_subscription_forms');
             }
             break;
@@ -252,7 +269,7 @@ function update_subscription_form($news_pass, $postdata, $form_id) {
 }
 
 function display_newsletter_flash_message($message) {
-    ?><div class="<?php echo $message['type'] ?> notice is-dismissable"><?php echo $message['msg'] ?></div><?php
+    ?><div class="<?php echo $message['type'] ?> notice is-dismissible"><p><?php echo $message['msg'] ?></p></div><?php
 }
 
 function display_newsletter_form_errors(array $errors) {
@@ -262,6 +279,7 @@ function display_newsletter_form_errors(array $errors) {
 function display_subscription_forms_list($connectionSucceeded, $forms) {
     ?>
     <div class="wrap">
+        <?php settings_errors('gan');; ?>
         <h1 class="wp-heading-inline">Your subscription forms</h1>
         <a href="?page=newsletter_subscription_forms&action=create" class="page-title-action">Add New</a>
         <?php
@@ -289,7 +307,7 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
                 <tr>
                     <td><?php echo $form['name'] ?></td>
                     <td><?php echo $form['lists_names'] ?></td>
-                    <td><code>[gan-form id=<?php echo $form['key'] ?>]</code></td>
+                    <td><code class="gan-shortcode-container">[gan-form id="<?php echo $form['key'] ?>"]</code></td>
                     <td><a href="?page=newsletter_subscription_forms&action=edit&form_id=<?php echo $form['key'] ?>" class="page-title-action">Edit</a><a href="?page=newsletter_subscription_forms&action=delete&form_id=<?php echo $form['key'] ?>&noheader=true" class="page-title-action">Delete</a></td>
                 </tr>
                 <?php
@@ -315,7 +333,7 @@ function display_subscription_form($params) {
         th { padding-bottom: 5px !important; padding-top: 5px !important }
         td { padding-bottom: 5px !important; padding-top: 5px !important }
     </style>
-    <div class="wrap">
+    <div class="wrap gan-settings-page">
         <form method="post" action="<?php echo $form_id ? '?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id . '&noheader=true' : '?page=newsletter_subscription_forms&action=create&noheader=true' ?>">
             <h1>Get a Newsletter - new form</h1>
             <?php
@@ -324,150 +342,189 @@ function display_subscription_form($params) {
             }
             ?>
 
-            <?php echo wp_nonce_field('newsletter-create-form'); ?>
-            <h2>Name your form</h2>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Form name</th>
-                    <td><input type="text" name="name" value="<?php echo $currentFormData['name'] ?? '' ?>" /></td>
-                </tr>
-                <?php
-                if (isset($currentErrors['name'])) {
-                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['name']) ?></td></tr><?php
-                }
-                ?>
-            </table>
+            <?php wp_nonce_field('newsletter-create-form'); ?>
 
-            <h2>Contact fields</h2>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Email</th>
-                    <td><input type="checkbox" name="email" value="1" checked="checked" disabled="disabled" /></td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">First name</th>
-                    <td><input type="checkbox" name="first_name" value="1" <?php echo isset($currentFormData['first_name']) && $currentFormData['first_name'] ? 'checked="checked"' : '' ?> /></td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">Last name</th>
-                    <td><input type="checkbox" name="last_name" value="1" <?php echo isset($currentFormData['last_name']) && $currentFormData['last_name'] ? 'checked="checked"' : '' ?> /></td>
-                </tr>
-            </table>
+            <div class="postbox" id="gan-settings-form-name">
+                <div class="postbox-header"><h2 class="hndle">1. Name your form</h2></div>
+                <div class="inside">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">Form name</th>
+                            <td><input type="text" name="name" value="<?php echo $currentFormData['name'] ?? '' ?>" /></td>
+                        </tr>
+                        <?php
+                        if (isset($currentErrors['name'])) {
+                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['name']) ?></td></tr><?php
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="postbox" id="gan-settings-contact-fields">
+                <div class="postbox-header"><h2 class="hndle">2. Contact fields</h2></div>
+                <div class="inside">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">Email</th>
+                            <td><input type="checkbox" name="email" value="1" checked="checked" disabled="disabled" /></td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">First name</th>
+                            <td><input type="checkbox" name="first_name" value="1" <?php echo isset($currentFormData['first_name']) && $currentFormData['first_name'] ? 'checked="checked"' : '' ?> /></td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">Last name</th>
+                            <td><input type="checkbox" name="last_name" value="1" <?php echo isset($currentFormData['last_name']) && $currentFormData['last_name'] ? 'checked="checked"' : '' ?> /></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
             <?php
             if (isset($attributes) && is_array($attributes) && !empty($attributes)) {
                 ?>
-                <h2>Attributes fields</h2>
-                <table class="form-table">
-                    <?php
-                    foreach ($attributes as $attribute) {
-                        ?>
-                        <tr valign="top">
-                            <th scope="row"><?php echo $attribute['name'] ?></th>
-                            <td><input type="checkbox" name="attributes[]" value="<?php echo $attribute['code'] ?>"
-                                       <?php echo in_array($attribute['code'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?>/>
-                            </td>
-                        </tr>
-                        <?php
-                    }
-                    ?>
-                </table>
+                <div class="postbox" id="gan-settings-attributes">
+                    <div class="postbox-header"><h2 class="hndle">3. Attributes fields</h2></div>
+                    <div class="inside">
+                        <table class="form-table">
+                            <?php
+                            foreach ($attributes as $attribute) {
+                                ?>
+                                <tr valign="top">
+                                    <th scope="row"><?php echo $attribute['name'] ?></th>
+                                    <td><input type="checkbox" name="attributes[]" value="<?php echo $attribute['code'] ?>"
+                                            <?php echo in_array($attribute['code'], ($currentFormData['attributes'] ?? [])) ? 'checked="checked"' : '' ?>/>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+                        </table>
+                    </div>
+                </div>
                 <?php
             }
             ?>
 
-            <h2>List and Sender</h2>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Choose list</th>
-                    <td>
-                        <select name="list">
-                            <?php
-                            foreach ($lists as $list) {
-                                ?>
-                                <?php $is_selected_list = isset( $currentFormData['list'] ) && $currentFormData['list'][0] == $list['hash'] ?>
-                                <option value="<?php echo $list['hash'] ?>" <?php echo $is_selected_list ? 'selected="selected"' : '' ?>><?php echo $list['name'] ?></option>
-                                <?php
-                            }
-                            ?>
-                        </select>
-                    </td>
-                </tr>
-                
-                <tr valign="top">
-                    <th scope="row">Choose sender</th>
-                    <td>
-                        <select name="sender_id">
-                            <?php
-                            foreach ($senders as $sender) {
-                                ?>
-                                <?php $is_selected_sender = isset( $currentFormData['sender_id'] ) && $currentFormData['sender_id'] == $sender['id'] ?>
-                                <option value="<?php echo $sender['id'] ?>" <?php echo $is_selected_sender ? 'selected="selected"' : '' ?>><?php echo $sender['email'] ?></option>
-                                <?php
-                            }
-                            ?>
-                        </select>
-                    </td>
-                </tr>
-            </table>
+            <div class="postbox" id="gan-settings-sender">
+                <?php if (isset($attributes) && is_array($attributes) && !empty($attributes)): ?>
+                    <div class="postbox-header"><h2 class="hndle">4. List and Sender</h2></div>
+                <?php else: ?>
+                    <div class="postbox-header"><h2 class="hndle">3. List and Sender</h2></div>
+                <?php endif; ?>
+                <div class="inside">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">Choose list</th>
+                            <td>
+                                <select name="list">
+                                    <?php
+                                    foreach ($lists as $list) {
+                                        ?>
+                                        <?php $is_selected_list = isset( $currentFormData['list'] ) && $currentFormData['list'][0] == $list['hash'] ?>
+                                        <option value="<?php echo $list['hash'] ?>" <?php echo $is_selected_list ? 'selected="selected"' : '' ?>><?php echo $list['name'] ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                        
+                        <tr valign="top">
+                            <th scope="row">Choose sender</th>
+                            <td>
+                                <select name="sender_id">
+                                    <?php
+                                    foreach ($senders as $sender) {
+                                        ?>
+                                        <?php $is_selected_sender = isset( $currentFormData['sender_id'] ) && $currentFormData['sender_id'] == $sender['id'] ?>
+                                        <?php $is_confirmed_sender = ( isset( $sender['status'] ) && $sender['status'] !== 1 ) ?>
+                                        <option value="<?php echo $sender['id'] ?>" <?php echo $is_selected_sender ? 'selected="selected"' : '' ?> <?php echo $is_confirmed_sender ? '' : 'disabled' ?>><?php echo $sender['email'] ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <a href="#" class="gan-advanced-settings-btn">Show advanced settings</a>
+                </div>
+            </div>
 
-            <h2>Confirmation email</h2>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Subject</th>
-                    <td><input type="text" name="confirmation_email_subject" value="<?php echo $currentFormData['confirmation_email_subject'] ?? 'Welcome as a subscriber to ##list_name##' ?>" style="width: 600px" /></td>
-                </tr>
-                <?php
-                if (isset($currentErrors['verify_mail_subject'])) {
-                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
-                }
-                ?>
-                <tr valign="top">
-                    <th scope="row">Message</th>
-                    <td>
-                        <textarea type="text" name="confirmation_email_message" style="width: 600px; height: 250px;">
-<?php echo $currentFormData['confirmation_email_message'] ??
-'Hello!
+            <div class="postbox" id="gan-settings-confirmation" style="display: none">
+                <?php if (isset($attributes) && is_array($attributes) && !empty($attributes)): ?>
+                    <div class="postbox-header"><h2 class="hndle">5. Confirmation email</h2></div>
+                <?php else: ?>
+                    <div class="postbox-header"><h2 class="hndle">4. Confirmation email</h2></div>
+                <?php endif; ?>
+                <div class="inside">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">Subject</th>
+                            <td><input type="text" name="confirmation_email_subject" value="<?php echo $currentFormData['confirmation_email_subject'] ?? 'Welcome as a subscriber to ##list_name##' ?>" style="width: 600px" /></td>
+                        </tr>
+                        <?php
+                        if (isset($currentErrors['verify_mail_subject'])) {
+                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
+                        }
+                        ?>
+                        <tr valign="top">
+                            <th scope="row">Message</th>
+                            <td>
+                                <textarea type="text" name="confirmation_email_message" style="width: 600px; height: 250px;">
+        <?php echo $currentFormData['confirmation_email_message'] ??
+        'Hello!
 
-You have been added as a subscriber to ##list_name##. Before you can receive our newsletter, please confirm your subscription by clicking the following link:
+        You have been added as a subscriber to ##list_name##. Before you can receive our newsletter, please confirm your subscription by clicking the following link:
 
-##confirmation_link##
+        ##confirmation_link##
 
-Best regards
-##sendername##
+        Best regards
+        ##sendername##
 
-Ps. If you don\'t want our newsletter in the future, you can easily unsubscribe with the link provided in every newsletter.' ?>
-                        </textarea>
-                    </td>
-                </tr>
-                <?php
-                if (isset($currentErrors['verify_mail_text'])) {
-                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
-                }
-                ?>
-            </table>
+        Ps. If you don\'t want our newsletter in the future, you can easily unsubscribe with the link provided in every newsletter.' ?>
+                                </textarea>
+                            </td>
+                        </tr>
+                        <?php
+                        if (isset($currentErrors['verify_mail_text'])) {
+                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
 
-            <h2>Form Settings</h2>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Next URL</th>
-                    <td><input type="text" name="next_url" value="<?php echo $currentFormData['next_url'] ?? '' ?>" /></td>
-                </tr>
-                <?php
-                if (isset($currentErrors['next_url'])) {
-                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
-                }
-                ?>
-                <tr valign="top">
-                    <th scope="row">Button Text</th>
-                    <td><input type="text" name="button_text" value="<?php echo $currentFormData['button_text'] ?? 'Subscribe' ?>" /></td>
-                </tr>
-                <?php
-                if (isset($currentErrors['button_text'])) {
-                    ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['button_text']) ?></td></tr><?php
-                }
-                ?>
-            </table>
+            <div class="postbox" id="gan-settings-form-settings" style="display: none;">
+                <?php if (isset($attributes) && is_array($attributes) && !empty($attributes)): ?>
+                    <div class="postbox-header"><h2 class="hndle">6. Form settings</h2></div>
+                <?php else: ?>
+                    <div class="postbox-header"><h2 class="hndle">5. Form settings</h2></div>
+                <?php endif; ?>
+                <div class="inside">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">Next URL</th>
+                            <td><input type="text" name="next_url" value="<?php echo $currentFormData['next_url'] ?? '' ?>" /></td>
+                        </tr>
+                        <?php
+                        if (isset($currentErrors['next_url'])) {
+                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
+                        }
+                        ?>
+                        <tr valign="top">
+                            <th scope="row">Button Text</th>
+                            <td><input type="text" name="button_text" value="<?php echo $currentFormData['button_text'] ?? 'Subscribe' ?>" /></td>
+                        </tr>
+                        <?php
+                        if (isset($currentErrors['button_text'])) {
+                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['button_text']) ?></td></tr><?php
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
 
             <p class="submit">
                 <input type="submit" class="button-primary" value="Save and return" />
@@ -519,6 +576,16 @@ function get_senders($news_pass) {
 
     $conn->get_senders();
     return $conn->body['results'];
+}
+
+function stringify_api_errors($errors) {
+    $errors_string = '';
+
+    foreach ($errors as $key => $messages) {
+        $errors_string .= '<br>' . $key . ': ' . implode(', ', $messages);
+    }
+
+    return $errors_string;
 }
 
 function get_subscription_form($news_pass, $form_id) {

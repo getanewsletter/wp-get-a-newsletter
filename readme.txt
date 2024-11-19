@@ -1,7 +1,7 @@
 === Get a Newsletter ===
 Tags: email, marketing, newsletter, subscription
 Requires at least: 5.2.0
-Stable tag: 3.0.5
+Stable tag: 3.1
 Tested up to: 6.7
 Requires PHP: 7.2
 License: GPLv2 or later
@@ -39,6 +39,12 @@ Signup required at (https://app.getanewsletter.com)
 
 
 == Changelog ==
+
+= 3.1 =
+Added custom scripts and styles for the settings pages
+Form errors and success notices now appear as expected
+Form errors now utilize transients instead of the PHP sessions
+Cosmetic changes to the settings pages
 
 = 3.0.5 =
 Fixed bug caused by changed API for choosing sender when creating a subscription form
