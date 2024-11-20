@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 3.1
+Version: 3.0.5
 Requires at least: 5.2.0
 Requires PHP: 7.2
 Author: getanewsletter
@@ -207,7 +207,9 @@ function create_subscription_form($news_pass, $postdata) {
         throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
     }
 
-    wp_verify_nonce('newsletter-create-form');
+    if ( ! check_admin_referer( 'newsletter-create-form' ) ) {
+        wp_die( 'Nonce verification failed.' );
+    }
 
     $data = [
         'attributes' => $postdata['attributes'] ?? [],
@@ -241,7 +243,9 @@ function update_subscription_form($news_pass, $postdata, $form_id) {
         throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
     }
 
-    wp_verify_nonce('newsletter-create-form');
+    if ( ! check_admin_referer( 'newsletter-create-form' ) ) {
+        wp_die( 'Nonce verification failed.' );
+    }
 
     $data = [
         'attributes' => $postdata['attributes'] ?? [],
@@ -270,10 +274,6 @@ function update_subscription_form($news_pass, $postdata, $form_id) {
 
 function display_newsletter_flash_message($message) {
     ?><div class="<?php echo $message['type'] ?> notice is-dismissible"><p><?php echo $message['msg'] ?></p></div><?php
-}
-
-function display_newsletter_form_errors(array $errors) {
-    return '<span class="error notice notice-error">' . implode(', ', $errors) . '</span>';
 }
 
 function display_subscription_forms_list($connectionSucceeded, $forms) {
@@ -352,11 +352,6 @@ function display_subscription_form($params) {
                             <th scope="row">Form name</th>
                             <td><input type="text" name="name" value="<?php echo $currentFormData['name'] ?? '' ?>" /></td>
                         </tr>
-                        <?php
-                        if (isset($currentErrors['name'])) {
-                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['name']) ?></td></tr><?php
-                        }
-                        ?>
                     </table>
                 </div>
             </div>
@@ -419,6 +414,7 @@ function display_subscription_form($params) {
                             <th scope="row">Choose list</th>
                             <td>
                                 <select name="list">
+                                    <option disabled <?php echo isset( $currentFormData['list'] ) ? '' : 'selected="selected"' ?> value=""> -- Choose a list --</option>
                                     <?php
                                     foreach ($lists as $list) {
                                         ?>
@@ -435,6 +431,7 @@ function display_subscription_form($params) {
                             <th scope="row">Choose sender</th>
                             <td>
                                 <select name="sender_id">
+                                    <option disabled <?php echo isset( $currentFormData['sender_id'] ) ? '' : 'selected="selected"' ?> value=""> -- Choose a sender --</option>
                                     <?php
                                     foreach ($senders as $sender) {
                                         ?>
@@ -464,11 +461,6 @@ function display_subscription_form($params) {
                             <th scope="row">Subject</th>
                             <td><input type="text" name="confirmation_email_subject" value="<?php echo $currentFormData['confirmation_email_subject'] ?? 'Welcome as a subscriber to ##list_name##' ?>" style="width: 600px" /></td>
                         </tr>
-                        <?php
-                        if (isset($currentErrors['verify_mail_subject'])) {
-                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['verify_mail_subject']) ?></td></tr><?php
-                        }
-                        ?>
                         <tr valign="top">
                             <th scope="row">Message</th>
                             <td>
@@ -487,11 +479,6 @@ function display_subscription_form($params) {
                                 </textarea>
                             </td>
                         </tr>
-                        <?php
-                        if (isset($currentErrors['verify_mail_text'])) {
-                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['verify_mail_text']) ?></td></tr><?php
-                        }
-                        ?>
                     </table>
                 </div>
             </div>
@@ -508,11 +495,6 @@ function display_subscription_form($params) {
                             <th scope="row">Next URL</th>
                             <td><input type="text" name="next_url" value="<?php echo $currentFormData['next_url'] ?? '' ?>" /></td>
                         </tr>
-                        <?php
-                        if (isset($currentErrors['next_url'])) {
-                            ?><tr><td></td><td><?php echo display_newsletter_form_errors($currentErrors['next_url']) ?></td></tr><?php
-                        }
-                        ?>
                         <tr valign="top">
                             <th scope="row">Button Text</th>
                             <td><input type="text" name="button_text" value="<?php echo $currentFormData['button_text'] ?? 'Subscribe' ?>" /></td>
