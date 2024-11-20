@@ -1,0 +1,17 @@
+.gan-shortcode-container {
+  cursor: pointer;
+}
+
+.gan-settings-page .postbox-header .hndle {
+  font-size: 16px;
+  padding: 12px 12px;
+  margin: 0;
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
+  cursor: default;
+}
+
+.gan-settings-page h1 {
+  margin-bottom: 20px;
+}
