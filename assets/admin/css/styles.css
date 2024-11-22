@@ -15,3 +15,128 @@
 .gan-settings-page h1 {
   margin-bottom: 20px;
 }
+
+.gan-onboarding-container {
+  display: flex;
+  width: 100%;
+}
+
+.gan-onboarding-column {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 15px;
+}
+
+.gan-onboarding-column h2 {
+  font-size: 26px;
+}
+
+.gan-onboarding-column > p {
+  font-size: 18px;
+}
+
+.gan-onboarding-image {
+  width: 100%;
+}
+
+.gan-onboarding-step {
+  margin-bottom: 25px;
+}
+
+.gan-onboarding-step-counter {
+  width: 37px;
+  height: 35px;
+  background: #0073aa;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.gan-onboarding-step-counter.success {
+  background: #00a32a;
+}
+
+.gan-onboarding-step-counter > svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+
+.gan-onboarding-step-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 15px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.gan-onboarding-step-header {
+  display: flex;
+  align-items: center;
+}
+
+.gan-onboarding-step-content {
+  font-size: 16px;
+  padding: 15px 0 0 50px;
+}
+
+.gan-onboarding-form label {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.gan-onboarding-form #token {
+  width: 350px;
+  margin-bottom: 10px;
+  margin-right: 20px;
+}
+
+.gan-onboarding-form input[type="submit"] {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.gan-result-message {
+  font-size: 16px;
+}
+
+.gan-result-message .gan-success-message {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.gan-result-message .gan-success-message .gan-checkmark-container {
+  width: 20px;
+  height: 20px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  font-weight: bold;
+  font-size: 18px;
+  background: #00a32a;
+  margin-right: 10px;
+}
+
+.gan-result-message .gan-success-message .gan-checkmark-container > svg {
+  fill: white;
+  height: 14px;
+  width: 14px;
+}
+
+.gan-result-message .button-primary {
+  display: block;
+  text-align: center;
+}
