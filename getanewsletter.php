@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: http://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
-Version: 3.1
+Version: 3.2
 Requires at least: 5.2.0
 Requires PHP: 7.2
 Author: getanewsletter
@@ -594,22 +594,49 @@ function get_subscription_forms_list($news_pass): array {
 function display_api_key_form() {
     ?>
     <div class="wrap">
-        <form method="post" action="options.php?option_page=newsletter">
-            <h2>Get Started</h2>
-            <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
-            <?php echo wp_nonce_field('newsletter-options'); ?>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">API Token</th>
-                    <td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
-                </tr>
-                <input type="hidden" name="action" value="update" />
-                <input type="hidden" name="page_options" value="newsletter_pass" />
-            </table>
-            <p class="submit">
-                <input type="submit" class="button-primary" value="<?php echo _e('Save Changes', 'getanewsletter') ?>" />
-            </p>
-        </form>
+        <div class="gan-onboarding-container">
+            <div class="gan-onboarding-content">
+                <h2>Getting Started</h2>
+                <p>Thank you for choosing Get a Newsletter's WordPress plugin – the easiest way to get your subscription forms online.</p>
+
+                <div class="gan-onboarding-step">
+                    <div class="gan-onboarding-step-counter">1</div>
+                    <div class="gan-onboarding-step-content">
+                        <h3>Log in or sign up</h3>
+                        <p>Log in to <a href="https://app.getanewsletter.com/">app.getanewsletter.com</a>. Don't have an account yet, <a href="https://app.getanewsletter.com/signup">sign up</a> instead.</p>
+                    </div>
+                </div>
+
+                <div class="gan-onboarding-step">
+                    <div class="gan-onboarding-step-counter">2</div>
+                    <div class="gan-onboarding-step-content">
+                        <h3>Create an API token</h3>
+                        <p>Once logged in, go to <a href="https://app.getanewsletter.com/account/api">My Account -> API</a> and create a new token.</p>
+                    </div>
+                </div>
+
+                <div class="gan-onboarding-step">
+                    <div class="gan-onboarding-step-counter">3</div>
+                    <div class="gan-onboarding-step-content">
+                        <h3>Add API token to authenticate</h3>
+                        <p>Copy and paste the generated token below to authenticate.</p>
+                    </div>
+                </div>
+
+                <div class="gan-onboarding-form-container">
+                    <form action="#" class="gan-onboarding-form">
+                        <label for="token">Your API token</label>
+                        <input type="password" name="token" id="token" required> 
+                        <input type="submit" class="button button-primary" id="gan-submit-token-btn" value="Continue">
+                    </form>
+                </div>
+
+                <div class="gan-result-message"></div>
+            </div>
+            <div class="gan-onboarding-image">
+                <img src="<?php echo plugin_dir_url(__FILE__) . 'assets/admin/img/onboarding-promo.png'; ?>" alt="Onboarding image">
+            </div>
+        </div>
     </div>
     <?php
 }
@@ -1241,4 +1268,50 @@ function news_js_ajax()
     </script>
     <?php
 }
-?>
+
+
+add_action( 'wp_ajax_gan_register_admin_api_key', 'gan_register_admin_api_key' );
+function gan_register_admin_api_key() {
+    $token = $_POST['token'];
+    $conn = new GAPI('', $token);
+    $ok = $conn->check_login();
+
+    if ( ! $ok ) {
+        wp_send_json( array(
+            'success' => false,
+            'message' => 'Please, double check if the provided API key is correct.'
+        ) );
+
+        die();
+    }
+
+    update_option( 'newsletter_pass', $token );
+
+    wp_send_json( array(
+        'success' => true
+    ) );
+}
+
+function gan_uninstall_action() {
+	delete_option( 'newsletter_plugin_version' );
+	delete_option( 'newsletter_default_verify_mail_subject' );
+	delete_option( 'newsletter_default_verify_mail_text' );
+	delete_option( 'newsletter_pass' );
+	delete_option( 'newsletter_user' );
+	delete_option( 'newsletter_apikey' );
+	delete_option( 'widget_getanewsletter' );
+	delete_option( 'gan_redirect_after_activation' );
+}
+register_uninstall_hook( __FILE__, 'gan_uninstall_action' );
+
+register_activation_hook( __FILE__, function() {
+    add_option( 'gan_redirect_after_activation', 'no' );
+} );
+
+add_action( 'admin_init', function() {
+    if ( get_option( 'gan_redirect_after_activation' ) !== 'yes' && current_user_can( 'manage_options' ) ) {
+        update_option( 'gan_redirect_after_activation', 'yes' );
+        wp_safe_redirect( admin_url( 'admin.php?page=newsletter_subscription_forms' ) );
+        exit;
+    }
+} );
