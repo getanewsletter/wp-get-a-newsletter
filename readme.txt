@@ -20,7 +20,7 @@ Plugin features:
 * Add forms using shortcodes in blog posts or pages
 * Add forms using widgets to the sidebar or in the footer
 
-Website: http://www.getanewsletter.com
+Website: https://www.getanewsletter.com
 
 == Installation ==
 

@@ -595,37 +595,31 @@ function display_api_key_form() {
     ?>
     <div class="wrap">
         <div class="gan-onboarding-container">
-            <div class="gan-onboarding-column">
+            <div class="gan-onboarding-content">
                 <h2>Getting Started</h2>
-                <p>Thank you for choosing Get a Newsletter's WordPress plugin, the easiest way to get your subscription forms online.</p>
+                <p>Thank you for choosing Get a Newsletter's WordPress plugin – the easiest way to get your subscription forms online.</p>
 
                 <div class="gan-onboarding-step">
-                    <div class="gan-onboarding-step-header">
-                        <div class="gan-onboarding-step-counter">1</div>
-                        <div class="gan-onboarding-step-title">Log in or sign up</div>
-                    </div>
+                    <div class="gan-onboarding-step-counter">1</div>
                     <div class="gan-onboarding-step-content">
-                        Log in to <a href="https://app.getanewsletter.com/">app.getanewsletter.com</a>. Don't have an account yet, <a href="https://app.getanewsletter.com/signup">sign up</a> instead.
+                        <h3>Log in or sign up</h3>
+                        <p>Log in to <a href="https://app.getanewsletter.com/">app.getanewsletter.com</a>. Don't have an account yet, <a href="https://app.getanewsletter.com/signup">sign up</a> instead.</p>
                     </div>
                 </div>
 
                 <div class="gan-onboarding-step">
-                    <div class="gan-onboarding-step-header">
-                        <div class="gan-onboarding-step-counter">2</div>
-                        <div class="gan-onboarding-step-title">Create an API token</div>
-                    </div>
+                    <div class="gan-onboarding-step-counter">2</div>
                     <div class="gan-onboarding-step-content">
-                        Once logged in, go to <a href="https://app.getanewsletter.com/account/api">My Account -> API</a> and create a new token.
+                        <h3>Create an API token</h3>
+                        <p>Once logged in, go to <a href="https://app.getanewsletter.com/account/api">My Account -> API</a> and create a new token.</p>
                     </div>
                 </div>
 
                 <div class="gan-onboarding-step">
-                    <div class="gan-onboarding-step-header">
-                        <div class="gan-onboarding-step-counter">3</div>
-                        <div class="gan-onboarding-step-title">Add API token to authenticate</div>
-                    </div>
+                    <div class="gan-onboarding-step-counter">3</div>
                     <div class="gan-onboarding-step-content">
-                        Copy and paste the generated token below to authenticate.
+                        <h3>Add API token to authenticate</h3>
+                        <p>Copy and paste the generated token below to authenticate.</p>
                     </div>
                 </div>
 
@@ -639,8 +633,8 @@ function display_api_key_form() {
 
                 <div class="gan-result-message"></div>
             </div>
-            <div class="gan-onboarding-column">
-                <img class="gan-onboarding-image" src="https://placehold.co/600x600" alt="Onboarding image">
+            <div class="gan-onboarding-image">
+                <img src="<?php echo plugin_dir_url(__FILE__) . 'assets/admin/img/onboarding-promo.png'; ?>" alt="Onboarding image">
             </div>
         </div>
     </div>
