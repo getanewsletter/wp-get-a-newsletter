@@ -1,4 +1,6 @@
 window.addEventListener('load', function() {
+    let checkmarkSVG = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 41.9375 8.625 C 41.273438 8.648438 40.664063 9 40.3125 9.5625 L 21.5 38.34375 L 9.3125 27.8125 C 8.789063 27.269531 8.003906 27.066406 7.28125 27.292969 C 6.5625 27.515625 6.027344 28.125 5.902344 28.867188 C 5.777344 29.613281 6.078125 30.363281 6.6875 30.8125 L 20.625 42.875 C 21.0625 43.246094 21.640625 43.410156 22.207031 43.328125 C 22.777344 43.242188 23.28125 42.917969 23.59375 42.4375 L 43.6875 11.75 C 44.117188 11.121094 44.152344 10.308594 43.78125 9.644531 C 43.410156 8.984375 42.695313 8.589844 41.9375 8.625 Z"/></svg>`;
+
     if (document.querySelectorAll('.gan-shortcode-container').length > 0) {
         document.querySelectorAll('.gan-shortcode-container').forEach(element => {
             element.addEventListener('click', () => {
@@ -107,8 +109,6 @@ window.addEventListener('load', function() {
     }
 
     if (document.querySelector('.gan-onboarding-form')) {
-        let checkmarkSVG = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 41.9375 8.625 C 41.273438 8.648438 40.664063 9 40.3125 9.5625 L 21.5 38.34375 L 9.3125 27.8125 C 8.789063 27.269531 8.003906 27.066406 7.28125 27.292969 C 6.5625 27.515625 6.027344 28.125 5.902344 28.867188 C 5.777344 29.613281 6.078125 30.363281 6.6875 30.8125 L 20.625 42.875 C 21.0625 43.246094 21.640625 43.410156 22.207031 43.328125 C 22.777344 43.242188 23.28125 42.917969 23.59375 42.4375 L 43.6875 11.75 C 44.117188 11.121094 44.152344 10.308594 43.78125 9.644531 C 43.410156 8.984375 42.695313 8.589844 41.9375 8.625 Z"/></svg>`;
-
         document.querySelector('.gan-onboarding-form').addEventListener('submit', function(e) {
             e.preventDefault();
             document.querySelector('.gan-result-message').innerHTML = '';
@@ -145,6 +145,44 @@ window.addEventListener('load', function() {
                     document.querySelector('.gan-result-message').innerHTML += `<a class="button button-primary" href="/wp-admin/admin.php?page=newsletter_subscription_forms">Continue to forms</a>`;
 
                     document.querySelector('.gan-onboarding-form').remove();
+                })
+                .catch(error => console.error('Error:', error))
+        });
+    }
+
+    if (document.querySelector('.gan-settings-page')) {
+        document.querySelector('#gan-update-token-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            let token = document.querySelector('.gan-settings-page #newsletter_pass').value.trim();
+
+            fetch('/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    action: 'gan_register_admin_api_key',
+                    token: token
+                })
+            })
+                .then(response => response.json())
+                .then((data) => {
+                    if (data.success === false) {
+                        let errorMessage = data.message;
+
+                        document.querySelector('.gan-result-message').innerHTML = `<div class="notice notice-error inline"><p></p></div>`;
+                        document.querySelector('.gan-result-message .notice-error > p').textContent = errorMessage;
+                        return;
+                    }
+
+                    Array.from(document.querySelectorAll('.gan-onboarding-step-counter')).forEach(el => {
+                        el.classList.add('success');
+                        el.innerHTML = checkmarkSVG;
+                    });
+
+                    document.querySelector('.gan-result-message').innerHTML = `<div class="gan-success-message"></div>`;
+                    document.querySelector('.gan-result-message .gan-success-message').innerHTML = `<div class="gan-checkmark-container">` + checkmarkSVG + `</div>` + `<span>Your API token is active and working</span>`;
                 })
                 .catch(error => console.error('Error:', error))
         });

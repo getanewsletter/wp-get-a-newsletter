@@ -26,6 +26,7 @@ add_action('admin_init', function() {
     register_setting('newsletter', 'newsletter_msg_confirm');
     register_setting('newsletter', 'newsletter_msg_505');
     register_setting('newsletter', 'newsletter_msg_512');
+    register_setting('newsletter', 'gan_enable_popup_forms');
     session_write_close();
 });
 /* ADMIN PANEL */
@@ -42,10 +43,10 @@ function gan_enqueue_admin_assets() {
 }
 
 function newsletter_menu() {
-  add_menu_page('Get a Newsletter', 'Get a Newsletter', 'administrator', 'newsletter', 'newsletter_options');
-  add_submenu_page('newsletter', 'Subscription forms', 'Subscription forms', 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
-  remove_submenu_page('newsletter', 'newsletter');
-  add_submenu_page('newsletter', 'Settings', 'Settings', 'administrator', 'newsletter', 'newsletter_options');
+    add_menu_page('Get a Newsletter', 'Get a Newsletter', 'administrator', 'newsletter', 'newsletter_options');
+    add_submenu_page('newsletter', 'Subscription forms', 'Subscription forms', 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
+    remove_submenu_page('newsletter', 'newsletter');
+    add_submenu_page('newsletter', 'Settings', 'Settings', 'administrator', 'newsletter', 'newsletter_options');
 }
 
 function set_session_data($key, $data) {
@@ -652,52 +653,92 @@ function newsletter_options() {
         return;
     }
 ?>
-    <div class="wrap">
+    <div class="wrap gan-settings-page">
 
     <form method="post" action="options.php?option_page=newsletter">
 
-        <h2>Get a Newsletter Options</h2>
+        <h1>Get a Newsletter Options</h1>
 
-        <h3>Account Information</h3>
-        <p>Enter your <a href="http://www.getanewsletter.com" target=_blank>Get a Newsletter</a> API Token here. Don't have an account? Register one for free at the <a href="http://www.getanewsletter.com" target=_blank>website</a>.</p>
+        <?php wp_nonce_field('newsletter-options'); ?>
 
-        <?php echo wp_nonce_field('newsletter-options'); ?>
-        <table class="form-table">
-            <tr valign="top">
-                <th scope="row">API Token</th>
-                <td><input type="password" name="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" /></td>
-            </tr>
-            <tr>
-                <th scope="row">Login status:</th>
-                <td><?php echo $ok == true ? 'Success' : '<span style="color: red;">Failed, please check your API Token</span>';?></td>
-            </tr>
-        </table>
+        <div class="postbox" id="gan-account-information">
+            <div class="postbox-header">
+                <h2 class="hndle">API Token</h2>
+            </div>
 
-        <h3>Messages</h3>
-        <p>Here you can enter friendly messages that will be displayed on user-end when they interact with the form.</p>
-        <table class="form-table">
-            <tr valign="top">
-                <th scope="row">Successfull submission:</th>
-                <td><input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /></td>
-            </tr>
-            <tr valign="top">
-                <th scope="row">Message - 505:</th>
-                <td>
-                    <input type="text" class="regular-text" name="newsletter_msg_505" value="<?php echo get_option('newsletter_msg_505', 'Invalid e-mail'); ?>" />
-                    <br/> <span class="small">Invalid email address</span>
-                </td>
-            </tr>
-            <tr valign="top">
-                <th scope="row">Message - 512:</th>
-                <td>
-                    <input type="text" class="regular-text" name="newsletter_msg_512" value="<?php echo get_option('newsletter_msg_512', 'Subscription already exists'); ?>" />
-                    <br/> <span class="small">Subscription already exists</span>
-                </td>
-            </tr>
-        </table>
+            <div class="inside">
+                <p>This is the API token you use to connect your Get a Newsletter account to this WordPress site. If you want to update the API token, login to your account and go to <a href="https://app.getanewsletter.com/account/api" target="_blank">My Account -> API</a> to generate a new one.</p>
+                <div>
+                    <label class="gan-label-block" for="newsletter_pass">API Token</label>
+                    <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" />
+
+                    <a href="#" class="button button-primary" id="gan-update-token-btn">Update token</a>
+
+                    <div class="gan-result-message">
+                        <div class="gan-success-message">
+                            <div class="gan-checkmark-container">
+                                <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 41.9375 8.625 C 41.273438 8.648438 40.664063 9 40.3125 9.5625 L 21.5 38.34375 L 9.3125 27.8125 C 8.789063 27.269531 8.003906 27.066406 7.28125 27.292969 C 6.5625 27.515625 6.027344 28.125 5.902344 28.867188 C 5.777344 29.613281 6.078125 30.363281 6.6875 30.8125 L 20.625 42.875 C 21.0625 43.246094 21.640625 43.410156 22.207031 43.328125 C 22.777344 43.242188 23.28125 42.917969 23.59375 42.4375 L 43.6875 11.75 C 44.117188 11.121094 44.152344 10.308594 43.78125 9.644531 C 43.410156 8.984375 42.695313 8.589844 41.9375 8.625 Z"/></svg>
+                            </div>
+                            <span>Your API token is active and working</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="postbox" id="gan-messages">
+            <div class="postbox-header">
+                <h2 class="hndle">Popup forms</h2>
+            </div>
+
+            <div class="inside">
+                <p>When creating popup forms in our tool we ask you to paste a universal code snippet in the &lt;head&gt; of your website. <br> Using this plugin you can simply activate popup forms below.</p>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Enable popup forms</th>
+                        <td>
+                            <input type="checkbox" name="gan_enable_popup_forms" <?php echo get_option( 'gan_enable_popup_forms', false ) ? 'checked' : '' ?> /> <br>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="postbox" id="gan-messages">
+            <div class="postbox-header">
+                <h2 class="hndle">Messages</h2>
+            </div>
+
+            <div class="inside">
+                <p>Here you can enter friendly messages that will be displayed on user-end when they interact with the form.</p>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Successfull submission:</th>
+                        <td>
+                            <input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /> <br>
+                            <span class="gan-input-description">When a user successfully enters their details this message will be displayed</span>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Message - 505:</th>
+                        <td>
+                            <input type="text" class="regular-text" name="newsletter_msg_505" value="<?php echo get_option('newsletter_msg_505', 'Invalid e-mail'); ?>" />
+                            <br/> <span class="gan-input-description">When a user enters an invalid email address this message will be displayed</span>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Message - 512:</th>
+                        <td>
+                            <input type="text" class="regular-text" name="newsletter_msg_512" value="<?php echo get_option('newsletter_msg_512', 'Subscription already exists'); ?>" />
+                            <br/> <span class="gan-input-description">When a user enters an email address that already exists this message will be displayed</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
 
         <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="page_options" value="newsletter_user,newsletter_pass,newsletter_apikey,newsletter_msg_success,newsletter_msg_confirm,newsletter_msg_505,newsletter_msg_512" />
+        <input type="hidden" name="page_options" value="newsletter_user,newsletter_pass,newsletter_apikey,newsletter_msg_success,newsletter_msg_confirm,newsletter_msg_505,newsletter_msg_512,gan_enable_popup_forms" />
         <p class="submit">
             <input type="submit" class="button-primary" value="<?php echo _e('Save Changes', 'getanewsletter') ?>" />
         </p>
@@ -1275,6 +1316,7 @@ function gan_register_admin_api_key() {
     $token = $_POST['token'];
     $conn = new GAPI('', $token);
     $ok = $conn->check_login();
+    $hash = isset( $conn->body['hash'] ) ? $conn->body['hash'] : '';
 
     if ( ! $ok ) {
         wp_send_json( array(
@@ -1286,6 +1328,7 @@ function gan_register_admin_api_key() {
     }
 
     update_option( 'newsletter_pass', $token );
+    update_option( 'gan_user_hash', $hash );
 
     wp_send_json( array(
         'success' => true
@@ -1301,6 +1344,12 @@ function gan_uninstall_action() {
 	delete_option( 'newsletter_apikey' );
 	delete_option( 'widget_getanewsletter' );
 	delete_option( 'gan_redirect_after_activation' );
+	delete_option( 'gan_user_hash' );
+    delete_option( 'newsletter_msg_success' );
+    delete_option( 'newsletter_msg_confirm' );
+    delete_option( 'newsletter_msg_505' );
+    delete_option( 'newsletter_msg_512' );
+    delete_option( 'gan_enable_popup_forms' );
 }
 register_uninstall_hook( __FILE__, 'gan_uninstall_action' );
 
@@ -1315,3 +1364,68 @@ add_action( 'admin_init', function() {
         exit;
     }
 } );
+
+add_action( 'plugins_loaded', 'gan_check_user_hash', 99 );
+function gan_check_user_hash() {
+    $newsletter_pass = get_option( 'newsletter_pass' );
+
+    // If the user hasn't provided the API token - do nothing
+    if ( ! isset( $newsletter_pass ) || ! is_string( $newsletter_pass ) || strlen( $newsletter_pass ) === 0 ) {
+        return;
+    }
+
+    $user_hash = get_option( 'gan_user_hash' );
+
+    // If the user hash is already set - do nothing
+    if ( isset( $user_hash ) && is_string( $user_hash ) && strlen( $user_hash ) > 0 ) {
+        return;
+    }
+
+    // If the API key has been provided, but the user hash is empty - we need to set it for the user
+    $conn = new GAPI( '', $newsletter_pass );
+    $ok = $conn->check_login();
+
+    if ( ! $ok ) {
+        return;
+    }
+
+    $hash = $conn->body['hash'];
+
+    if ( ! isset( $hash ) || ! is_string( $hash ) || strlen( $hash ) === 0 ) {
+        return;
+    }
+
+    update_option( 'gan_user_hash', $hash );
+}
+
+add_action( 'wp_head', 'gan_inject_popup_script', 99 );
+function gan_inject_popup_script() {
+    $enable_popup_form = get_option( 'gan_enable_popup_forms', false );
+
+    if ( ! $enable_popup_form ) {
+        return;
+    }
+
+    $user_hash = get_option( 'gan_user_hash' );
+
+    if ( ! isset( $user_hash ) || ! is_string( $user_hash ) || strlen( $user_hash ) === 0 ) {
+        return;
+    }
+
+    ?>
+
+    <!-- Get a Newsletter popup form -->
+    <script>
+    !function(e,t,n,a,c,r){function o(){var e={a:arguments,q:[]},t=this.push(e)
+    ;return"number"!=typeof t?t:o.bind(e.q)}
+    e.GetanewsletterObject=c,o.q=o.q||[],e[c]=e[c]||o.bind(o.q),
+    e[c].q=e[c].q||o.q,r=t.createElement(n);var i=t.getElementsByTagName(n)[0]
+    ;r.async=1,
+    r.src="https://cdn.getanewsletter.com/js-forms-assets/universal.js?v"+~~((new Date).getTime()/1e6),
+    i.parentNode.insertBefore(r,i)}(window,document,"script",0,"gan");
+    var gan_account=gan("accounts","<?php echo esc_html( $user_hash ); ?>","load");
+    </script>
+    <!-- End Get a Newsletter popup form -->
+
+    <?php
+}
