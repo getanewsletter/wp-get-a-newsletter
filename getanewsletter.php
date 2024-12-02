@@ -672,7 +672,7 @@ function newsletter_options() {
                     <label class="gan-label-block" for="newsletter_pass">API Token</label>
                     <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" />
 
-                    <a href="#" class="button button-primary" id="gan-update-token-btn">Update token</a>
+                    <!-- <a href="#" class="button button-primary" id="gan-update-token-btn">Update token</a> -->
 
                     <div class="gan-result-message">
                         <div class="gan-success-message">
@@ -693,14 +693,10 @@ function newsletter_options() {
 
             <div class="inside">
                 <p>When creating popup forms in our tool we ask you to paste a universal code snippet in the &lt;head&gt; of your website. <br> Using this plugin you can simply activate popup forms below.</p>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">Enable popup forms</th>
-                        <td>
-                            <input type="checkbox" name="gan_enable_popup_forms" <?php echo get_option( 'gan_enable_popup_forms', false ) ? 'checked' : '' ?> /> <br>
-                        </td>
-                    </tr>
-                </table>
+                <label for="gan_enable_popup_forms">
+                    <input id="gan_enable_popup_forms" type="checkbox" name="gan_enable_popup_forms" <?php echo get_option( 'gan_enable_popup_forms', false ) ? 'checked' : '' ?> />
+                    <strong>Enable popup forms</strong>
+                </label>
             </div>
         </div>
 
