@@ -645,10 +645,16 @@ function display_api_key_form() {
 function newsletter_options() {
     $news_pass = get_option('newsletter_pass');
     $ok = false;
-    if($news_pass) {
-        $conn = new GAPI('', $news_pass);
+
+    if ( $news_pass ) {
+        $conn = new GAPI( '', $news_pass );
         $ok = $conn->check_login();
     } else {
+        display_api_key_form();
+        return;
+    }
+
+    if ( ! $ok ) {
         display_api_key_form();
         return;
     }
@@ -671,8 +677,6 @@ function newsletter_options() {
                 <div>
                     <label class="gan-label-block" for="newsletter_pass">API Token</label>
                     <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" />
-
-                    <!-- <a href="#" class="button button-primary" id="gan-update-token-btn">Update token</a> -->
 
                     <div class="gan-result-message">
                         <div class="gan-success-message">
