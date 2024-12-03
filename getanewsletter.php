@@ -1199,6 +1199,19 @@ class GetaNewsletter extends WP_Widget {
 }
 
 add_action('widgets_init', function() {
+    $api_token = get_option( 'newsletter_pass' );
+
+    if ( ! isset( $api_token ) || ! is_string( $api_token ) || strlen( $api_token ) === 0 ) {
+        return;
+    }
+
+    $conn = new GAPI( '', $api_token );
+    $ok = $conn->check_login();
+
+    if ( ! $ok ) {
+        return;
+    }
+
     register_widget("GetaNewsletter");
 });
 
@@ -1409,6 +1422,12 @@ function gan_inject_popup_script() {
     $enable_popup_form = get_option( 'gan_enable_popup_forms', false );
 
     if ( ! $enable_popup_form ) {
+        return;
+    }
+
+    $newsletter_pass = get_option( 'newsletter_pass' );
+
+    if ( ! isset( $newsletter_pass ) || ! is_string( $newsletter_pass ) || strlen( $newsletter_pass ) === 0 ) {
         return;
     }
 
