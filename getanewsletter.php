@@ -900,6 +900,19 @@ function newsletter_upgrade_create_subscription_form($settings, $api) {
 }
 
 function gan_shortcode( $atts ) {
+    $news_pass = get_option('newsletter_pass');
+
+    if ( ! isset( $news_pass ) || ! is_string( $news_pass ) || strlen( $news_pass ) === 0 ) {
+        return '';
+    }
+
+    $conn = new GAPI( '', $news_pass );
+    $ok = $conn->check_login();
+
+    if ( ! $ok ) {
+        return '';
+    }
+
     $a = shortcode_atts( array(
         'id' => null,
     ), $atts );
@@ -908,7 +921,6 @@ function gan_shortcode( $atts ) {
         return '';
     }
 
-    $news_pass = get_option('newsletter_pass');
     $form = get_subscription_form($news_pass, $a['id']);
 
     $customAttributes = get_subscription_attributes(get_option('newsletter_pass'));
