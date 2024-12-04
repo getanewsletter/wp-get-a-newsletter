@@ -282,7 +282,9 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
     <div class="wrap">
         <?php settings_errors('gan');; ?>
         <h1 class="wp-heading-inline">Your subscription forms</h1>
-        <a href="?page=newsletter_subscription_forms&action=create" class="page-title-action">Add New</a>
+        <?php if ( $connectionSucceeded ): ?>
+            <a href="?page=newsletter_subscription_forms&action=create" class="page-title-action">Add New</a>
+        <?php endif; ?>
         <?php
         if (!$connectionSucceeded) {
             ?>
@@ -676,7 +678,7 @@ function newsletter_options() {
                 <p>This is the API token you use to connect your Get a Newsletter account to this WordPress site. If you want to update the API token, login to your account and go to <a href="https://app.getanewsletter.com/account/api" target="_blank">My Account -> API</a> to generate a new one.</p>
                 <div>
                     <label class="gan-label-block" for="newsletter_pass">API Token</label>
-                    <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" />
+                    <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo esc_html( get_option('newsletter_pass') ); ?>" />
 
                     <div class="gan-result-message">
                         <?php if ( $is_api_token_correct ): ?>
@@ -1465,4 +1467,18 @@ function gan_inject_popup_script() {
     <!-- End Get a Newsletter popup form -->
 
     <?php
+}
+
+add_action( 'update_option_newsletter_pass', 'update_user_hash_after_token_update', 99, 3 );
+function update_user_hash_after_token_update( $old_value, $value, $option ) {
+    $token = $value;
+    $conn = new GAPI('', $token);
+    $ok = $conn->check_login();
+
+    if ( ! $ok ) {
+        delete_option( 'gan_user_hash' );
+    }
+
+    $hash = isset( $conn->body['hash'] ) ? $conn->body['hash'] : '';
+    update_option( 'gan_user_hash', $hash );
 }
