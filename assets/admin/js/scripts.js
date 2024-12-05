@@ -149,4 +149,11 @@ window.addEventListener('load', function() {
                 .catch(error => console.error('Error:', error))
         });
     }
+
+    if (document.querySelector('.gan-support-info-copy')) {
+        document.querySelector('.gan-support-info-copy').addEventListener('click', function() {
+            let content = document.querySelector('.gan-support-info-content').innerText.trim();
+            navigator.clipboard.writeText(content);
+        });
+    }
 });

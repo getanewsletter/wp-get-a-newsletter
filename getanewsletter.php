@@ -13,6 +13,8 @@ Text Domain: getanewsletter
 Domain Path: /languages/
 */
 
+define( 'GAN_VERSION', '3.3' );
+
 require_once("GAPI.class.php");
 
 class GetANewsletterException extends \RuntimeException { }
@@ -47,6 +49,7 @@ function newsletter_menu() {
     add_submenu_page('newsletter', 'Subscription forms', 'Subscription forms', 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
     remove_submenu_page('newsletter', 'newsletter');
     add_submenu_page('newsletter', 'Settings', 'Settings', 'administrator', 'newsletter', 'newsletter_options');
+    add_submenu_page( 'newsletter', 'Support', 'Support', 'administrator', 'gan-support', 'render_gan_support_page' );
 }
 
 function set_session_data($key, $data) {
@@ -518,6 +521,63 @@ function display_subscription_form($params) {
 
         </form>
     </div>
+    <?php
+}
+
+function render_gan_support_page() {
+    $php_version = phpversion();
+    $wordpress_version = get_bloginfo( 'version' );
+    $site_url = home_url();
+    $plugin_version = GAN_VERSION;
+    $api_token = get_option( 'newsletter_pass' );
+    $api_token_is_set = false;
+    $api_token_is_valid = false;
+
+    if ( isset( $api_token ) && is_string( $api_token ) && strlen( $api_token ) > 0 ) {
+        $api_token_is_set = true;
+        $conn = new GAPI( '', $api_token );
+        $ok = $conn->check_login();
+        $api_token_is_valid = $ok;
+    }
+
+    $user_hash_is_set = ( strlen( get_option( 'gan_user_hash', '' ) ) > 0 );
+    $popups_enabled = get_option( 'gan_enable_popup_forms', false );
+
+    ?>
+        <div class="wrap gan-support-page">
+            <h1>Support</h1>
+
+            <div class="postbox">
+                <div class="postbox-header">
+                    <h2 class="hndle">Need help?</h2>
+                </div>
+
+                <div class="inside">
+                    <p>If you are experiencing issues with the plugin you can reach out to our support team. In order to help you as fast as possible please copy the details below and include it in your message. Email us at <a href="maito:support@getanewsletter.com">support@getanewsletter.com</a></p>
+                    <div class="gan-support-info">
+                        <h3 class="gan-support-info-title">Debug information</h3>
+                        <button class="gan-support-info-copy">Copy text to clipboard</button>
+                        <pre class="gan-support-info-content">
+                            PHP Version: <?php echo esc_html( $php_version ); ?>
+
+                            WordPress Version: <?php echo esc_html( $wordpress_version ); ?>
+
+                            Site URL: <?php echo esc_html( $site_url ); ?>
+
+                            Get a Newsletter Plugin Version: <?php echo esc_html( $plugin_version ); ?>
+
+                            API key provided: <?php echo $api_token_is_set ? 'Yes' : 'No' ?>
+
+                            API key is valid: <?php echo $api_token_is_valid ? 'Yes' : 'No' ?>
+
+                            User hash is set: <?php echo $user_hash_is_set ? 'Yes' : 'No' ?>
+
+                            Popups enabled: <?php echo $popups_enabled ? 'Yes' : 'No' ?>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
     <?php
 }
 
