@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: Get a Newsletter
-Plugin URI: http://www.getanewsletter.com/
+Plugin URI: https://www.getanewsletter.com/
 Description: Plugin to add subscription form to the site using widgets.
 Version: 3.2
 Requires at least: 5.2.0
 Requires PHP: 7.2
 Author: getanewsletter
-Author URI: http://www.getanewsletter.com/
+Author URI: https://www.getanewsletter.com/
 License: GPLv2 or later
 Text Domain: getanewsletter
 Domain Path: /languages/
@@ -294,7 +294,7 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
             display_newsletter_flash_message($message);
         }
         ?>
-        <table class="wp-list-table widefat fixed striped">
+        <table style="margin-top: 15px;" class="wp-list-table widefat fixed striped">
             <thead>
             <tr>
                 <th class="manage-column">Name</th>
