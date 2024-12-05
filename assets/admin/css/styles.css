@@ -154,3 +154,26 @@
   display: block;
   text-align: center;
 }
+
+.gan-input-description {
+  display: inline-block;
+  padding-top: 5px;
+  font-size: 14px;
+  color: #959595;
+}
+
+#gan-update-token-btn {
+  font-weight: 400;
+  margin-left: 10px;
+}
+
+.gan-label-block {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
+
+#gan-account-information .gan-result-message {
+  margin-top: 10px;
+  width: 350px;
+}

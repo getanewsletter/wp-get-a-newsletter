@@ -1,7 +1,7 @@
 === Get a Newsletter ===
 Tags: email, marketing, newsletter, subscription
 Requires at least: 5.2.0
-Stable tag: 3.2
+Stable tag: 3.3
 Tested up to: 6.7
 Requires PHP: 7.2
 License: GPLv2 or later
@@ -39,6 +39,10 @@ Signup required at (https://app.getanewsletter.com)
 
 
 == Changelog ==
+
+= 3.3 =
+Updated the design for the Settings-page
+Added an option to enable popup forms from the settings page
 
 = 3.2 =
 Completely re-made the onboarding process for users that install and activate the plugin for the first time
