@@ -152,8 +152,16 @@ window.addEventListener('load', function() {
 
     if (document.querySelector('.gan-support-info-copy')) {
         document.querySelector('.gan-support-info-copy').addEventListener('click', function() {
+            const button = this;
+            const originalText = button.textContent;
             let content = document.querySelector('.gan-support-info-content').innerText.trim();
+            
             navigator.clipboard.writeText(content);
+            button.textContent = 'Copied!';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
         });
     }
 });

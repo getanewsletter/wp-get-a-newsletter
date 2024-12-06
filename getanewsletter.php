@@ -556,24 +556,26 @@ function render_gan_support_page() {
                     <p>If you are experiencing issues with the plugin you can reach out to our support team. In order to help you as fast as possible please copy the details below and include it in your message. Email us at <a href="maito:support@getanewsletter.com">support@getanewsletter.com</a></p>
                     <div class="gan-support-info">
                         <h3 class="gan-support-info-title">Debug information</h3>
-                        <button class="gan-support-info-copy">Copy text to clipboard</button>
-                        <pre class="gan-support-info-content">
-                            PHP Version: <?php echo esc_html( $php_version ); ?>
-
-                            WordPress Version: <?php echo esc_html( $wordpress_version ); ?>
-
-                            Site URL: <?php echo esc_html( $site_url ); ?>
-
-                            Get a Newsletter Plugin Version: <?php echo esc_html( $plugin_version ); ?>
-
-                            API key provided: <?php echo $api_token_is_set ? 'Yes' : 'No' ?>
-
-                            API key is valid: <?php echo $api_token_is_valid ? 'Yes' : 'No' ?>
-
-                            User hash is set: <?php echo $user_hash_is_set ? 'Yes' : 'No' ?>
-
-                            Popups enabled: <?php echo $popups_enabled ? 'Yes' : 'No' ?>
-                        </pre>
+                        <div class="gan-support-info-wrapper">
+                            <button class="gan-support-info-copy">Copy text to clipboard</button>
+                            <pre class="gan-support-info-content">
+                                PHP Version: <?php echo esc_html( $php_version ); ?>
+    
+                                WordPress Version: <?php echo esc_html( $wordpress_version ); ?>
+    
+                                Site URL: <?php echo esc_html( $site_url ); ?>
+    
+                                Get a Newsletter Plugin Version: <?php echo esc_html( $plugin_version ); ?>
+    
+                                API key provided: <?php echo $api_token_is_set ? 'Yes' : 'No' ?>
+    
+                                API key is valid: <?php echo $api_token_is_valid ? 'Yes' : 'No' ?>
+    
+                                User hash is set: <?php echo $user_hash_is_set ? 'Yes' : 'No' ?>
+    
+                                Popups enabled: <?php echo $popups_enabled ? 'Yes' : 'No' ?>
+                            </pre>
+                        </div>
                     </div>
                 </div>
             </div>
