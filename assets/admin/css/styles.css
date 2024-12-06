@@ -2,7 +2,8 @@
   cursor: pointer;
 }
 
-.gan-settings-page .postbox-header .hndle {
+.gan-settings-page .postbox-header .hndle,
+.gan-support-page .postbox-header .hndle {
   font-size: 16px;
   padding: 12px 12px;
   margin: 0;
@@ -12,7 +13,8 @@
   cursor: default;
 }
 
-.gan-settings-page h1 {
+.gan-settings-page h1,
+.gan-support-page h1 {
   margin-bottom: 20px;
 }
 
@@ -176,4 +178,38 @@
 #gan-account-information .gan-result-message {
   margin-top: 10px;
   width: 350px;
+}
+
+.gan-support-info-wrapper {
+  position: relative;
+}
+
+.gan-support-info-content {
+  background-color: #f5f5f5;
+  color: #333;
+  padding: 15px 18px;
+  border-radius: 5px;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-line;
+  border: 1px solid #ddd;
+}
+
+.gan-support-info-copy {
+  background: none;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  border: none;
+  color: #135e96;
+  text-decoration: underline;
+  font-size: 14px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.gan-support-info-copy:hover,
+.gan-support-info-copy:focus {
+  text-decoration: none;
 }

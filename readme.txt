@@ -43,6 +43,7 @@ Signup required at (https://app.getanewsletter.com)
 = 3.3 =
 Updated the design for the Settings-page
 Added an option to enable popup forms from the settings page
+Added a support page with system info to easier get help
 
 = 3.2 =
 Completely re-made the onboarding process for users that install and activate the plugin for the first time
