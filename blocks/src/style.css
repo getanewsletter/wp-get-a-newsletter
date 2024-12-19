@@ -1,0 +1,29 @@
+.gan-newsletter-form {
+  --border-radius: 0; /* Default value */
+  --field-background: #ffffff; /* Default value */
+  --field-border: #000000; /* Default value */
+  --label-color: #000000; /* Default value */
+  --button-background: #0280FF; /* Default value */
+  --button-text-color: #000000; /* Default value */
+}
+
+.gan-newsletter-form .newsletter-signup input,
+.gan-newsletter-form .newsletter-signup button {
+  border-radius: var(--border-radius);
+  background-color: var(--field-background);
+  border-color: var(--field-border);
+}
+
+.gan-newsletter-form .newsletter-signup label {
+  color: var(--label-color);
+}
+
+.gan-newsletter-form .newsletter-signup button {
+  background-color: var(--button-background);
+  color: var(--button-text-color);
+}
+
+.gan-newsletter-form .newsletter-signup button:focus,
+.gan-newsletter-form .newsletter-signup button:hover {
+  opacity: 0.8;
+}
