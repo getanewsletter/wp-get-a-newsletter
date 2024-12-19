@@ -1544,3 +1544,232 @@ function update_user_hash_after_token_update( $old_value, $value, $option ) {
     $hash = isset( $conn->body['hash'] ) ? $conn->body['hash'] : '';
     update_option( 'gan_user_hash', $hash );
 }
+
+add_action( 'init', 'gan_register_blocks' );
+function gan_register_blocks() {
+    wp_register_script(
+        'gan-block-js',
+        plugins_url( 'blocks/build/index.js', __FILE__ ),
+        array('wp-blocks', 'wp-element', 'wp-editor'),
+        null
+    );
+
+    wp_localize_script( 'gan-block-js', 'ganAjax', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+    ) );
+
+    wp_register_style(
+        'gan-block-css',
+        plugins_url( 'blocks/build/style-index.css', __FILE__ ),
+        array(),
+        null
+    );
+
+    register_block_type( 'gan/newsletter-form', array(
+        'editor_script' => 'gan-block-js',
+        'style' => 'gan-block-css',
+        'render_callback' => 'render_gan_block',
+        'attributes' => array(
+            'formId' => array(
+                'type' => 'string',
+                'default' => '',
+            ),
+            'isTitleEnabled' => array(
+                'type' => 'boolean',
+                'default' => false,
+            ),
+            'formTitle' => array(
+                'type' => 'string',
+                'default' => 'Join our newsletter',
+            ),
+            'isDescriptionEnabled' => array(
+                'type' => 'boolean',
+                'default' => false,
+            ),
+            'formDescription' => array(
+                'type' => 'string',
+                'default' => 'Get weekly access to our deals, tricks and tips',
+            ),
+            'appearance' => array(
+                'type' => 'string',
+                'default' => 'square',
+            ),
+            'fieldBackground' => array(
+                'type' => 'string',
+                'default' => '#ffffff',
+            ),
+            'fieldBorder' => array(
+                'type' => 'string',
+                'default' => '#000000',
+            ),
+            'labelColor' => array(
+                'type' => 'string',
+                'default' => '#000000',
+            ),
+            'buttonBackground' => array(
+                'type' => 'string',
+                'default' => '#0280FF',
+            ),
+            'buttonTextColor' => array(
+                'type' => 'string',
+                'default' => '#000000',
+            ),
+        ),
+    ) );
+}
+
+function gan_block_get_subscription_form( $form_id ) {
+    $news_pass = get_option('newsletter_pass');
+    if ( !isset( $news_pass ) || ! is_string( $news_pass ) || strlen( $news_pass ) === 0) {
+        return [
+            'success' => false,
+            'error' => 'Invalid API token'
+        ];
+    }
+
+    $conn = new GAPI( '', $news_pass );
+    $ok = $conn->check_login();
+    if ( ! $ok ) {
+        return [
+            'success' => false,
+            'error' => 'Failed API authentication'
+        ];
+    }
+
+    if ( ! isset( $form_id ) || ! is_string( $form_id ) || strlen( $form_id ) === 0 ) {
+        return [
+            'success' => false,
+            'error' => 'Invalid form key'
+        ];
+    }
+
+    $form = get_subscription_form( $news_pass, $form_id );
+    $customAttributes = get_subscription_attributes( get_option( 'newsletter_pass' ) );
+
+    return [
+        'success' => true,
+        'data' => [
+            'form' => $form,
+            'customAttributes' => $customAttributes,
+        ]
+    ];
+}
+
+function render_gan_block( $attributes ) {
+    if ( empty( $attributes['formId'] ) ) {
+        return '<p>No form selected.</p>';
+    }
+
+    $form_id = esc_attr( $attributes['formId'] );
+    $response = gan_block_get_subscription_form( $form_id );
+
+    if ( ! isset( $response['success']) || $response['success'] === false || empty( $response['data'] ) ) {
+        if ( isset( $response['error'] ) ) {
+            return '<p>' . $response['error'] . '</p>';
+        } else {
+            return '<p>This element cannot be rendered at the moment.</p>';
+        }
+    } 
+
+    $form_data = $response['data'];
+    $border_radius = $attributes['appearance'] === 'rounded' ? '8px' : '0';
+    $form_html = '<div class="gan-newsletter-form" style="--border-radius: ' . esc_attr($border_radius) . '; --field-background: ' . esc_attr($attributes['fieldBackground']) . '; --field-border: ' . esc_attr($attributes['fieldBorder']) . '; --label-color: ' . esc_attr($attributes['labelColor']) . '; --button-background: ' . esc_attr($attributes['buttonBackground']) . '; --button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
+
+    if ( $attributes['isTitleEnabled'] ) {
+        $form_html .= '<h2>' . esc_html( $attributes['formTitle'] ) . '</h2>';
+    }
+
+    if ( $attributes['isDescriptionEnabled'] ) {
+        $form_html .= '<p>' . esc_html( $attributes['formDescription'] ) . '</p>';
+    }
+
+    $form_html .= '<form method="post" class="newsletter-signup" enctype="multipart/form-data">';
+    $form_html .= '<input type="hidden" name="key" value="' . esc_attr( $form_data['form']['key'] ) . '" />';
+    $form_html .= '<input type="hidden" name="form_link" value="' . esc_attr( $form_data['form']['form_link'] ) . '" />';
+    $form_html .= '<input type="hidden" name="action" value="getanewsletter_subscribe" />';
+
+    if (!empty($form_data['form']['first_name'])) {
+        $form_html .= '<p><label for="id_first_name">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : 'First Name' ) ) . '</label><br>';
+        $form_html .= '<input id="id_first_name" type="text" name="id_first_name" /></p>';
+    }
+
+    if (!empty($form_data['form']['last_name'])) {
+        $form_html .= '<p><label for="id_last_name">' . esc_html( ( trlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : 'Last Name' ) ) . '</label><br>';
+        $form_html .= '<input id="id_last_name" type="text" name="id_last_name" /></p>';
+    }
+
+    $form_html .= '<p><label for="id_email">E-Mail</label><br>';
+    $form_html .= '<input id="id_email" type="text" name="id_email" /></p>';
+
+    foreach ( $form_data['customAttributes'] as $attribute ) {
+        if ( in_array( $attribute['code'], $form_data['form']['attributes'], true ) ) {
+            $form_html .= '<p><label for="attr_' . esc_attr( $attribute['code'] ) . '">' . esc_html( $attribute['name'] ) . '</label><br>';
+            $form_html .= '<input id="attr_' . esc_attr( $attribute['code'] ) . '" type="text" name="attributes[' . esc_attr( $attribute['code'] ) . ']" /></p>';
+        }
+    }
+
+    $form_html .= '<p><button type="submit">' . esc_html( $form_data['form']['button_text'] ?? 'Subscribe' ) . '</button></p>';
+    $form_html .= '</form>';
+    $form_html .= '<div class="news-note"></div>';
+    $form_html .= '</div>';
+
+    return $form_html;
+}
+
+add_action( 'wp_ajax_gan_get_subscription_forms_list', 'gan_ajax_get_subscription_forms_list' );
+function gan_ajax_get_subscription_forms_list() {
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_error(
+            'You are not logged in'
+        );
+    }
+
+    if ( ! current_user_can( 'edit_posts' ) ) {
+        wp_send_json_error(
+            'You are not allowed to use this AJAX endpoint'
+        );
+    }
+
+    $news_pass = get_option( 'newsletter_pass' );
+    
+    try {
+        $forms = get_subscription_forms_list( $news_pass );
+        wp_send_json_success( $forms );
+    } catch( \GetANewsletterException $e ) {
+        wp_send_json_error(
+            'Invalid API token or failed API authentication'
+        );
+    }
+}
+
+add_action('wp_ajax_gan_get_subscription_form', 'gan_ajax_get_subscription_form');
+function gan_ajax_get_subscription_form() {
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_error(
+            'You are not logged in'
+        );
+    }
+
+    if ( ! current_user_can( 'edit_posts' ) ) {
+        wp_send_json_error(
+            'You are not allowed to use this AJAX endpoint'
+        );
+    }
+
+    $form_id = isset( $_POST['form_id'] ) ? $_POST['form_id'] : null;
+
+    if ( null === $form_id ) {
+        wp_send_json_error( 'Invalid form ID' );
+    }
+
+    $result = gan_block_get_subscription_form( $form_id );
+
+    if ( $result['success'] === false ) {
+        wp_send_json_error( $result['error'] );
+    }
+
+    wp_send_json_success( array(
+        'form' => $result['data']['form'],
+        'customAttributes' => $result['data']['customAttributes'],
+    ) );
+}
