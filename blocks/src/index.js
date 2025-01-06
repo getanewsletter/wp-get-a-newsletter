@@ -124,10 +124,13 @@ registerBlockType('gan/newsletter-form', {
                             <SelectControl
                                 label={__('Select Form', 'getanewsletter')}
                                 value={attributes.formId}
-                                options={forms.map(form => ({
-                                    label: form.name,
-                                    value: form.key,
-                                }))}
+                                options={[
+                                    { label: __('Choose a form', 'getanewsletter'), value: '', disabled: true },
+                                    ...forms.map(form => ({
+                                        label: form.name,
+                                        value: form.key,
+                                    }))
+                                ]}
                                 onChange={handleFormChange}
                             />
                         )}
@@ -212,10 +215,13 @@ registerBlockType('gan/newsletter-form', {
                                 <SelectControl
                                     label={__('Select Form', 'getanewsletter')}
                                     value={attributes.formId}
-                                    options={forms.map(form => ({
-                                        label: form.name,
-                                        value: form.key,
-                                    }))}
+                                    options={[
+                                        { label: __('Choose a form', 'getanewsletter'), value: '', disabled: true },
+                                        ...forms.map(form => ({
+                                            label: form.name,
+                                            value: form.key,
+                                        }))
+                                    ]}
                                     onChange={handleFormChange}
                                 />
                             )}
