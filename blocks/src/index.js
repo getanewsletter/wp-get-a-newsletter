@@ -1,7 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useEffect, useState } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/block-editor';
-import { SelectControl, Spinner, TextControl, Button, PanelBody, CheckboxControl, RadioControl, BaseControl, ColorPicker } from '@wordpress/components';
+import { SelectControl, Spinner, TextControl, Button, PanelBody, CheckboxControl, RadioControl, BaseControl, ColorPalette } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import './style.css';
 
@@ -170,33 +170,38 @@ registerBlockType('gan/newsletter-form', {
                             onChange={(appearance) => setAttributes({ appearance })}
                         />
                         <BaseControl label={__('Field Background', 'getanewsletter')}>
-                            <ColorPicker
-                                color={attributes.fieldBackground}
-                                onChangeComplete={(color) => setAttributes({ fieldBackground: color.hex })}
+                            <ColorPalette
+                                value={attributes.fieldBackground}
+                                onChange={(fieldBackground) => setAttributes({ fieldBackground })}
+                                disableCustomColors={false}
                             />
                         </BaseControl>
                         <BaseControl label={__('Field Border', 'getanewsletter')}>
-                            <ColorPicker
-                                color={attributes.fieldBorder}
-                                onChangeComplete={(color) => setAttributes({ fieldBorder: color.hex })}
+                            <ColorPalette
+                                value={attributes.fieldBorder}
+                                onChange={(fieldBorder) => setAttributes({ fieldBorder })}
+                                disableCustomColors={false}
                             />
                         </BaseControl>
                         <BaseControl label={__('Label Color', 'getanewsletter')}>
-                            <ColorPicker
-                                color={attributes.labelColor}
-                                onChangeComplete={(color) => setAttributes({ labelColor: color.hex })}
+                            <ColorPalette
+                                value={attributes.labelColor}
+                                onChange={(labelColor) => setAttributes({ labelColor })}
+                                disableCustomColors={false}
                             />
                         </BaseControl>
                         <BaseControl label={__('Button Background', 'getanewsletter')}>
-                            <ColorPicker
-                                color={attributes.buttonBackground}
-                                onChangeComplete={(color) => setAttributes({ buttonBackground: color.hex })}
+                            <ColorPalette
+                                value={attributes.buttonBackground}
+                                onChange={(buttonBackground) => setAttributes({ buttonBackground })}
+                                disableCustomColors={false}
                             />
                         </BaseControl>
                         <BaseControl label={__('Button Text Color', 'getanewsletter')}>
-                            <ColorPicker
-                                color={attributes.buttonTextColor}
-                                onChangeComplete={(color) => setAttributes({ buttonTextColor: color.hex })}
+                            <ColorPalette
+                                value={attributes.buttonTextColor}
+                                onChange={(buttonTextColor) => setAttributes({ buttonTextColor })}
+                                disableCustomColors={false}
                             />
                         </BaseControl>
                     </PanelBody>
