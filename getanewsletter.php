@@ -1689,21 +1689,21 @@ function render_gan_block( $attributes ) {
     $form_html .= '<input type="hidden" name="action" value="getanewsletter_subscribe" />';
 
     if (!empty($form_data['form']['first_name'])) {
-        $form_html .= '<label for="id_first_name">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : 'First Name' ) ) . '</label><br>';
+        $form_html .= '<label for="id_first_name">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : 'First Name' ) ) . '</label>';
         $form_html .= '<input id="id_first_name" type="text" name="id_first_name" />';
     }
 
     if (!empty($form_data['form']['last_name'])) {
-        $form_html .= '<label for="id_last_name">' . esc_html( ( trlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : 'Last Name' ) ) . '</label><br>';
+        $form_html .= '<label for="id_last_name">' . esc_html( ( trlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : 'Last Name' ) ) . '</label>';
         $form_html .= '<input id="id_last_name" type="text" name="id_last_name" />';
     }
 
-    $form_html .= '<label for="id_email">E-Mail</label><br>';
+    $form_html .= '<label for="id_email">E-Mail</label>';
     $form_html .= '<input id="id_email" type="text" name="id_email" />';
 
     foreach ( $form_data['customAttributes'] as $attribute ) {
         if ( in_array( $attribute['code'], $form_data['form']['attributes'], true ) ) {
-            $form_html .= '<label for="attr_' . esc_attr( $attribute['code'] ) . '">' . esc_html( $attribute['name'] ) . '</label><br>';
+            $form_html .= '<label for="attr_' . esc_attr( $attribute['code'] ) . '">' . esc_html( $attribute['name'] ) . '</label>';
             $form_html .= '<input id="attr_' . esc_attr( $attribute['code'] ) . '" type="text" name="attributes[' . esc_attr( $attribute['code'] ) . ']" />';
         }
     }
