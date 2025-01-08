@@ -1694,7 +1694,7 @@ function render_gan_block( $attributes ) {
     }
 
     if (!empty($form_data['form']['last_name'])) {
-        $form_html .= '<label for="id_last_name">' . esc_html( ( trlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : 'Last Name' ) ) . '</label>';
+        $form_html .= '<label for="id_last_name">' . esc_html( ( strlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : 'Last Name' ) ) . '</label>';
         $form_html .= '<input id="id_last_name" type="text" name="id_last_name" />';
     }
 
