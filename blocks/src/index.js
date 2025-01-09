@@ -1,7 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useEffect, useState } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/block-editor';
-import { SelectControl, Spinner, TextControl, Button, PanelBody, CheckboxControl, RadioControl, BaseControl, ColorPalette } from '@wordpress/components';
+import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
+import { SelectControl, Spinner, TextControl, Button, PanelBody, CheckboxControl, RadioControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import './style.css';
 
@@ -169,42 +169,37 @@ registerBlockType('gan/newsletter-form', {
                             ]}
                             onChange={(appearance) => setAttributes({ appearance })}
                         />
-                        <BaseControl label={__('Field Background', 'getanewsletter')}>
-                            <ColorPalette
-                                value={attributes.fieldBackground}
-                                onChange={(fieldBackground) => setAttributes({ fieldBackground })}
-                                disableCustomColors={false}
-                            />
-                        </BaseControl>
-                        <BaseControl label={__('Field Border', 'getanewsletter')}>
-                            <ColorPalette
-                                value={attributes.fieldBorder}
-                                onChange={(fieldBorder) => setAttributes({ fieldBorder })}
-                                disableCustomColors={false}
-                            />
-                        </BaseControl>
-                        <BaseControl label={__('Label Color', 'getanewsletter')}>
-                            <ColorPalette
-                                value={attributes.labelColor}
-                                onChange={(labelColor) => setAttributes({ labelColor })}
-                                disableCustomColors={false}
-                            />
-                        </BaseControl>
-                        <BaseControl label={__('Button Background', 'getanewsletter')}>
-                            <ColorPalette
-                                value={attributes.buttonBackground}
-                                onChange={(buttonBackground) => setAttributes({ buttonBackground })}
-                                disableCustomColors={false}
-                            />
-                        </BaseControl>
-                        <BaseControl label={__('Button Text Color', 'getanewsletter')}>
-                            <ColorPalette
-                                value={attributes.buttonTextColor}
-                                onChange={(buttonTextColor) => setAttributes({ buttonTextColor })}
-                                disableCustomColors={false}
-                            />
-                        </BaseControl>
                     </PanelBody>
+                    <PanelColorSettings
+                        title={__('Color Settings', 'getanewsletter')}
+                        colorSettings={[
+                            {
+                                value: attributes.fieldBackground,
+                                onChange: (fieldBackground) => setAttributes({ fieldBackground }),
+                                label: __('Field Background', 'getanewsletter'),
+                            },
+                            {
+                                value: attributes.fieldBorder,
+                                onChange: (fieldBorder) => setAttributes({ fieldBorder }),
+                                label: __('Field Border', 'getanewsletter'),
+                            },
+                            {
+                                value: attributes.labelColor,
+                                onChange: (labelColor) => setAttributes({ labelColor }),
+                                label: __('Label Color', 'getanewsletter'),
+                            },
+                            {
+                                value: attributes.buttonBackground,
+                                onChange: (buttonBackground) => setAttributes({ buttonBackground }),
+                                label: __('Button Background', 'getanewsletter'),
+                            },
+                            {
+                                value: attributes.buttonTextColor,
+                                onChange: (buttonTextColor) => setAttributes({ buttonTextColor }),
+                                label: __('Button Text Color', 'getanewsletter'),
+                            },
+                        ]}
+                    />
                 </InspectorControls>
                 <div className="gan-newsletter-form">
                     {attributes.errorMessage && (
