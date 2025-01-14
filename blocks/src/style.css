@@ -1,41 +1,114 @@
 .gan-newsletter-form {
-  --border-radius: 0; /* Default value */
-  --field-background: #ffffff; /* Default value */
-  --field-border: #000000; /* Default value */
-  --label-color: #000000; /* Default value */
-  --button-background: #0280FF; /* Default value */
-  --button-text-color: #000000; /* Default value */
+  --gan-border-radius: 0;
+  --gan-field-background: #ffffff;
+  --gan-field-border: #000000;
+  --gan-label-color: #000000;
+  --gan-button-background: #0280ff;
+  --gan-button-text-color: #000000;
+  --gan-input-height: 40px;
+  --gan-font-size: 16px;
 }
 
-.gan-newsletter-form .newsletter-signup input,
-.gan-newsletter-form .newsletter-signup button {
-  border-radius: var(--border-radius);
-  background-color: var(--field-background);
-  border-color: var(--field-border);
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Layout, title and description
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+/* Only add margin-top if the title or description is present */
+.gan-newsletter-form:has(h2, p) form {
+  margin-top: 20px;
 }
 
-.gan-newsletter-form input:not([type="hidden"]), 
-.gan-newsletter-form textarea, 
-.gan-newsletter-form label {
+.gan-newsletter-form h2.gan-newsletter-form--title {
+  all: unset;
   display: block;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.gan-newsletter-form p.gan-newsletter-form--description {
+  all: unset;
+  display: block;
+  margin-top: 6px;
+  font-size: var(--gan-font-size);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Input field
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-newsletter-form .gan-newsletter-form--input-field {
   margin-bottom: 10px;
 }
 
-.gan-newsletter-form .newsletter-signup input,
-.gan-newsletter-form textarea {
-  width: 100%;
-}
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Labels
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
 
 .gan-newsletter-form .newsletter-signup label {
-  color: var(--label-color);
+  all: unset;
+  color: var(--gan-label-color);
+  font-size: var(--gan-font-size);
+  font-weight: 600;
+  cursor: default;
+  user-select: none;
 }
 
-.gan-newsletter-form .newsletter-signup button {
-  background-color: var(--button-background);
-  color: var(--button-text-color);
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Inputs
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-newsletter-form .newsletter-signup input[type="text"],
+.gan-newsletter-form .newsletter-signup input[type="email"] {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: var(--gan-border-radius);
+  background-color: var(--gan-field-background);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--gan-field-border);
+  display: block;
+  padding: 0 10px;
+  margin: 0;
+  margin-top: 4px;
+  height: var(--gan-input-height);
+  font-size: var(--gan-font-size);
 }
 
-.gan-newsletter-form .newsletter-signup button:focus,
-.gan-newsletter-form .newsletter-signup button:hover {
+
+.gan-newsletter-form .newsletter-signup input[type="text"]:focus,
+.gan-newsletter-form .newsletter-signup input[type="email"]:focus {
+  outline: 1px solid var(--gan-button-background);
+  border-color: var(--gan-button-background);
+}
+
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Submit button
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container {
+  margin-top: 30px;
+}
+
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"] {
+  all: unset;
+  padding: 0 20px;
+  cursor: pointer;
+  background-color: var(--gan-button-background);
+  color: var(--gan-button-text-color);
+  height: var(--gan-input-height);
+  font-size: var(--gan-font-size);
+  border-radius: var(--gan-border-radius);
+}
+
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"]:focus,
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"]:hover {
   opacity: 0.8;
 }

@@ -994,46 +994,46 @@ function gan_shortcode( $atts ) {
 
     if($form['first_name']) {
         $content .= ""
-            ."<p>"
+            ."<div>"
             ."  <label for=\"id_first_name\">" . (!empty($form['first_name_label']) ? $form['first_name_label'] : __('First name', 'getanewsletter')) . "</label><br />"
             ."  <input id=\"id_first_name\" type=\"text\" class=\"text\" name=\"id_first_name\" />"
-            ."</p>";
+            ."</div>";
     }
 
     if($form['last_name']) {
         $content .=  ""
-            ."<p>"
+            ."<div>"
             ."  <label for=\"id_last_name\">" . (!empty($form['last_name_label']) ? $form['last_name_label'] : __('Last name', 'getanewsletter')) . "</label><br />"
             ."  <input id=\"id_last_name\" type=\"text\" class=\"text\" name=\"id_last_name\" />"
-            ."</p>";
+            ."</div>";
     }
 
     $content .=  ""
-        ."  <p>"
+        ."  <div>"
         ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') ."</label><br />"
-        ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
-        ."  </p>";
+        ."      <input id=\"id_email\" type=\"email\" class=\"text\" name=\"id_email\" />"
+        ."  </div>";
 
     foreach ($customAttributes as $attribute) {
         if (!in_array($attribute['code'], $form['attributes'])) {
             continue;
         }
         $content .=  ""
-            ."  <p>"
+            ."  <div>"
             ."      <label for=\"attr_${attribute['code']}\">". $attribute['name'] ."</label><br />"
             ."      <input id=\"attr_${attribute['code']}\" type=\"text\" class=\"text\" name=\"attributes[{$attribute['code']}]\" />"
-            ."  </p>";
+            ."  </div>";
     }
 
     $content .=  ""
-        ."  <p>"
+        ."  <div>"
         ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form['form_link']}\" id=\"id_form_link\" />"
         ."      <input type=\"hidden\" name=\"key\" value=\"{$form['key']}\" id=\"id_key\" />"
         ."      <input type=\"submit\" value=\"" . ($form['button_text'] != '' ?  __($form['button_text'], 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\" />"
         ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__), '', plugin_basename(__FILE__)) . "loading.gif\""
         ."          alt=\"loading\""
         ."          class=\"news-loading\" />"
-        ."  </p>";
+        ."  </div>";
     $content .=  ""
         ."</form>"
         ."<div class=\"news-note\"></div>";
@@ -1089,46 +1089,46 @@ class GetaNewsletter extends WP_Widget {
 
                 if($fname) {
                     print ""
-                        ."<p>"
+                        ."<div>"
                         ."  <label for=\"id_first_name\">" . (!empty($fnametxt) ? $fnametxt : __('First name', 'getanewsletter')) . "</label><br />"
                         ."  <input id=\"id_first_name\" type=\"text\" class=\"text\" name=\"id_first_name\" />"
-                        ."</p>";
+                        ."</div>";
                 }
 
                 if($lname) {
                     print ""
-                        ."<p>"
+                        ."<div>"
                         ."  <label for=\"id_last_name\">" . (!empty($lnametxt) ? $lnametxt : __('Last name', 'getanewsletter')) . "</label><br />"
                         ."  <input id=\"id_last_name\" type=\"text\" class=\"text\" name=\"id_last_name\" />"
-                        ."</p>";
+                        ."</div>";
                 }
 
                 print ""
-                    ."  <p>"
+                    ."  <div>"
                     ."      <label for=\"id_email\">". __('E-mail', 'getanewsletter') ."</label><br />"
-                    ."      <input id=\"id_email\" type=\"text\" class=\"text\" name=\"id_email\" />"
-                    ."  </p>";
+                    ."      <input id=\"id_email\" type=\"email\" class=\"text\" name=\"id_email\" />"
+                    ."  </div>";
 
                 foreach ($customAttributes as $attribute) {
                     if (!isset($instance[$attribute['code']]) || !$instance[$attribute['code']]) {
                         continue;
                     }
                     print ""
-                        ."  <p>"
+                        ."  <div>"
                         ."      <label for=\"attr_${attribute['code']}\">". $attribute['name'] ."</label><br />"
                         ."      <input id=\"attr_${attribute['code']}\" type=\"text\" class=\"text\" name=\"attributes[{$attribute['code']}]\" />"
-                        ."  </p>";
+                        ."  </div>";
                 }
 
                 print ""
-                    ."  <p>"
+                    ."  <div>"
                     ."      <input type=\"hidden\" name=\"form_link\" value=\"{$form_link}\" id=\"id_form_link\" />"
                     ."      <input type=\"hidden\" name=\"key\" value=\"{$key}\" id=\"id_key\" />"
                     ."      <input type=\"submit\" value=\"" . ($submittext != '' ?  __($submittext, 'getanewsletter') : __('Subscribe', 'getanewsletter')) . "\" />"
                     ."      <img src=\"" . WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__), '', plugin_basename(__FILE__)) . "loading.gif\""
                     ."          alt=\"loading\""
                     ."          class=\"news-loading\" />"
-                    ."  </p>";
+                    ."  </div>";
                 print ""
                     ."</form>"
                     ."<div class=\"news-note\"></div>";
@@ -1233,7 +1233,7 @@ class GetaNewsletter extends WP_Widget {
                     ."  <input data-newsletter-field-name='fname-{$this->number}' class=\"checkbox\" id=\"{$this->get_field_id('fname')}\""
                     ."      name=\"{$this->get_field_name('fname')}\""
                     ."      type=\"checkbox\" " . (!empty($fname) ? "checked=\"checked\"" : "") . " />"
-                    ."  <label for=\"{$this->get_field_id('fname')}\">" . __('First Name', 'getanewsletter'). "</label>"
+                    ."  <label for=\"{$this->get_field_id('fname')}\">" . __('First name', 'getanewsletter'). "</label>"
                     ."</p>";
 
                 print ""
@@ -1242,7 +1242,7 @@ class GetaNewsletter extends WP_Widget {
                     ."      id=\"{$this->get_field_id('lname')}\""
                     ."      name=\"{$this->get_field_name('lname')}\""
                     ."      type=\"checkbox\" " . (!empty($lname) ? "checked=\"checked\"" : "") . " />"
-                    ."  <label for=\"{$this->get_field_id('lname')}\">" . __('Last Name', 'getanewsletter') . "</label>"
+                    ."  <label for=\"{$this->get_field_id('lname')}\">" . __('Last name', 'getanewsletter') . "</label>"
                     ."</p>";
 
                 foreach ($customAttributes as $attribute) {
@@ -1673,14 +1673,14 @@ function render_gan_block( $attributes ) {
 
     $form_data = $response['data'];
     $border_radius = $attributes['appearance'] === 'rounded' ? '8px' : '0';
-    $form_html = '<div class="gan-newsletter-form" style="--border-radius: ' . esc_attr($border_radius) . '; --field-background: ' . esc_attr($attributes['fieldBackground']) . '; --field-border: ' . esc_attr($attributes['fieldBorder']) . '; --label-color: ' . esc_attr($attributes['labelColor']) . '; --button-background: ' . esc_attr($attributes['buttonBackground']) . '; --button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
+    $form_html = '<div class="gan-newsletter-form" style="--gan-border-radius: ' . esc_attr($border_radius) . '; --gan-field-background: ' . esc_attr($attributes['fieldBackground']) . '; --gan-field-border: ' . esc_attr($attributes['fieldBorder']) . '; --gan-label-color: ' . esc_attr($attributes['labelColor']) . '; --gan-button-background: ' . esc_attr($attributes['buttonBackground']) . '; --gan-button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
 
     if ( $attributes['isTitleEnabled'] ) {
-        $form_html .= '<h2>' . esc_html( $attributes['formTitle'] ) . '</h2>';
+        $form_html .= '<h2 class="gan-newsletter-form--title">' . esc_html( $attributes['formTitle'] ) . '</h2>';
     }
 
     if ( $attributes['isDescriptionEnabled'] ) {
-        $form_html .= '<p>' . esc_html( $attributes['formDescription'] ) . '</p>';
+        $form_html .= '<p class="gan-newsletter-form--description">' . esc_html( $attributes['formDescription'] ) . '</p>';
     }
 
     $form_html .= '<form method="post" class="newsletter-signup" enctype="multipart/form-data">';
@@ -1689,26 +1689,26 @@ function render_gan_block( $attributes ) {
     $form_html .= '<input type="hidden" name="action" value="getanewsletter_subscribe" />';
 
     if (!empty($form_data['form']['first_name'])) {
-        $form_html .= '<label for="id_first_name">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : 'First Name' ) ) . '</label>';
-        $form_html .= '<input id="id_first_name" type="text" name="id_first_name" />';
+        $form_html .= '<div class="gan-newsletter-form--input-field"><label for="id_first_name">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : 'First name' ) ) . '</label>';
+        $form_html .= '<input id="id_first_name" type="text" name="id_first_name" /></div>';
     }
 
     if (!empty($form_data['form']['last_name'])) {
-        $form_html .= '<label for="id_last_name">' . esc_html( ( strlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : 'Last Name' ) ) . '</label>';
-        $form_html .= '<input id="id_last_name" type="text" name="id_last_name" />';
+        $form_html .= '<div class="gan-newsletter-form--input-field"><label for="id_last_name">' . esc_html( ( strlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : 'Last name' ) ) . '</label>';
+        $form_html .= '<input id="id_last_name" type="text" name="id_last_name" /></div>';
     }
 
-    $form_html .= '<label for="id_email">E-Mail</label>';
-    $form_html .= '<input id="id_email" type="text" name="id_email" />';
+    $form_html .= '<div class="gan-newsletter-form--input-field"><label for="id_email">Email address</label>';
+    $form_html .= '<input id="id_email" required type="email" name="id_email" /></div>';
 
     foreach ( $form_data['customAttributes'] as $attribute ) {
         if ( in_array( $attribute['code'], $form_data['form']['attributes'], true ) ) {
-            $form_html .= '<label for="attr_' . esc_attr( $attribute['code'] ) . '">' . esc_html( $attribute['name'] ) . '</label>';
-            $form_html .= '<input id="attr_' . esc_attr( $attribute['code'] ) . '" type="text" name="attributes[' . esc_attr( $attribute['code'] ) . ']" />';
+            $form_html .= '<div class="gan-newsletter-form--input-field"><label for="attr_' . esc_attr( $attribute['code'] ) . '">' . esc_html( $attribute['name'] ) . '</label>';
+            $form_html .= '<input id="attr_' . esc_attr( $attribute['code'] ) . '" type="text" name="attributes[' . esc_attr( $attribute['code'] ) . ']" /></div>';
         }
     }
 
-    $form_html .= '<button type="submit">' . esc_html( $form_data['form']['button_text'] ?? 'Subscribe' ) . '</button>';
+    $form_html .= '<div class="gan-newsletter-form--button-container"><button type="submit">' . esc_html( $form_data['form']['button_text'] ?? 'Subscribesss' ) . '</button></div>';
     $form_html .= '</form>';
     $form_html .= '<div class="news-note"></div>';
     $form_html .= '</div>';

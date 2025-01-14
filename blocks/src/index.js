@@ -1,7 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useEffect, useState } from '@wordpress/element';
 import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
-import { SelectControl, Spinner, TextControl, Button, PanelBody, CheckboxControl, RadioControl } from '@wordpress/components';
+import { SelectControl, Spinner, TextControl, PanelBody, CheckboxControl, RadioControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import './style.css';
 
@@ -101,12 +101,12 @@ registerBlockType('gan/newsletter-form', {
         useEffect(() => {
             const blockElement = document.querySelector('.gan-newsletter-form');
             if (blockElement) {
-                blockElement.style.setProperty('--border-radius', attributes.appearance === 'rounded' ? '8px' : '0');
-                blockElement.style.setProperty('--field-background', attributes.fieldBackground);
-                blockElement.style.setProperty('--field-border', attributes.fieldBorder);
-                blockElement.style.setProperty('--label-color', attributes.labelColor);
-                blockElement.style.setProperty('--button-background', attributes.buttonBackground);
-                blockElement.style.setProperty('--button-text-color', attributes.buttonTextColor);
+                blockElement.style.setProperty('--gan-border-radius', attributes.appearance === 'rounded' ? '8px' : '0');
+                blockElement.style.setProperty('--gan-field-background', attributes.fieldBackground);
+                blockElement.style.setProperty('--gan-field-border', attributes.fieldBorder);
+                blockElement.style.setProperty('--gan-label-color', attributes.labelColor);
+                blockElement.style.setProperty('--gan-button-background', attributes.buttonBackground);
+                blockElement.style.setProperty('--gan-button-text-color', attributes.buttonTextColor);
             }
         }, [attributes.appearance, attributes.fieldBackground, attributes.fieldBorder, attributes.labelColor, attributes.buttonBackground, attributes.buttonTextColor]);
 
@@ -228,46 +228,43 @@ registerBlockType('gan/newsletter-form', {
                         </>
                     )}
                     {attributes.isTitleEnabled && (
-                        <h2>{attributes.formTitle}</h2>
+                        <h2 class="gan-newsletter-form--title">{attributes.formTitle}</h2>
                     )}
                     {attributes.isDescriptionEnabled && (
-                        <p>{attributes.formDescription}</p>
+                        <p class="gan-newsletter-form--description">{attributes.formDescription}</p>
                     )}
                     {isLoadingFormData ? (
                         <Spinner />
                     ) : (
                         formData && (
-                            <form method="post" className="newsletter-signup" action="javascript:alert('success!');" enctype="multipart/form-data">
-                                <input type="hidden" name="action" value="getanewsletter_subscribe" />
+                            <form method="post" className="newsletter-signup" action="javascript:alert('success!');">
                                 {formData.form.first_name && (
-                                    <p>
-                                        <label htmlFor="id_first_name">{formData.form.first_name_label || __('First name', 'getanewsletter')}</label><br />
+                                    <div className='gan-newsletter-form--input-field'>
+                                        <label htmlFor="id_first_name">{formData.form.first_name_label || __('First name', 'getanewsletter')}</label>
                                         <input id="id_first_name" type="text" className="text" name="id_first_name" />
-                                    </p>
+                                    </div>
                                 )}
                                 {formData.form.last_name && (
-                                    <p>
-                                        <label htmlFor="id_last_name">{formData.form.last_name_label || __('Last name', 'getanewsletter')}</label><br />
+                                    <div className='gan-newsletter-form--input-field'>
+                                        <label htmlFor="id_last_name">{formData.form.last_name_label || __('Last name', 'getanewsletter')}</label>
                                         <input id="id_last_name" type="text" className="text" name="id_last_name" />
-                                    </p>
+                                    </div>
                                 )}
-                                <p>
-                                    <label htmlFor="id_email">{__('E-mail', 'getanewsletter')}</label><br />
-                                    <input id="id_email" type="text" className="text" name="id_email" />
-                                </p>
+                                <div className='gan-newsletter-form--input-field'>
+                                    <label htmlFor="id_email">{__('Email address', 'getanewsletter')}</label>
+                                    <input id="id_email" type="text" className="email" name="id_email" />
+                                </div>
                                 {formData.customAttributes.map(attribute => (
                                     formData.form.attributes.includes(attribute.code) && (
-                                        <p key={attribute.code}>
-                                            <label htmlFor={`attr_${attribute.code}`}>{attribute.name}</label><br />
+                                        <div className='gan-newsletter-form--input-field' key={attribute.code}>
+                                            <label htmlFor={`attr_${attribute.code}`}>{attribute.name}</label>
                                             <input id={`attr_${attribute.code}`} type="text" className="text" name={`attributes[${attribute.code}]`} />
-                                        </p>
+                                        </div>
                                     )
                                 ))}
-                                <p>
-                                    <input type="hidden" name="form_link" value={formData.form.form_link} id="id_form_link" />
-                                    <input type="hidden" name="key" value={formData.form.key} id="id_key" />
-                                    <Button type="submit">{formData.form.button_text || __('Subscribe', 'getanewsletter')}</Button>
-                                </p>
+                                <div class="gan-newsletter-form--button-container">
+                                    <button type="submit">{formData.form.button_text || __('Subscribe', 'getanewsletter')}</button>
+                                </div>
                             </form>
                         )
                     )}
