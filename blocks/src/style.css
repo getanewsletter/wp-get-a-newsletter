@@ -108,6 +108,7 @@
   color: var(--gan-button-text-color);
   height: var(--gan-input-height);
   font-size: var(--gan-font-size);
+  font-weight: 600;
   border-radius: var(--gan-border-radius);
 }
 

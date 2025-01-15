@@ -263,7 +263,7 @@ registerBlockType('gan/newsletter-form', {
                                     )
                                 ))}
                                 <div class="gan-newsletter-form--button-container">
-                                    <button type="submit">{formData.form.button_text || __('Subscribe', 'getanewsletter')}</button>
+                                    <button class="gan-newsletter-form--button" type="submit">{formData.form.button_text || __('Subscribe', 'getanewsletter')}</button>
                                 </div>
                             </form>
                         )
