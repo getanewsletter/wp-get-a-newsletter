@@ -1368,9 +1368,10 @@ function news_js_ajax()
             jQuery('.newsletter-signup').submit(function() {
                 var form = jQuery(this);
                 var data = form.serialize();
+                var inputs = form.find('input:not([type="hidden"])');
+                var submitButton = jQuery('.gan-newsletter-form--button');
                 var resultContainer = jQuery('<span></span>');
                 var resultWrapper = jQuery('.news-note');
-                var spinner = jQuery('.news-loading');
 
                 jQuery.ajax({
                     'type': 'POST',
@@ -1378,18 +1379,22 @@ function news_js_ajax()
                     'data': data,
                     'cache': false,
                     'beforeSend': function(message) {
-                        spinner.show();
+                        submitButton.addClass('loading');
+                        submitButton.attr('disabled', true);
                     },
                     'success': function(response) {
-                        spinner.hide();
+                        submitButton.removeClass('loading');
+                        submitButton.attr('disabled', false);
+                        inputs.val('');
+                        inputs.first().focus();
                         resultWrapper.append(
                             resultContainer.addClass('news-success')
                                 .removeClass('news-error')
                                 .html(response.message));
-                        jQuery('.newsletter-signup').hide();
                     },
                     'error': function(response) {
-                        spinner.hide();
+                        submitButton.removeClass('loading');
+                        submitButton.attr('disabled', false);
                         resultWrapper.append(
                             resultContainer.removeClass('news-success')
                                 .addClass('news-error')
@@ -1708,7 +1713,12 @@ function render_gan_block( $attributes ) {
         }
     }
 
-    $form_html .= '<div class="gan-newsletter-form--button-container"><button type="submit">' . esc_html( $form_data['form']['button_text'] ?? 'Subscribesss' ) . '</button></div>';
+    $form_html .= '<div class="gan-newsletter-form--button-container">';
+    $form_html .= '<button class="gan-newsletter-form--button" type="submit">';
+    $form_html .= '<span class="gan-newsletter-form--button-text">' . esc_html( $form_data['form']['button_text'] ?? 'Subscribe' ) . '</span>';
+    $form_html .= '<svg class="gan-newsletter-form--button-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M140,32V64a12,12,0,0,1-24,0V32a12,12,0,0,1,24,0Zm33.25,62.75a12,12,0,0,0,8.49-3.52L204.37,68.6a12,12,0,0,0-17-17L164.77,74.26a12,12,0,0,0,8.48,20.49ZM224,116H192a12,12,0,0,0,0,24h32a12,12,0,0,0,0-24Zm-42.26,48.77a12,12,0,1,0-17,17l22.63,22.63a12,12,0,0,0,17-17ZM128,180a12,12,0,0,0-12,12v32a12,12,0,0,0,24,0V192A12,12,0,0,0,128,180ZM74.26,164.77,51.63,187.4a12,12,0,0,0,17,17l22.63-22.63a12,12,0,1,0-17-17ZM76,128a12,12,0,0,0-12-12H32a12,12,0,0,0,0,24H64A12,12,0,0,0,76,128ZM68.6,51.63a12,12,0,1,0-17,17L74.26,91.23a12,12,0,0,0,17-17Z"></path></svg>';
+    $form_html .= '</button>';
+    $form_html .= '</div>';
     $form_html .= '</form>';
     $form_html .= '<div class="news-note"></div>';
     $form_html .= '</div>';
