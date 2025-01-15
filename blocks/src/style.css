@@ -97,9 +97,12 @@
   margin-top: 30px;
 }
 
-.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"] {
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"].gan-newsletter-form--button {
   all: unset;
   padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   background-color: var(--gan-button-background);
   color: var(--gan-button-text-color);
@@ -108,7 +111,47 @@
   border-radius: var(--gan-border-radius);
 }
 
-.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"]:focus,
-.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"]:hover {
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"].gan-newsletter-form--button .gan-newsletter-form--button-spinner {
+  position: absolute;
+  animation: spin 1s linear infinite;
+  visibility: hidden;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading state for the submit button */
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"].gan-newsletter-form--button.loading .gan-newsletter-form--button-text {
+  opacity: 0;
+}
+
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"].gan-newsletter-form--button.loading .gan-newsletter-form--button-spinner {
+  visibility: visible;
+}
+
+/* Hover, focus and disabled states */
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"].gan-newsletter-form--button:focus,
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"].gan-newsletter-form--button:hover {
   opacity: 0.8;
+}
+
+.gan-newsletter-form .newsletter-signup .gan-newsletter-form--button-container button[type="submit"].gan-newsletter-form--button:disabled {
+  opacity: .7;
+  cursor: default;
+}
+
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Validation messages
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-newsletter-form .news-note {
+  margin-top: 20px;
+  font-size: var(--gan-font-size);
 }
