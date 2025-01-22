@@ -20,27 +20,27 @@ window.addEventListener('load', function() {
         const requiredFields = [
             {
                 name: 'name',
-                label: 'Form name'
+                label: wp.i18n.__( 'Form name', 'getanewsletter' )
             },
             {
                 name: 'list',
-                label: 'List'
+                label: wp.i18n.__( 'List', 'getanewsletter' )
             },
             {
                 name: 'sender_id',
-                label: 'Sender'
+                label: wp.i18n.__( 'Sender', 'getanewsletter' )
             },
             {
                 name: 'confirmation_email_subject',
-                label: 'Confirmation email subject'
+                label: wp.i18n.__( 'Confirmation email subject', 'getanewsletter' )
             },
             {
                 name: 'confirmation_email_message',
-                label: 'Confirmation email message'
+                label: wp.i18n.__( 'Confirmation email message', 'getanewsletter' )
             },
             {
                 name: 'button_text',
-                label: 'Button text'
+                label: wp.i18n.__( 'Button text', 'getanewsletter' )
             }
         ];
 
@@ -61,7 +61,9 @@ window.addEventListener('load', function() {
             }
 
             if (!element.value.trim()) {
-                const error = createErrorMessage(`${field.label} is required.`);
+                const errorText = wp.i18n.sprintf(__('%s is required.', 'getanewsletter'), field.label);
+                const error = createErrorMessage(errorText);
+
                 if (element.tagName.toLowerCase() === 'select') {
                     element.parentElement.appendChild(error);
                 } else {
@@ -93,7 +95,8 @@ window.addEventListener('load', function() {
                 e.preventDefault();
                 const existingTopError = document.querySelector('.gan-settings-page > .notice');
                 if (!existingTopError) {
-                    const topError = createErrorMessage('Please fill in all required fields.');
+                    const errorText = wp.i18n.__('Please fill in all required fields.', 'getanewsletter');
+                    const topError = createErrorMessage(errorText);
                     topError.className = 'notice notice-error';
                     topError.style.margin = '20px 0';
                     form.parentElement.insertBefore(topError, form);
@@ -141,8 +144,21 @@ window.addEventListener('load', function() {
                     });
 
                     document.querySelector('.gan-result-message').innerHTML = `<div class="gan-success-message"></div>`;
-                    document.querySelector('.gan-result-message .gan-success-message').innerHTML = `<div class="gan-checkmark-container">` + checkmarkSVG + `</div>` + `<span>Your API token is active and working</span>`;
-                    document.querySelector('.gan-result-message').innerHTML += `<a class="button button-primary" href="/wp-admin/admin.php?page=newsletter_subscription_forms">Continue to forms</a>`;
+
+                    let successMessage = wp.i18n.__('Your API token is active and working', 'getanewsletter');
+                    console.log(successMessage);
+                    document.querySelector('.gan-result-message .gan-success-message').innerHTML = `
+                        <div class="gan-checkmark-container">${checkmarkSVG}</div>
+                        <span>${successMessage}</span>
+                    `;
+
+                    let continueText = wp.i18n.__('Continue to forms', 'getanewsletter');
+                    console.log(continueText);
+                    document.querySelector('.gan-result-message').innerHTML += `
+                        <a class="button button-primary" href="/wp-admin/admin.php?page=newsletter_subscription_forms">
+                            ${continueText}
+                        </a>
+                    `;
 
                     document.querySelector('.gan-onboarding-form').remove();
                 })
@@ -157,7 +173,7 @@ window.addEventListener('load', function() {
             let content = document.querySelector('.gan-support-info-content').innerText.trim();
             
             navigator.clipboard.writeText(content);
-            button.textContent = 'Copied!';
+            button.textContent = wp.i18n.__('Copied!', 'getanewsletter');
             
             setTimeout(() => {
                 button.textContent = originalText;

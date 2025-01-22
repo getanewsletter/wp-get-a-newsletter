@@ -20,7 +20,7 @@ registerBlockType('gan/newsletter-form', {
         },
         formTitle: {
             type: 'string',
-            default: 'Join our newsletter',
+            default: __('Join our newsletter', 'getanewsletter'),
         },
         isDescriptionEnabled: {
             type: 'boolean',
@@ -28,7 +28,7 @@ registerBlockType('gan/newsletter-form', {
         },
         formDescription: {
             type: 'string',
-            default: 'Get weekly access to our deals, tricks and tips',
+            default: __('Get weekly access to our deals, tricks and tips', 'getanewsletter'),
         },
         appearance: {
             type: 'string',
