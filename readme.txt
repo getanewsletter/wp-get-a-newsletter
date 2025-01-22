@@ -1,7 +1,7 @@
 === Get a Newsletter ===
 Tags: email, marketing, newsletter, subscription
 Requires at least: 5.2.0
-Stable tag: 3.3
+Stable tag: 4.0
 Tested up to: 6.7
 Requires PHP: 7.2
 License: GPLv2 or later
@@ -39,6 +39,11 @@ Signup required at (https://app.getanewsletter.com)
 
 
 == Changelog ==
+
+= 4.0 =
+Added Newsletter Form Gutenberg block
+Made the plugin translatable
+Added Ukrainian translation
 
 = 3.3 =
 Updated the design for the Settings-page
