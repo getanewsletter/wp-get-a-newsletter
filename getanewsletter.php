@@ -48,7 +48,7 @@ function gan_enqueue_admin_assets() {
 
 function newsletter_menu() {
     add_menu_page('Get a Newsletter', 'Get a Newsletter', 'administrator', 'newsletter', 'newsletter_options');
-    add_submenu_page('newsletter', __( 'Subscription forms', 'getanewsletter' ), __( 'Subscription forms', 'getanewsletter' ), 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
+    add_submenu_page('newsletter', __( 'Forms', 'getanewsletter' ), __( 'Forms', 'getanewsletter' ), 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
     remove_submenu_page('newsletter', 'newsletter');
     add_submenu_page('newsletter', __( 'Settings', 'getanewsletter' ), __( 'Settings', 'getanewsletter' ), 'administrator', 'newsletter', 'newsletter_options');
     add_submenu_page( 'newsletter', __( 'Support', 'getanewsletter' ), __( 'Support', 'getanewsletter' ), 'administrator', 'gan-support', 'render_gan_support_page' );
@@ -98,7 +98,7 @@ function newsletter_subscription_forms() {
             try {
                 if (isset($_GET['form_id'])) {
                     delete_subscription_form($_GET['form_id'], $news_pass);     
-                    set_newsletter_flash_message(__( 'Form has been deleted', 'getanewsletter' ), 'notice-success');
+                    set_newsletter_flash_message(__( 'The subscription form has been deleted', 'getanewsletter' ), 'notice-success');
                     wp_redirect('?page=newsletter_subscription_forms');
                     exit;
                 } else {
@@ -114,12 +114,12 @@ function newsletter_subscription_forms() {
                 try {
                     $result = create_subscription_form($news_pass, $_POST);
                     if (empty($result)) {
-                        set_newsletter_flash_message(__( 'The form has been created', 'getanewsletter' ), 'notice-success');
+                        set_newsletter_flash_message(__( 'The subscription form has been created', 'getanewsletter' ), 'notice-success');
                         wp_redirect('?page=newsletter_subscription_forms');
                         exit;
                     } else {
                         $errors_string = stringify_api_errors( $result );
-                        set_newsletter_flash_message(__( 'Please correct errors: ', 'getanewsletter' ) . $errors_string, 'notice-error');
+                        set_newsletter_flash_message(__( 'Please correct the errors below: ', 'getanewsletter' ) . $errors_string, 'notice-error');
                         set_session_data('newsletter_form_data', $_POST);
                         set_session_data('newsletter_form_errors', $result);
                         wp_redirect('?page=newsletter_subscription_forms&action=create');
@@ -146,12 +146,12 @@ function newsletter_subscription_forms() {
                 try {
                     $result = update_subscription_form($news_pass, $_POST, $form_id);
                     if (empty($result)) {
-                        set_newsletter_flash_message(__( 'The form has been updated', 'getanewsletter' ), 'notice-success');
+                        set_newsletter_flash_message(__( 'The subscription form has been updated', 'getanewsletter' ), 'notice-success');
                         wp_redirect('?page=newsletter_subscription_forms');
                         exit;
                     } else {
                         $errors_string = stringify_api_errors( $result );
-                        set_newsletter_flash_message(__( 'Please correct errors: ', 'getanewsletter' ) . $errors_string, 'notice-error');
+                        set_newsletter_flash_message(__( 'Please correct the errors below: ', 'getanewsletter' ) . $errors_string, 'notice-error');
                         set_session_data('newsletter_form_data', $_POST);
                         set_session_data('newsletter_form_errors', $result);
                         wp_redirect('?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id);
@@ -210,7 +210,7 @@ function transform_form_data($form_data) {
 function create_subscription_form($news_pass, $postdata) {
     $conn = new GAPI('', $news_pass);
     if (!$conn->check_login()) {
-        throw new \GetANewsletterException('Cannot connect to Get A Newsletter API');
+        throw new \GetANewsletterException('Unable to connect to the Get A Newsletter API.');
     }
 
     if ( ! check_admin_referer( 'newsletter-create-form' ) ) {
@@ -246,7 +246,7 @@ function create_subscription_form($news_pass, $postdata) {
 function update_subscription_form($news_pass, $postdata, $form_id) {
     $conn = new GAPI('', $news_pass);
     if (!$conn->check_login()) {
-        throw new \GetANewsletterException( __( 'Cannot connect to Get A Newsletter API', 'getanewsletter' ) );
+        throw new \GetANewsletterException( __( 'Unable to connect to the Get A Newsletter API.', 'getanewsletter' ) );
     }
 
     if ( ! check_admin_referer( 'newsletter-create-form' ) ) {
@@ -286,16 +286,16 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
     ?>
     <div class="wrap">
         <?php settings_errors('gan'); ?>
-        <h1 class="wp-heading-inline"><?php esc_html_e( 'Your subscription forms', 'getanewsletter' ); ?></h1>
+        <h1 class="wp-heading-inline"><?php esc_html_e( 'Forms', 'getanewsletter' ); ?></h1>
         <?php if ( $connectionSucceeded ): ?>
             <a href="?page=newsletter_subscription_forms&action=create" class="page-title-action">
-                <?php esc_html_e( 'Add New', 'getanewsletter' ); ?>
+                <?php esc_html_e( 'Add new form', 'getanewsletter' ); ?>
             </a>
         <?php endif; ?>
         <?php
         if (!$connectionSucceeded) {
             ?>
-            <h2 style="color: red"><?php esc_html_e( 'Cannot connect to Get A Newsletter API. Please verify your API Token', 'getanewsletter' ); ?></h2>
+            <h2 style="color: red"><?php esc_html_e( 'Unable to connect to the Get a Newsletter API. Please verify your API key', 'getanewsletter' ); ?></h2>
             <?php
         } elseif ($message = get_newsletter_flash_message()) {
             display_newsletter_flash_message($message);
@@ -305,7 +305,7 @@ function display_subscription_forms_list($connectionSucceeded, $forms) {
             <thead>
             <tr>
                 <th class="manage-column"><?php esc_html_e( 'Name', 'getanewsletter' ); ?></th>
-                <th class="manage-column"><?php esc_html_e( 'Lists', 'getanewsletter' ); ?></th>
+                <th class="manage-column"><?php esc_html_e( 'List', 'getanewsletter' ); ?></th>
                 <th class="manage-column"><?php esc_html_e( 'Shortcode', 'getanewsletter' ); ?></th>
                 <th class="manage-column"><?php esc_html_e( 'Actions', 'getanewsletter' ); ?></th>
             </tr>
@@ -345,7 +345,7 @@ function display_subscription_form($params) {
     </style>
     <div class="wrap gan-settings-page">
         <form method="post" action="<?php echo $form_id ? '?page=newsletter_subscription_forms&action=edit&form_id=' . $form_id . '&noheader=true' : '?page=newsletter_subscription_forms&action=create&noheader=true' ?>">
-            <h1><?php esc_html_e( 'Get a Newsletter - new form', 'getanewsletter' ); ?></h1>
+            <h1><?php esc_html_e( 'Add new form', 'getanewsletter' ); ?></h1>
             <?php
             if ($message = get_newsletter_flash_message()) {
                 display_newsletter_flash_message($message);
@@ -390,7 +390,7 @@ function display_subscription_form($params) {
             if (isset($attributes) && is_array($attributes) && !empty($attributes)) {
                 ?>
                 <div class="postbox" id="gan-settings-attributes">
-                    <div class="postbox-header"><h2 class="hndle"><?php _e( '3. Attributes fields', 'getanewsletter' ); ?></h2></div>
+                    <div class="postbox-header"><h2 class="hndle"><?php _e( '3. Attribute fields', 'getanewsletter' ); ?></h2></div>
                     <div class="inside">
                         <table class="form-table">
                             <?php
@@ -474,12 +474,7 @@ function display_subscription_form($params) {
                         <tr valign="top">
                             <th scope="row"><?php _e( 'Message', 'getanewsletter' ); ?></th>
                             <td>
-                                <textarea type="text" name="confirmation_email_message" style="width: 600px; height: 250px;">
-                                    <?php 
-                                    echo $currentFormData['confirmation_email_message'] ?? 
-                                    esc_html__("Hello! \n You have been added as a subscriber to ##list_name##. Before you can receive our newsletter, please confirm your subscription by clicking the following link: \n ##confirmation_link## \n Best regards, \n ##sendername## \n Ps. If you don't want our newsletter in the future, you can easily unsubscribe with the link provided in every newsletter.", 'getanewsletter')
-                                    ?>
-                                </textarea>
+                                <textarea type="text" name="confirmation_email_message" style="width: 600px; height: 250px;"><?php echo $currentFormData['confirmation_email_message'] ?? esc_html__("Hello!\n\nYou have been added as a subscriber to ##list_name##. Before you can receive our newsletter, please confirm your subscription by clicking the following link:\n\n##confirmation_link##\n\nBest regards,\n##sendername##\n\nPs. If you don't want our newsletter in the future, you can easily unsubscribe with the link provided in every newsletter.", 'getanewsletter')?></textarea>
                             </td>
                         </tr>
                     </table>
@@ -690,15 +685,15 @@ function display_api_key_form() {
                 <div class="gan-onboarding-step">
                     <div class="gan-onboarding-step-counter">2</div>
                     <div class="gan-onboarding-step-content">
-                        <h3><?php _e( 'Create an API token', 'getanewsletter' ); ?></h3>
+                        <h3><?php _e( 'Create an API key', 'getanewsletter' ); ?></h3>
                         <p>
                             <?php 
                                 echo sprintf(
                                     esc_html__(
-                                        'Once logged in, go to %s and create a new token.',
+                                        'Once logged in, go to %s and create a new API key.',
                                         'getanewsletter'
                                     ),
-                                    '<a href="https://app.getanewsletter.com/account/api">My Account -> API</a>'
+                                    '<a href="https://app.getanewsletter.com/account/api">'. esc_html__('My Account -> API', 'getanewsletter') .'</a>'
                                 );
                             ?>
                         </p>
@@ -709,14 +704,14 @@ function display_api_key_form() {
                 <div class="gan-onboarding-step">
                     <div class="gan-onboarding-step-counter">3</div>
                     <div class="gan-onboarding-step-content">
-                        <h3><?php esc_html_e( 'Add API token to authenticate', 'getanewsletter' ); ?></h3>
-                        <p><?php esc_html_e( 'Copy and paste the generated token below to authenticate.', 'getanewsletter' ); ?></p>
+                        <h3><?php esc_html_e( 'Add API key to authenticate', 'getanewsletter' ); ?></h3>
+                        <p><?php esc_html_e( 'Copy and paste the generated API key below to authenticate.', 'getanewsletter' ); ?></p>
                     </div>
                 </div>
 
                 <div class="gan-onboarding-form-container">
                     <form action="#" class="gan-onboarding-form">
-                        <label for="token"><?php esc_html_e( 'Your API token', 'getanewsletter' ); ?></label>
+                        <label for="token"><?php esc_html_e( 'Your API key', 'getanewsletter' ); ?></label>
                         <input type="password" name="token" id="token" required> 
                         <input type="submit" class="button button-primary" id="gan-submit-token-btn" value="<?php esc_html_e( 'Continue', 'getanewsletter' ); ?>">
                     </form>
@@ -753,13 +748,13 @@ function newsletter_options() {
 
     <form method="post" action="options.php?option_page=newsletter">
 
-        <h1><?php esc_html_e( 'Get a Newsletter Options', 'getanewsletter' ); ?></h1>
+        <h1><?php esc_html_e( 'Settings', 'getanewsletter' ); ?></h1>
 
         <?php wp_nonce_field('newsletter-options'); ?>
 
         <div class="postbox" id="gan-account-information">
             <div class="postbox-header">
-                <h2 class="hndle"><?php esc_html_e( 'API Token', 'getanewsletter' ); ?></h2>
+                <h2 class="hndle"><?php esc_html_e( 'API key', 'getanewsletter' ); ?></h2>
             </div>
 
             <div class="inside">
@@ -767,7 +762,7 @@ function newsletter_options() {
                     <?php 
                         echo sprintf(
                             esc_html__(
-                                'This is the API token you use to connect your Get a Newsletter account to this WordPress site. If you want to update the API token, login to your account and go to %s to generate a new one.',
+                                'Here is your API key for connecting your Get a Newsletter account to this WordPress site. To update the API key, log in to your account and go to %s to generate a new one.',
                                 'getanewsletter'
                             ),
                             '<a href="https://app.getanewsletter.com/account/api" target="_blank">My Account -> API</a>'
@@ -776,7 +771,7 @@ function newsletter_options() {
                 </p>
 
                 <div>
-                    <label class="gan-label-block" for="newsletter_pass"><?php _e( 'API Token', 'getanewsletter' ); ?></label>
+                    <label class="gan-label-block" for="newsletter_pass"><?php _e( 'API key', 'getanewsletter' ); ?></label>
                     <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" />
 
                     <div class="gan-result-message">
@@ -785,11 +780,11 @@ function newsletter_options() {
                                 <div class="gan-checkmark-container">
                                     <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 41.9375 8.625 C 41.273438 8.648438 40.664063 9 40.3125 9.5625 L 21.5 38.34375 L 9.3125 27.8125 C 8.789063 27.269531 8.003906 27.066406 7.28125 27.292969 C 6.5625 27.515625 6.027344 28.125 5.902344 28.867188 C 5.777344 29.613281 6.078125 30.363281 6.6875 30.8125 L 20.625 42.875 C 21.0625 43.246094 21.640625 43.410156 22.207031 43.328125 C 22.777344 43.242188 23.28125 42.917969 23.59375 42.4375 L 43.6875 11.75 C 44.117188 11.121094 44.152344 10.308594 43.78125 9.644531 C 43.410156 8.984375 42.695313 8.589844 41.9375 8.625 Z"/></svg>
                                 </div>
-                                <span><?php esc_html_e( 'Your API token is active and working', 'getanewsletter' ); ?></span>
+                                <span><?php esc_html_e( 'Your API key is active and working', 'getanewsletter' ); ?></span>
                             </div>
                         <?php else:  ?>
                             <div class="notice notice-error inline">
-                                <p><?php esc_html_e( 'Please, double check if the provided API key is correct', 'getanewsletter' ); ?></p>
+                                <p><?php esc_html_e( 'Invalid API key. Verify and re-enter the API key.', 'getanewsletter' ); ?></p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -803,7 +798,7 @@ function newsletter_options() {
             </div>
 
             <div class="inside">
-                <p><?php esc_html_e( "When creating popup forms in our tool we ask you to paste a universal code snippet in the &lt;head&gt; of your website. \n Using this plugin you can simply activate popup forms below.", 'getanewsletter' ); ?></p>
+                <p><?php esc_html_e( "When creating popup forms with our tool, we ask you to paste a universal code snippet into the ⁠<head> section of your website. With this plugin, you can easily enable your popup forms below.", 'getanewsletter' ); ?></p>
                 <label for="gan_enable_popup_forms">
                     <input id="gan_enable_popup_forms" type="checkbox" name="gan_enable_popup_forms" <?php echo get_option( 'gan_enable_popup_forms', false ) ? 'checked' : '' ?> />
                     <strong><?php esc_html_e( 'Enable popup forms', 'getanewsletter' ); ?></strong>
@@ -813,31 +808,31 @@ function newsletter_options() {
 
         <div class="postbox" id="gan-messages">
             <div class="postbox-header">
-                <h2 class="hndle"><?php esc_html_e( 'Messages', 'getanewsletter' ); ?></h2>
+                <h2 class="hndle"><?php esc_html_e( 'Submission feedback', 'getanewsletter' ); ?></h2>
             </div>
 
             <div class="inside">
-                <p><?php esc_html_e( 'Here you can enter friendly messages that will be displayed on user-end when they interact with the form.', 'getanewsletter' ); ?></p>
+                <p><?php esc_html_e( 'You can customize the messages shown to users when they interact with the form.', 'getanewsletter' ); ?></p>
                 <table class="form-table">
                     <tr valign="top">
-                        <th scope="row"><?php esc_html_e( 'Successfull submission:', 'getanewsletter' ); ?></th>
+                        <th scope="row"><?php esc_html_e( 'Successful submission:', 'getanewsletter' ); ?></th>
                         <td>
                             <input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /> <br>
-                            <span class="gan-input-description"><?php _e( 'When a user successfully enters their details this message will be displayed', 'getanewsletter' ); ?></span>
+                            <span class="gan-input-description"><?php _e( 'Displayed when a user successfully enters their details.', 'getanewsletter' ); ?></span>
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row"><?php esc_html_e( 'Message - 505:', 'getanewsletter' ); ?></th>
+                        <th scope="row"><?php esc_html_e( 'Invalid email:', 'getanewsletter' ); ?></th>
                         <td>
                             <input type="text" class="regular-text" name="newsletter_msg_505" value="<?php echo get_option('newsletter_msg_505', 'Invalid e-mail'); ?>" />
-                            <br/> <span class="gan-input-description"><?php _e( 'When a user enters an invalid email address this message will be displayed', 'getanewsletter' ); ?></span>
+                            <br/> <span class="gan-input-description"><?php _e( 'Displayed when a user enters an invalid email address', 'getanewsletter' ); ?></span>
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row"><?php esc_html_e( 'Message - 512:', 'getanewsletter' ); ?></th>
+                        <th scope="row"><?php esc_html_e( 'Existing subscription:', 'getanewsletter' ); ?></th>
                         <td>
                             <input type="text" class="regular-text" name="newsletter_msg_512" value="<?php echo get_option('newsletter_msg_512', 'Subscription already exists'); ?>" />
-                            <br/> <span class="gan-input-description"><?php _e( 'When a user enters an email address that already exists this message will be displayed', 'getanewsletter' ); ?></span>
+                            <br/> <span class="gan-input-description"><?php _e( 'Displayed when a user enters an email address that is already subscribed.', 'getanewsletter' ); ?></span>
                         </td>
                     </tr>
                 </table>
@@ -1027,51 +1022,57 @@ function gan_shortcode($atts) {
 
     ob_start();
     ?>
-    <form method="post" class="newsletter-signup" action="javascript:alert('success!');" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="getanewsletter_subscribe" />
+    <div class="gan-newsletter-widget">
+        <form method="post" class="newsletter-signup" action="javascript:alert('success!');" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="getanewsletter_subscribe" />
 
-        <?php if ($form['first_name']): ?>
-            <div>
-                <label for="id_first_name">
-                    <?php echo !empty($form['first_name_label']) ? $form['first_name_label'] : esc_html__('First name', 'getanewsletter'); ?>
-                </label><br />
-                <input id="id_first_name" type="text" class="text" name="id_first_name" />
-            </div>
-        <?php endif; ?>
-
-        <?php if ($form['last_name']): ?>
-            <div>
-                <label for="id_last_name">
-                    <?php echo !empty($form['last_name_label']) ? $form['last_name_label'] : esc_html__('Last name', 'getanewsletter'); ?>
-                </label><br />
-                <input id="id_last_name" type="text" class="text" name="id_last_name" />
-            </div>
-        <?php endif; ?>
-
-        <div>
-            <label for="id_email"><?php echo esc_html__('E-mail', 'getanewsletter'); ?></label><br />
-            <input id="id_email" type="email" class="text" name="id_email" />
-        </div>
-
-        <?php foreach ($customAttributes as $attribute): ?>
-            <?php if (in_array($attribute['code'], $form['attributes'])): ?>
+            <?php if ($form['first_name']): ?>
                 <div>
-                    <label for="attr_<?php echo $attribute['code']; ?>">
-                        <?php echo $attribute['name']; ?>
+                    <label for="id_first_name">
+                        <?php echo !empty($form['first_name_label']) ? $form['first_name_label'] : esc_html__('First name', 'getanewsletter'); ?>
                     </label><br />
-                    <input id="attr_<?php echo $attribute['code']; ?>" type="text" class="text" name="attributes[<?php echo $attribute['code']; ?>]" />
+                    <input id="id_first_name" type="text" class="text" name="id_first_name" />
                 </div>
             <?php endif; ?>
-        <?php endforeach; ?>
 
-        <div>
-            <input type="hidden" name="form_link" value="<?php echo $form['form_link']; ?>" id="id_form_link" />
-            <input type="hidden" name="key" value="<?php echo $form['key']; ?>" id="id_key" />
-            <input type="submit" value="<?php echo !empty($form['button_text']) ? esc_attr( $form['button_text'] ) : esc_html__('Subscribe', 'getanewsletter'); ?>" />
-            <img src="<?php echo WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), '', plugin_basename(__FILE__)) . 'loading.gif'; ?>" alt="loading" class="news-loading" />
-        </div>
-    </form>
-    <div class="news-note"></div>
+            <?php if ($form['last_name']): ?>
+                <div>
+                    <label for="id_last_name">
+                        <?php echo !empty($form['last_name_label']) ? $form['last_name_label'] : esc_html__('Last name', 'getanewsletter'); ?>
+                    </label><br />
+                    <input id="id_last_name" type="text" class="text" name="id_last_name" />
+                </div>
+            <?php endif; ?>
+
+            <div>
+                <label for="id_email"><?php echo esc_html__('E-mail', 'getanewsletter'); ?></label><br />
+                <input id="id_email" required type="email" class="text" name="id_email" />
+            </div>
+
+            <?php foreach ($customAttributes as $attribute): ?>
+                <?php if (in_array($attribute['code'], $form['attributes'])): ?>
+                    <div>
+                        <label for="attr_<?php echo $attribute['code']; ?>">
+                            <?php echo $attribute['name']; ?>
+                        </label><br />
+                        <input id="attr_<?php echo $attribute['code']; ?>" type="text" class="text" name="attributes[<?php echo $attribute['code']; ?>]" />
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+            <div>
+                <input type="hidden" name="form_link" value="<?php echo $form['form_link']; ?>" id="id_form_link" />
+                <input type="hidden" name="key" value="<?php echo $form['key']; ?>" id="id_key" />
+                <div class="gan-button-container">
+                    <button type="submit" class="gan-button-container--button">
+                        <span class="gan-button-container--button-text"><?php echo !empty($form['button_text']) ? esc_attr($form['button_text']) : esc_html__('Subscribe', 'getanewsletter'); ?></span>
+                        <svg class="gan-button-container--button-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M140,32V64a12,12,0,0,1-24,0V32a12,12,0,0,1,24,0Zm33.25,62.75a12,12,0,0,0,8.49-3.52L204.37,68.6a12,12,0,0,0-17-17L164.77,74.26a12,12,0,0,0,8.48,20.49ZM224,116H192a12,12,0,0,0,0,24h32a12,12,0,0,0,0-24Zm-42.26,48.77a12,12,0,1,0-17,17l22.63,22.63a12,12,0,0,0,17-17ZM128,180a12,12,0,0,0-12,12v32a12,12,0,0,0,24,0V192A12,12,0,0,0,128,180ZM74.26,164.77,51.63,187.4a12,12,0,0,0,17,17l22.63-22.63a12,12,0,1,0-17-17ZM76,128a12,12,0,0,0-12-12H32a12,12,0,0,0,0,24H64A12,12,0,0,0,76,128ZM68.6,51.63a12,12,0,1,0-17,17L74.26,91.23a12,12,0,0,0,17-17Z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="news-note"></div>
+        </form>
+    </div>
     <?php
 
     return ob_get_clean();
@@ -1092,9 +1093,12 @@ add_action( 'wp_ajax_newsletter_get_form', function() {
 /* WIDGET */
 
 class GetaNewsletter extends WP_Widget {
-    /** constructor */
     function __construct() {
-        parent::__construct(false, $name = 'Get a Newsletter');
+        $widget_ops = array(
+            'classname' => 'getanewsletter_widget',
+            'description' => __('Easily integrate Get a Newsletter forms into your WordPress site.', 'getanewsletter')
+        );
+        parent::__construct(false, __('Get a Newsletter', 'getanewsletter'), $widget_ops);
     }
 
     static function install() {
@@ -1147,7 +1151,7 @@ class GetaNewsletter extends WP_Widget {
                 <label for="id_email">
                     <?php echo esc_html__('E-mail', 'getanewsletter'); ?>
                 </label><br />
-                <input id="id_email" type="email" class="text" name="id_email" />
+                <input id="id_email" required type="email" class="text" name="id_email" />
             </div>
     
             <?php foreach ($customAttributes as $attribute): ?>
@@ -1166,12 +1170,12 @@ class GetaNewsletter extends WP_Widget {
             <div>
                 <input type="hidden" name="form_link" value="<?php echo $form_link; ?>" id="id_form_link" />
                 <input type="hidden" name="key" value="<?php echo $key; ?>" id="id_key" />
-                <button type="submit">
-                    <?php echo ($submittext != '' ? esc_html( $submittext ) : esc_html__('Subscribe', 'getanewsletter')); ?>
-                </button>
-                <img src="<?php echo WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), '', plugin_basename(__FILE__)) . 'loading.gif'; ?>" 
-                    alt="loading" 
-                    class="news-loading" />
+                <div class="gan-button-container">
+                    <button type="submit" class="gan-button-container--button">
+                        <span class="gan-button-container--button-text"><?php echo ($submittext != '' ? esc_html( $submittext ) : esc_html__('Subscribe', 'getanewsletter')); ?></span>
+                        <svg class="gan-button-container--button-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M140,32V64a12,12,0,0,1-24,0V32a12,12,0,0,1,24,0Zm33.25,62.75a12,12,0,0,0,8.49-3.52L204.37,68.6a12,12,0,0,0-17-17L164.77,74.26a12,12,0,0,0,8.48,20.49ZM224,116H192a12,12,0,0,0,0,24h32a12,12,0,0,0,0-24Zm-42.26,48.77a12,12,0,1,0-17,17l22.63,22.63a12,12,0,0,0,17-17ZM128,180a12,12,0,0,0-12,12v32a12,12,0,0,0,24,0V192A12,12,0,0,0,128,180ZM74.26,164.77,51.63,187.4a12,12,0,0,0,17,17l22.63-22.63a12,12,0,1,0-17-17ZM76,128a12,12,0,0,0-12-12H32a12,12,0,0,0,0,24H64A12,12,0,0,0,76,128ZM68.6,51.63a12,12,0,1,0-17,17L74.26,91.23a12,12,0,0,0,17-17Z"></path></svg>
+                    </button>
+                </div>
             </div>
     
             <div class="news-note"></div>
@@ -1426,7 +1430,7 @@ function news_js_ajax()
                 var form = jQuery(this);
                 var data = form.serialize();
                 var inputs = form.find('input:not([type="hidden"])');
-                var submitButton = form.find('.gan-newsletter-form--button');
+                var submitButton = form.find('.gan-button-container--button');
                 var resultContainer = jQuery('<span></span>');
                 var resultWrapper = form.find('.news-note');
 
@@ -1739,14 +1743,14 @@ function render_gan_block( $attributes ) {
 
     $form_data = $response['data'];
     $border_radius = $attributes['appearance'] === 'rounded' ? '8px' : '0';
-    $form_html = '<div class="gan-newsletter-form" style="--gan-border-radius: ' . esc_attr($border_radius) . '; --gan-field-background: ' . esc_attr($attributes['fieldBackground']) . '; --gan-field-border: ' . esc_attr($attributes['fieldBorder']) . '; --gan-label-color: ' . esc_attr($attributes['labelColor']) . '; --gan-button-background: ' . esc_attr($attributes['buttonBackground']) . '; --gan-button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
+    $form_html = '<div class="gan-block-form" style="--gan-border-radius: ' . esc_attr($border_radius) . '; --gan-field-background: ' . esc_attr($attributes['fieldBackground']) . '; --gan-field-border: ' . esc_attr($attributes['fieldBorder']) . '; --gan-label-color: ' . esc_attr($attributes['labelColor']) . '; --gan-button-background: ' . esc_attr($attributes['buttonBackground']) . '; --gan-button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
 
     if ( $attributes['isTitleEnabled'] ) {
-        $form_html .= '<h2 class="gan-newsletter-form--title">' . esc_html( $attributes['formTitle'] ) . '</h2>';
+        $form_html .= '<h2 class="gan-block-form--title">' . esc_html( $attributes['formTitle'] ) . '</h2>';
     }
 
     if ( $attributes['isDescriptionEnabled'] ) {
-        $form_html .= '<p class="gan-newsletter-form--description">' . esc_html( $attributes['formDescription'] ) . '</p>';
+        $form_html .= '<p class="gan-block-form--description">' . esc_html( $attributes['formDescription'] ) . '</p>';
     }
 
     $form_html .= '<form method="post" class="newsletter-signup" enctype="multipart/form-data">';
@@ -1755,29 +1759,29 @@ function render_gan_block( $attributes ) {
     $form_html .= '<input type="hidden" name="action" value="getanewsletter_subscribe" />';
 
     if (!empty($form_data['form']['first_name'])) {
-        $form_html .= '<div class="gan-newsletter-form--input-field"><label for="id_first_name">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : esc_html__( 'First name', 'getanewsletter' ) ) ) . '</label>';
+        $form_html .= '<div class="gan-block-form--input-field"><label for="id_first_name">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : esc_html__( 'First name', 'getanewsletter' ) ) ) . '</label>';
         $form_html .= '<input id="id_first_name" type="text" name="id_first_name" /></div>';
     }
 
     if (!empty($form_data['form']['last_name'])) {
-        $form_html .= '<div class="gan-newsletter-form--input-field"><label for="id_last_name">' . esc_html( ( strlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : esc_html__( 'Last name', 'getanewsletter' ) ) ) . '</label>';
+        $form_html .= '<div class="gan-block-form--input-field"><label for="id_last_name">' . esc_html( ( strlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : esc_html__( 'Last name', 'getanewsletter' ) ) ) . '</label>';
         $form_html .= '<input id="id_last_name" type="text" name="id_last_name" /></div>';
     }
 
-    $form_html .= '<div class="gan-newsletter-form--input-field"><label for="id_email">Email address</label>';
+    $form_html .= '<div class="gan-block-form--input-field"><label for="id_email">Email address</label>';
     $form_html .= '<input id="id_email" required type="email" name="id_email" /></div>';
 
     foreach ( $form_data['customAttributes'] as $attribute ) {
         if ( in_array( $attribute['code'], $form_data['form']['attributes'], true ) ) {
-            $form_html .= '<div class="gan-newsletter-form--input-field"><label for="attr_' . esc_attr( $attribute['code'] ) . '">' . esc_html( $attribute['name'] ) . '</label>';
+            $form_html .= '<div class="gan-block-form--input-field"><label for="attr_' . esc_attr( $attribute['code'] ) . '">' . esc_html( $attribute['name'] ) . '</label>';
             $form_html .= '<input id="attr_' . esc_attr( $attribute['code'] ) . '" type="text" name="attributes[' . esc_attr( $attribute['code'] ) . ']" /></div>';
         }
     }
 
-    $form_html .= '<div class="gan-newsletter-form--button-container">';
-    $form_html .= '<button class="gan-newsletter-form--button" type="submit">';
-    $form_html .= '<span class="gan-newsletter-form--button-text">' . esc_html( $form_data['form']['button_text'] ?? esc_html__( 'Subscribe', 'getanewsletter' ) ) . '</span>';
-    $form_html .= '<svg class="gan-newsletter-form--button-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M140,32V64a12,12,0,0,1-24,0V32a12,12,0,0,1,24,0Zm33.25,62.75a12,12,0,0,0,8.49-3.52L204.37,68.6a12,12,0,0,0-17-17L164.77,74.26a12,12,0,0,0,8.48,20.49ZM224,116H192a12,12,0,0,0,0,24h32a12,12,0,0,0,0-24Zm-42.26,48.77a12,12,0,1,0-17,17l22.63,22.63a12,12,0,0,0,17-17ZM128,180a12,12,0,0,0-12,12v32a12,12,0,0,0,24,0V192A12,12,0,0,0,128,180ZM74.26,164.77,51.63,187.4a12,12,0,0,0,17,17l22.63-22.63a12,12,0,1,0-17-17ZM76,128a12,12,0,0,0-12-12H32a12,12,0,0,0,0,24H64A12,12,0,0,0,76,128ZM68.6,51.63a12,12,0,1,0-17,17L74.26,91.23a12,12,0,0,0,17-17Z"></path></svg>';
+    $form_html .= '<div class="gan-button-container">';
+    $form_html .= '<button class="gan-button-container--button" type="submit">';
+    $form_html .= '<span class="gan-button-container--button-text">' . esc_html( $form_data['form']['button_text'] ?? esc_html__( 'Subscribe', 'getanewsletter' ) ) . '</span>';
+    $form_html .= '<svg class="gan-button-container--button-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M140,32V64a12,12,0,0,1-24,0V32a12,12,0,0,1,24,0Zm33.25,62.75a12,12,0,0,0,8.49-3.52L204.37,68.6a12,12,0,0,0-17-17L164.77,74.26a12,12,0,0,0,8.48,20.49ZM224,116H192a12,12,0,0,0,0,24h32a12,12,0,0,0,0-24Zm-42.26,48.77a12,12,0,1,0-17,17l22.63,22.63a12,12,0,0,0,17-17ZM128,180a12,12,0,0,0-12,12v32a12,12,0,0,0,24,0V192A12,12,0,0,0,128,180ZM74.26,164.77,51.63,187.4a12,12,0,0,0,17,17l22.63-22.63a12,12,0,1,0-17-17ZM76,128a12,12,0,0,0-12-12H32a12,12,0,0,0,0,24H64A12,12,0,0,0,76,128ZM68.6,51.63a12,12,0,1,0-17,17L74.26,91.23a12,12,0,0,0,17-17Z"></path></svg>';
     $form_html .= '</button>';
     $form_html .= '</div>';
     $form_html .= '<div class="news-note"></div>';

@@ -76,7 +76,9 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
             if($response['status'] == 201) {
                 $response['message'] = get_option('newsletter_msg_success');
             } else {
-                $response['message'] = __('An error has occured', 'getanewsletter');
+                $response['message'] = __('An unknown error has occurred. Please try again later.', 'getanewsletter');
+                // error_log('GetANewsletter API Error - Status: ' . $response['status']);
+                // error_log('GetANewsletter API Response: ' . print_r($request, true));
             }
         }
 
