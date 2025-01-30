@@ -57,9 +57,13 @@ registerBlockType('gan/newsletter-form', {
         errorMessage: {
             'type': 'string',
             'default': ''
+        },
+        uniqueId: {
+            type: 'string',
+            default: ''
         }
     },
-    edit: ({ attributes, setAttributes }) => {
+    edit: ({ attributes, setAttributes, clientId }) => {
         const [forms, setForms] = useState([]);
         const [formData, setFormData] = useState(null);
         const [isLoadingForms, setIsLoadingForms] = useState(true);
@@ -99,7 +103,7 @@ registerBlockType('gan/newsletter-form', {
         }, [attributes.formId]);
 
         useEffect(() => {
-            const blockElement = document.querySelector('.gan-block-form');
+            const blockElement = document.querySelector(`.gan-block-form-${attributes.uniqueId}`);
             if (blockElement) {
                 blockElement.style.setProperty('--gan-border-radius', attributes.appearance === 'rounded' ? '8px' : '0');
                 blockElement.style.setProperty('--gan-field-background', attributes.fieldBackground);
@@ -108,7 +112,11 @@ registerBlockType('gan/newsletter-form', {
                 blockElement.style.setProperty('--gan-button-background', attributes.buttonBackground);
                 blockElement.style.setProperty('--gan-button-text-color', attributes.buttonTextColor);
             }
-        }, [attributes.appearance, attributes.fieldBackground, attributes.fieldBorder, attributes.labelColor, attributes.buttonBackground, attributes.buttonTextColor]);
+        }, [attributes.appearance, attributes.fieldBackground, attributes.fieldBorder, attributes.labelColor, attributes.buttonBackground, attributes.buttonTextColor, attributes.uniqueId]);
+
+        useEffect(() => {
+            setAttributes({ uniqueId: clientId });
+        }, [clientId]);
 
         const handleFormChange = (formId) => {
             setAttributes({ formId });
@@ -201,7 +209,7 @@ registerBlockType('gan/newsletter-form', {
                         ]}
                     />
                 </InspectorControls>
-                <div className="gan-block-form">
+                <div className={`gan-block-form gan-block-form-${attributes.uniqueId}`}>
                     {attributes.errorMessage && (
                         <div className="error-message">
                             {attributes.errorMessage}

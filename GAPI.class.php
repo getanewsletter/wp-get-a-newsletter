@@ -685,7 +685,7 @@ class GAPI
      */
     function attribute_listing()
     {
-        $ok = $this->call_api('GET', 'attributes/');
+        $ok = $this->call_api('GET', 'attributes/?paginate_by=100');
         if ($ok) {
             $this->result = $this->body['results'];
 

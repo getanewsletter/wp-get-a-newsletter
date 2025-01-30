@@ -1680,7 +1680,7 @@ function gan_register_blocks() {
             ),
             'buttonTextColor' => array(
                 'type' => 'string',
-                'default' => '#000000',
+                'default' => '#ffffff',
             ),
         ),
     ) );
@@ -1739,11 +1739,12 @@ function render_gan_block( $attributes ) {
             $render_error_text = __( 'This element cannot be rendered at the moment.', 'getanewsletter' );
             return '<p>' . esc_html( $render_error_text ) . '</p>';
         }
-    } 
+    }
 
     $form_data = $response['data'];
     $border_radius = $attributes['appearance'] === 'rounded' ? '8px' : '0';
-    $form_html = '<div class="gan-block-form" style="--gan-border-radius: ' . esc_attr($border_radius) . '; --gan-field-background: ' . esc_attr($attributes['fieldBackground']) . '; --gan-field-border: ' . esc_attr($attributes['fieldBorder']) . '; --gan-label-color: ' . esc_attr($attributes['labelColor']) . '; --gan-button-background: ' . esc_attr($attributes['buttonBackground']) . '; --gan-button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
+
+    $form_html = '<div class="gan-block-form gan-block-form-' . esc_attr($attributes['uniqueId']) . '" style="--gan-border-radius: ' . esc_attr($border_radius) . '; --gan-field-background: ' . esc_attr($attributes['fieldBackground']) . '; --gan-field-border: ' . esc_attr($attributes['fieldBorder']) . '; --gan-label-color: ' . esc_attr($attributes['labelColor']) . '; --gan-button-background: ' . esc_attr($attributes['buttonBackground']) . '; --gan-button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
 
     if ( $attributes['isTitleEnabled'] ) {
         $form_html .= '<h2 class="gan-block-form--title">' . esc_html( $attributes['formTitle'] ) . '</h2>';
