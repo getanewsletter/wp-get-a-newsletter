@@ -1730,6 +1730,8 @@ function render_gan_block( $attributes ) {
     }
 
     $form_id = esc_attr( $attributes['formId'] );
+    $gutenberg_unique_id = $attributes['uniqueId'];
+
     $response = gan_block_get_subscription_form( $form_id );
 
     if ( ! isset( $response['success']) || $response['success'] === false || empty( $response['data'] ) ) {
@@ -1744,7 +1746,13 @@ function render_gan_block( $attributes ) {
     $form_data = $response['data'];
     $border_radius = $attributes['appearance'] === 'rounded' ? '8px' : '0';
 
-    $form_html = '<div class="gan-block-form gan-block-form-' . esc_attr($attributes['uniqueId']) . '" style="--gan-border-radius: ' . esc_attr($border_radius) . '; --gan-field-background: ' . esc_attr($attributes['fieldBackground']) . '; --gan-field-border: ' . esc_attr($attributes['fieldBorder']) . '; --gan-label-color: ' . esc_attr($attributes['labelColor']) . '; --gan-button-background: ' . esc_attr($attributes['buttonBackground']) . '; --gan-button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
+    $classname = 'gan-block-form';
+
+    if ( isset( $gutenberg_unique_id ) && strlen( $gutenberg_unique_id ) > 0 ) {
+        $classname .= ' gan-block-form-' . $gutenberg_unique_id;
+    }
+
+    $form_html = '<div class="' . esc_attr( $classname ) . '" style="--gan-border-radius: ' . esc_attr($border_radius) . '; --gan-field-background: ' . esc_attr($attributes['fieldBackground']) . '; --gan-field-border: ' . esc_attr($attributes['fieldBorder']) . '; --gan-label-color: ' . esc_attr($attributes['labelColor']) . '; --gan-button-background: ' . esc_attr($attributes['buttonBackground']) . '; --gan-button-text-color: ' . esc_attr($attributes['buttonTextColor']) . ';">';
 
     if ( $attributes['isTitleEnabled'] ) {
         $form_html .= '<h2 class="gan-block-form--title">' . esc_html( $attributes['formTitle'] ) . '</h2>';
