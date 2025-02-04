@@ -245,35 +245,35 @@ registerBlockType('gan/newsletter-form', {
                         <Spinner />
                     ) : (
                         formData && (
-                            <form method="post" className="newsletter-signup" action="javascript:alert('success!');">
-                                {formData.form.first_name && (
-                                    <div className='gan-block-form--input-field'>
-                                        <label htmlFor="id_first_name">{formData.form.first_name_label || __('First name', 'getanewsletter')}</label>
-                                        <input id="id_first_name" type="text" className="text" name="id_first_name" />
-                                    </div>
-                                )}
-                                {formData.form.last_name && (
-                                    <div className='gan-block-form--input-field'>
-                                        <label htmlFor="id_last_name">{formData.form.last_name_label || __('Last name', 'getanewsletter')}</label>
-                                        <input id="id_last_name" type="text" className="text" name="id_last_name" />
-                                    </div>
-                                )}
+                        <form method="post" className="newsletter-signup" action="javascript:alert('success!');">
+                            {formData.form.first_name && (
                                 <div className='gan-block-form--input-field'>
-                                    <label htmlFor="id_email">{__('Email address', 'getanewsletter')}</label>
-                                    <input id="id_email" type="text" className="email" name="id_email" />
+                                    <label htmlFor={`id_first_name_${clientId}`}>{formData.form.first_name_label || __('First name', 'getanewsletter')}</label>
+                                    <input id={`id_first_name_${clientId}`} type="text" className="text" name="id_first_name" />
                                 </div>
-                                {formData.customAttributes.map(attribute => (
-                                    formData.form.attributes.includes(attribute.code) && (
-                                        <div className='gan-block-form--input-field' key={attribute.code}>
-                                            <label htmlFor={`attr_${attribute.code}`}>{attribute.name}</label>
-                                            <input id={`attr_${attribute.code}`} type="text" className="text" name={`attributes[${attribute.code}]`} />
-                                        </div>
-                                    )
-                                ))}
-                                <div class="gan-button-container">
-                                    <button class="gan-button-container--button" type="submit">{formData.form.button_text || __('Subscribe', 'getanewsletter')}</button>
+                            )}
+                            {formData.form.last_name && (
+                                <div className='gan-block-form--input-field'>
+                                    <label htmlFor={`id_last_name_${clientId}`}>{formData.form.last_name_label || __('Last name', 'getanewsletter')}</label>
+                                    <input id={`id_last_name_${clientId}`} type="text" className="text" name="id_last_name" />
                                 </div>
-                            </form>
+                            )}
+                            <div className='gan-block-form--input-field'>
+                                <label htmlFor={`id_email_${clientId}`}>{__('Email address', 'getanewsletter')}</label>
+                                <input id={`id_email_${clientId}`} type="text" className="email" name="id_email" />
+                            </div>
+                            {formData.customAttributes.map(attribute => (
+                                formData.form.attributes.includes(attribute.code) && (
+                                    <div className='gan-block-form--input-field' key={attribute.code}>
+                                        <label htmlFor={`attr_${attribute.code}_${clientId}`}>{attribute.name}</label>
+                                        <input id={`attr_${attribute.code}_${clientId}`} type="text" className="text" name={`attributes[${attribute.code}]`} />
+                                    </div>
+                                )
+                            ))}
+                            <div className="gan-button-container">
+                                <button className="gan-button-container--button" type="submit">{formData.form.button_text || __('Subscribe', 'getanewsletter')}</button>
+                            </div>
+                        </form>
                         )
                     )}
                     <div className="news-note"></div>

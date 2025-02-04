@@ -1019,6 +1019,7 @@ function gan_shortcode($atts) {
 
     $form = get_subscription_form($news_pass, $a['id']);
     $customAttributes = get_subscription_attributes($news_pass);
+    $unique_id = uniqid() . bin2hex(random_bytes(5));
 
     ob_start();
     ?>
@@ -1028,34 +1029,34 @@ function gan_shortcode($atts) {
 
             <?php if ($form['first_name']): ?>
                 <div>
-                    <label for="id_first_name">
+                    <label for="id_first_name_<?php echo esc_attr( $unique_id ); ?>">
                         <?php echo !empty($form['first_name_label']) ? $form['first_name_label'] : esc_html__('First name', 'getanewsletter'); ?>
                     </label><br />
-                    <input id="id_first_name" type="text" class="text" name="id_first_name" />
+                    <input id="id_first_name_<?php echo esc_attr( $unique_id ); ?>" type="text" class="text" name="id_first_name" />
                 </div>
             <?php endif; ?>
 
             <?php if ($form['last_name']): ?>
                 <div>
-                    <label for="id_last_name">
+                    <label for="id_last_name_<?php echo esc_attr( $unique_id ); ?>">
                         <?php echo !empty($form['last_name_label']) ? $form['last_name_label'] : esc_html__('Last name', 'getanewsletter'); ?>
                     </label><br />
-                    <input id="id_last_name" type="text" class="text" name="id_last_name" />
+                    <input id="id_last_name_<?php echo esc_attr( $unique_id ); ?>" type="text" class="text" name="id_last_name" />
                 </div>
             <?php endif; ?>
 
             <div>
-                <label for="id_email"><?php echo esc_html__('E-mail', 'getanewsletter'); ?></label><br />
-                <input id="id_email" required type="email" class="text" name="id_email" />
+                <label for="id_email_<?php echo esc_attr( $unique_id ); ?>"><?php echo esc_html__('E-mail', 'getanewsletter'); ?></label><br />
+                <input id="id_email_<?php echo esc_attr( $unique_id ); ?>" required type="email" class="text" name="id_email" />
             </div>
 
             <?php foreach ($customAttributes as $attribute): ?>
                 <?php if (in_array($attribute['code'], $form['attributes'])): ?>
                     <div>
-                        <label for="attr_<?php echo $attribute['code']; ?>">
+                        <label for="attr_<?php echo $attribute['code']; ?>_<?php echo esc_attr( $unique_id ); ?>">
                             <?php echo $attribute['name']; ?>
                         </label><br />
-                        <input id="attr_<?php echo $attribute['code']; ?>" type="text" class="text" name="attributes[<?php echo $attribute['code']; ?>]" />
+                        <input id="attr_<?php echo $attribute['code']; ?>_<?php echo esc_attr( $unique_id ); ?>" type="text" class="text" name="attributes[<?php echo $attribute['code']; ?>]" />
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>
@@ -1118,6 +1119,7 @@ class GetaNewsletter extends WP_Widget {
         $submittext = esc_attr(empty($instance['submittext']) ? "" : $instance['submittext']);
     
         $customAttributes = get_subscription_attributes(get_option('newsletter_pass'));
+        $unique_id = uniqid() . bin2hex(random_bytes(5));
     
         ?>
         <?php echo $before_widget; ?>
@@ -1131,27 +1133,27 @@ class GetaNewsletter extends WP_Widget {
     
             <?php if ($fname): ?>
                 <div>
-                    <label for="id_first_name">
+                    <label for="id_first_name_<?php echo esc_attr( $unique_id ); ?>">
                         <?php echo !empty($fnametxt) ? $fnametxt : esc_html__('First name', 'getanewsletter'); ?>
                     </label><br />
-                    <input id="id_first_name" type="text" class="text" name="id_first_name" />
+                    <input id="id_first_name_<?php echo esc_attr( $unique_id ); ?>" type="text" class="text" name="id_first_name" />
                 </div>
             <?php endif; ?>
     
             <?php if ($lname): ?>
                 <div>
-                    <label for="id_last_name">
+                    <label for="id_last_name_<?php echo esc_attr( $unique_id ); ?>">
                         <?php echo !empty($lnametxt) ? $lnametxt : esc_html__('Last name', 'getanewsletter'); ?>
                     </label><br />
-                    <input id="id_last_name" type="text" class="text" name="id_last_name" />
+                    <input id="id_last_name_<?php echo esc_attr( $unique_id ); ?>" type="text" class="text" name="id_last_name" />
                 </div>
             <?php endif; ?>
     
             <div>
-                <label for="id_email">
+                <label for="id_email_<?php echo esc_attr( $unique_id ); ?>">
                     <?php echo esc_html__('E-mail', 'getanewsletter'); ?>
                 </label><br />
-                <input id="id_email" required type="email" class="text" name="id_email" />
+                <input id="id_email_<?php echo esc_attr( $unique_id ); ?>" required type="email" class="text" name="id_email" />
             </div>
     
             <?php foreach ($customAttributes as $attribute): ?>
@@ -1160,10 +1162,10 @@ class GetaNewsletter extends WP_Widget {
                 <?php endif; ?>
     
                 <div>
-                    <label for="attr_<?php echo $attribute['code']; ?>">
+                    <label for="attr_<?php echo $attribute['code']; ?>_<?php echo esc_attr( $unique_id ); ?>">
                         <?php echo $attribute['name']; ?>
                     </label><br />
-                    <input id="attr_<?php echo $attribute['code']; ?>" type="text" class="text" name="attributes[<?php echo $attribute['code']; ?>]" />
+                    <input id="attr_<?php echo $attribute['code']; ?>_<?php echo esc_attr( $unique_id ); ?>" type="text" class="text" name="attributes[<?php echo $attribute['code']; ?>]" />
                 </div>
             <?php endforeach; ?>
     
@@ -1768,22 +1770,22 @@ function render_gan_block( $attributes ) {
     $form_html .= '<input type="hidden" name="action" value="getanewsletter_subscribe" />';
 
     if (!empty($form_data['form']['first_name'])) {
-        $form_html .= '<div class="gan-block-form--input-field"><label for="id_first_name">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : esc_html__( 'First name', 'getanewsletter' ) ) ) . '</label>';
-        $form_html .= '<input id="id_first_name" type="text" name="id_first_name" /></div>';
+        $form_html .= '<div class="gan-block-form--input-field"><label for="id_first_name_' . esc_attr($gutenberg_unique_id) . '">' . esc_html( ( strlen( $form_data['form']['first_name_label'] ) > 0 ? $form_data['form']['first_name_label'] : esc_html__( 'First name', 'getanewsletter' ) ) ) . '</label>';
+        $form_html .= '<input id="id_first_name_' . esc_attr($gutenberg_unique_id) . '" type="text" name="id_first_name" /></div>';
     }
 
     if (!empty($form_data['form']['last_name'])) {
-        $form_html .= '<div class="gan-block-form--input-field"><label for="id_last_name">' . esc_html( ( strlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : esc_html__( 'Last name', 'getanewsletter' ) ) ) . '</label>';
-        $form_html .= '<input id="id_last_name" type="text" name="id_last_name" /></div>';
+        $form_html .= '<div class="gan-block-form--input-field"><label for="id_last_name_' . esc_attr($gutenberg_unique_id) . '">' . esc_html( ( strlen( $form_data['form']['last_name_label'] ) > 0 ? $form_data['form']['last_name_label'] : esc_html__( 'Last name', 'getanewsletter' ) ) ) . '</label>';
+        $form_html .= '<input id="id_last_name_' . esc_attr($gutenberg_unique_id) . '" type="text" name="id_last_name" /></div>';
     }
 
-    $form_html .= '<div class="gan-block-form--input-field"><label for="id_email">Email address</label>';
-    $form_html .= '<input id="id_email" required type="email" name="id_email" /></div>';
+    $form_html .= '<div class="gan-block-form--input-field"><label for="id_email_' . esc_attr($gutenberg_unique_id) . '">Email address</label>';
+    $form_html .= '<input id="id_email_' . esc_attr($gutenberg_unique_id) . '" required type="email" name="id_email" /></div>';
 
     foreach ( $form_data['customAttributes'] as $attribute ) {
         if ( in_array( $attribute['code'], $form_data['form']['attributes'], true ) ) {
-            $form_html .= '<div class="gan-block-form--input-field"><label for="attr_' . esc_attr( $attribute['code'] ) . '">' . esc_html( $attribute['name'] ) . '</label>';
-            $form_html .= '<input id="attr_' . esc_attr( $attribute['code'] ) . '" type="text" name="attributes[' . esc_attr( $attribute['code'] ) . ']" /></div>';
+            $form_html .= '<div class="gan-block-form--input-field"><label for="attr_' . esc_attr( $attribute['code'] ) . '_' . esc_attr($gutenberg_unique_id) . '">' . esc_html( $attribute['name'] ) . '</label>';
+            $form_html .= '<input id="attr_' . esc_attr( $attribute['code'] ) . '_' . esc_attr($gutenberg_unique_id) . '" type="text" name="attributes[' . esc_attr( $attribute['code'] ) . ']" /></div>';
         }
     }
 
