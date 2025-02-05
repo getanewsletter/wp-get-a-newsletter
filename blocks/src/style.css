@@ -9,7 +9,6 @@
   --gan-font-size: 16px;
 }
 
-
 /* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
    Layout, title and description
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -36,7 +35,6 @@
   font-weight: 400;
 }
 
-
 /* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
    Input field
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -57,7 +55,6 @@
   cursor: default;
   user-select: none;
 }
-
 
 /* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
    Inputs
@@ -81,13 +78,11 @@
   font-size: var(--gan-font-size);
 }
 
-
 .gan-block-form .newsletter-signup input[type="text"]:focus,
 .gan-block-form .newsletter-signup input[type="email"]:focus {
   outline: 1px solid var(--gan-button-background);
   border-color: var(--gan-button-background);
 }
-
 
 /* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
    Submit button
@@ -97,7 +92,10 @@
   margin-top: 30px;
 }
 
-.gan-block-form .newsletter-signup .gan-button-container button[type="submit"].gan-button-container--button {
+.gan-block-form
+  .newsletter-signup
+  .gan-button-container
+  button[type="submit"].gan-button-container--button {
   all: unset;
   padding: 0 20px;
   display: flex;
@@ -112,6 +110,20 @@
   border-radius: var(--gan-border-radius);
 }
 
+.gan-block-form
+  .newsletter-signup
+  .gan-button-container
+  button[type="submit"].gan-button-container--button:hover {
+  opacity: 0.8;
+}
+
+.gan-block-form
+  .newsletter-signup
+  .gan-button-container
+  button[type="submit"].gan-button-container--button:focus-visible {
+  outline: 2px solid var(--gan-button-background);
+  outline-offset: 2px;
+}
 
 /* 
 The styles below applies to all form types – block, shortcode and widget – in order to
@@ -123,7 +135,8 @@ button[type="submit"].gan-button-container--button {
   align-items: center;
 }
 
-button[type="submit"].gan-button-container--button .gan-button-container--button-spinner {
+button[type="submit"].gan-button-container--button
+  .gan-button-container--button-spinner {
   position: absolute;
   animation: spin 1s linear infinite;
   visibility: hidden;
@@ -139,25 +152,20 @@ button[type="submit"].gan-button-container--button .gan-button-container--button
 }
 
 /* Loading state for the submit button */
-button[type="submit"].gan-button-container--button.loading .gan-button-container--button-text {
+button[type="submit"].gan-button-container--button.loading
+  .gan-button-container--button-text {
   opacity: 0;
 }
 
-button[type="submit"].gan-button-container--button.loading .gan-button-container--button-spinner {
+button[type="submit"].gan-button-container--button.loading
+  .gan-button-container--button-spinner {
   visibility: visible;
 }
 
-/* Hover, focus and disabled states */
-button[type="submit"].gan-button-container--button:focus,
-button[type="submit"].gan-button-container--button:hover {
-  opacity: 0.8;
-}
-
 button[type="submit"].gan-button-container--button:disabled {
-  opacity: .7;
+  opacity: 0.7;
   cursor: default;
 }
-
 
 /* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
    Validation messages
