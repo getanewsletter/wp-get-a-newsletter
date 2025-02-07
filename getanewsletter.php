@@ -1650,7 +1650,7 @@ function gan_register_blocks() {
             ),
             'formTitle' => array(
                 'type' => 'string',
-                'default' => 'Join our newsletter',
+                'default' => __('Join our newsletter', 'getanewsletter'),
             ),
             'isDescriptionEnabled' => array(
                 'type' => 'boolean',
@@ -1658,7 +1658,7 @@ function gan_register_blocks() {
             ),
             'formDescription' => array(
                 'type' => 'string',
-                'default' => 'Get weekly access to our deals, tricks and tips',
+                'default' => __('Enter your details below to sign up for our newsletter', 'getanewsletter'),
             ),
             'appearance' => array(
                 'type' => 'string',
