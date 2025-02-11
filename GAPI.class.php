@@ -62,6 +62,11 @@ class GAPI
     public $body;
 
     /*
+     * HTTP client instance
+     */
+    private $http;
+
+    /*
      * GAPI()
      *
      * A constructor. Prepares the interface for work with the API.

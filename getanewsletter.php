@@ -1779,7 +1779,7 @@ function render_gan_block( $attributes ) {
         $form_html .= '<input id="id_last_name_' . esc_attr($gutenberg_unique_id) . '" type="text" name="id_last_name" /></div>';
     }
 
-    $form_html .= '<div class="gan-block-form--input-field"><label for="id_email_' . esc_attr($gutenberg_unique_id) . '">Email address</label>';
+    $form_html .= '<div class="gan-block-form--input-field"><label for="id_email_' . esc_attr($gutenberg_unique_id) . '">' . esc_html__('Email address', 'getanewsletter') . '</label>';
     $form_html .= '<input id="id_email_' . esc_attr($gutenberg_unique_id) . '" required type="email" name="id_email" /></div>';
 
     foreach ( $form_data['customAttributes'] as $attribute ) {
