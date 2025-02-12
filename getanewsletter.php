@@ -51,6 +51,7 @@ function newsletter_menu() {
     add_submenu_page('newsletter', __( 'Forms', 'getanewsletter' ), __( 'Forms', 'getanewsletter' ), 'administrator', 'newsletter_subscription_forms', 'newsletter_subscription_forms');
     remove_submenu_page('newsletter', 'newsletter');
     add_submenu_page('newsletter', __( 'Settings', 'getanewsletter' ), __( 'Settings', 'getanewsletter' ), 'administrator', 'newsletter', 'newsletter_options');
+    add_submenu_page( 'newsletter', __( 'Guide', 'getanewsletter' ), __( 'Guide', 'getanewsletter' ), 'administrator', 'gan-guide', 'render_gan_guide_page' );
     add_submenu_page( 'newsletter', __( 'Support', 'getanewsletter' ), __( 'Support', 'getanewsletter' ), 'administrator', 'gan-support', 'render_gan_support_page' );
 }
 
@@ -516,6 +517,82 @@ function display_subscription_form($params) {
     <?php
 }
 
+function render_gan_guide_page() {
+    ?>
+        <div class="wrap gan-guide-page">
+            <h1><?php esc_html_e( 'Getting started guide', 'getanewsletter' ); ?></h1>
+            <p><?php esc_html_e( 'An overview of the Get a Newsletter form plugin and the features available to you.', 'getanewsletter' ); ?></p>
+            <hr>
+
+            <h2><?php esc_html_e( 'Create and manage forms', 'getanewsletter' ); ?></h2>
+            <p><?php esc_html_e( "There's two types of forms available to you ‒ Embedded and popup forms." ); ?></p>
+
+            <div class="guide-columns">
+                <div class="guide-column">
+                    <strong class="guide-column__title"><?php esc_html_e( "Embedded forms", 'getanewsletter' ) ?></strong>
+                    <p><?php esc_html_e( 'You can create new, edit and delete forms straight from your site. Go to "Get a Newsletter > Forms" to see a list of your existing forms.', 'getanewsletter' ); ?></p>
+                    <div class="guide-column__link-container">
+                        <a href="#" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
+                    </div>
+                </div>
+                <div class="guide-column">
+                    <strong class="guide-column__title"><?php esc_html_e( "Popup forms", 'getanewsletter' ) ?></strong>
+                    <p><?php esc_html_e( 'Popup forms are managed on your Get a Newsletter-account, but you can enable popup forms from "Get a Newsletter > Settings".', 'getanewsletter' ); ?></p>
+                    <div class="guide-column__link-container">
+                        <a href="#" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2><?php esc_html_e( 'Displaying forms on your site', 'getanewsletter' ); ?></h2>
+            <p><?php esc_html_e( "There's a few different ways to display forms on your site.", 'getanewsletter' ); ?></p>
+
+            <div class="display-guides">
+                <div class="display-guide">
+                    <img src="https://placehold.co/350x200" class="display-guide__image">
+                    <div class="display-guide__content">
+                        <strong class="display-guide__title"><?php esc_html_e( 'Posts or page', 'getanewsletter' ); ?></strong>
+                        <p class="display-guide__description"><?php esc_html_e( "Lorem ipsum odor amet, consectetuer adipiscing elit. Turpis urna ligula facilisi per aenean tempus tellus. Platea himenaeos dignissim id class curae ligula.", 'getanewsletter' ); ?></p>
+                        <div class="display-guide__link-container">
+                            <a href="#" class="display-guide__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="display-guide">
+                    <img src="https://placehold.co/350x200" class="display-guide__image">
+                    <div class="display-guide__content">
+                        <strong class="display-guide__title"><?php esc_html_e( 'Siderbars and footers', 'getanewsletter' ); ?></strong>
+                        <p class="display-guide__description"><?php esc_html_e( "Lorem ipsum odor amet, consectetuer adipiscing elit. Turpis urna ligula facilisi per aenean tempus tellus. Platea himenaeos dignissim id class curae ligula.", 'getanewsletter' ); ?></p>
+                        <div class="display-guide__link-container">
+                            <a href="#" class="display-guide__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="display-guide">
+                    <img src="https://placehold.co/350x200" class="display-guide__image">
+                    <div class="display-guide__content">
+                        <strong class="display-guide__title"><?php esc_html_e( 'Popup', 'getanewsletter' ); ?></strong>
+                        <p class="display-guide__description"><?php esc_html_e( "Lorem ipsum odor amet, consectetuer adipiscing elit. Turpis urna ligula facilisi per aenean tempus tellus. Platea himenaeos dignissim id class curae ligula.", 'getanewsletter' ); ?></p>
+                        <div class="display-guide__link-container">
+                            <a href="#" class="display-guide__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="guide-get-started">
+                <h2><?php esc_html_e( 'Ready to get started?', 'getanewsletter' ); ?></h2>
+                <p><?php esc_html_e( 'Continue to forms to get started', 'getanewsletter' ); ?></p>
+                <a class="button button-primary" href="/wp-admin/admin.php?page=newsletter_subscription_forms">Continue to forms</a>
+            </div>
+        </div>
+    <?php
+}
+
 function render_gan_support_page() {
     $php_version = phpversion();
     $wordpress_version = get_bloginfo( 'version' );
@@ -663,8 +740,8 @@ function display_api_key_form() {
     <div class="wrap">
         <div class="gan-onboarding-container">
             <div class="gan-onboarding-content">
-                <h2><?php esc_html_e( 'Getting Started', 'getanewsletter' ); ?></h2>
-                <p><?php esc_html_e( "Thank you for choosing Get a Newsletter's WordPress plugin – the easiest way to get your subscription forms online.", 'getanewsletter' ); ?></p>
+                <h2><?php esc_html_e( 'Connect your account', 'getanewsletter' ); ?></h2>
+                <p><?php esc_html_e( "To get access to the plugin, you must first connect to your Get a Newsletter-account", 'getanewsletter' ); ?></p>
 
                 <div class="gan-onboarding-step">
                     <div class="gan-onboarding-step-counter">1</div>

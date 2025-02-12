@@ -152,10 +152,10 @@ window.addEventListener('load', function() {
                         <span>${successMessage}</span>
                     `;
 
-                    let continueText = wp.i18n.__('Continue to forms', 'getanewsletter');
+                    let continueText = wp.i18n.__('Continue', 'getanewsletter');
                     console.log(continueText);
                     document.querySelector('.gan-result-message').innerHTML += `
-                        <a class="button button-primary" href="/wp-admin/admin.php?page=newsletter_subscription_forms">
+                        <a class="button button-primary" href="/wp-admin/admin.php?page=gan-guide">
                             ${continueText}
                         </a>
                     `;
