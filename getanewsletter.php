@@ -519,75 +519,82 @@ function display_subscription_form($params) {
 
 function render_gan_guide_page() {
     ?>
-        <div class="wrap gan-guide-page">
-            <h1><?php esc_html_e( 'Getting started guide', 'getanewsletter' ); ?></h1>
-            <p><?php esc_html_e( 'An overview of the Get a Newsletter form plugin and the features available to you.', 'getanewsletter' ); ?></p>
-            <hr>
-
-            <h2><?php esc_html_e( 'Create and manage forms', 'getanewsletter' ); ?></h2>
-            <p><?php esc_html_e( "There's two types of forms available to you ‒ Embedded and popup forms." ); ?></p>
-
-            <div class="guide-columns">
-                <div class="guide-column">
-                    <strong class="guide-column__title"><?php esc_html_e( "Embedded forms", 'getanewsletter' ) ?></strong>
-                    <p><?php esc_html_e( 'You can create new, edit and delete forms straight from your site. Go to "Get a Newsletter > Forms" to see a list of your existing forms.', 'getanewsletter' ); ?></p>
-                    <div class="guide-column__link-container">
-                        <a href="#" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
+        <div class="wrap">
+            <div class="gan-guide-page">
+                <h1 class="gan-guide-title"><?php esc_html_e( 'Getting started guide', 'getanewsletter' ); ?></h1>
+                <p style="font-size: 18px;"><?php esc_html_e( 'An overview of the Get a Newsletter form plugin and the features available to you.', 'getanewsletter' ); ?></p>
+                
+                <hr style="margin: 40px 0;">
+    
+                <h2><?php esc_html_e( 'Create and manage forms', 'getanewsletter' ); ?></h2>
+                <p><?php esc_html_e( "There's two types of forms available to you ‒ Embedded forms and popup forms.", 'getanewsletter' ); ?></p>
+    
+                <div class="guide-columns">
+                    <div class="guide-column">
+                    <div style="font-size: 28px; margin-bottom: 20px;">📋</div>
+                    <h3 class="guide-column__title"><?php esc_html_e( "Embedded forms", 'getanewsletter' ) ?></h3>
+                        <p><?php esc_html_e( 'Manage the forms from your Get a Newsletter account directly from your WordPress site. You can view, edit, and add new forms, and any changes made here will automatically update in both locations.', 'getanewsletter' ); ?></p>
+                        <div class="guide-column__link-container">
+                            <a href="/wp-admin/admin.php?page=newsletter_subscription_forms" class="guide-column__link"><?php esc_html_e( "Manage embedded forms", 'getanewsletter' ); ?></a>
+                            <a target="_blank" href="<?php esc_html_e( "https://support.getanewsletter.com/en/articles/3678267-create-a-subscription-form", 'getanewsletter' ); ?>" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center ↗", 'getanewsletter' ); ?></a>
+                        </div>
                     </div>
-                </div>
-                <div class="guide-column">
-                    <strong class="guide-column__title"><?php esc_html_e( "Popup forms", 'getanewsletter' ) ?></strong>
-                    <p><?php esc_html_e( 'Popup forms are managed on your Get a Newsletter-account, but you can enable popup forms from "Get a Newsletter > Settings".', 'getanewsletter' ); ?></p>
-                    <div class="guide-column__link-container">
-                        <a href="#" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-
-            <h2><?php esc_html_e( 'Displaying forms on your site', 'getanewsletter' ); ?></h2>
-            <p><?php esc_html_e( "There's a few different ways to display forms on your site.", 'getanewsletter' ); ?></p>
-
-            <div class="display-guides">
-                <div class="display-guide">
-                    <img src="https://placehold.co/350x200" class="display-guide__image">
-                    <div class="display-guide__content">
-                        <strong class="display-guide__title"><?php esc_html_e( 'Posts or page', 'getanewsletter' ); ?></strong>
-                        <p class="display-guide__description"><?php esc_html_e( "Lorem ipsum odor amet, consectetuer adipiscing elit. Turpis urna ligula facilisi per aenean tempus tellus. Platea himenaeos dignissim id class curae ligula.", 'getanewsletter' ); ?></p>
-                        <div class="display-guide__link-container">
-                            <a href="#" class="display-guide__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
+                    <div class="guide-column">
+                        <div style="font-size: 28px; margin-bottom: 20px;">🔔</div>
+                        <h3 class="guide-column__title"><?php esc_html_e( "Popup forms", 'getanewsletter' ) ?></h3>
+                        <p><?php esc_html_e( 'Popup forms can only be managed from your Get a Newsletter account. However, you can enable them directly from the Settings page on your WordPress site.', 'getanewsletter' ); ?></p>
+                        <div class="guide-column__link-container">
+                            <a href="/wp-admin/admin.php?page=newsletter" class="guide-column__link"><?php esc_html_e( "Enable popup forms", 'getanewsletter' ); ?></a>
+                            <a target="_blank" href="<?php esc_html_e( "https://support.getanewsletter.com/en/articles/5335643-create-a-popup-form", 'getanewsletter' ); ?>" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center ↗", 'getanewsletter' ); ?></a>
                         </div>
                     </div>
                 </div>
-                <div class="display-guide">
-                    <img src="https://placehold.co/350x200" class="display-guide__image">
-                    <div class="display-guide__content">
-                        <strong class="display-guide__title"><?php esc_html_e( 'Siderbars and footers', 'getanewsletter' ); ?></strong>
-                        <p class="display-guide__description"><?php esc_html_e( "Lorem ipsum odor amet, consectetuer adipiscing elit. Turpis urna ligula facilisi per aenean tempus tellus. Platea himenaeos dignissim id class curae ligula.", 'getanewsletter' ); ?></p>
-                        <div class="display-guide__link-container">
-                            <a href="#" class="display-guide__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
+    
+                <hr style="margin: 40px 0;">
+    
+                <h2><?php esc_html_e( 'Displaying forms on your site', 'getanewsletter' ); ?></h2>
+                <p><?php esc_html_e( "There's a few different ways to display forms on your site.", 'getanewsletter' ); ?></p>
+    
+                <div class="display-guides">
+                    <div class="display-guide">
+                        <img src="<?php echo plugin_dir_url(__FILE__) . 'assets/admin/img/posts-pages.png'; ?>" class="display-guide__image">
+                        <div class="display-guide__content">
+                            <h3 class="display-guide__title"><?php esc_html_e( 'Posts and pages', 'getanewsletter' ); ?></h3>
+                            <p class="display-guide__description"><?php esc_html_e( "Easily add forms to your posts and pages by inserting a new \"Get a Newsletter\"-block. Choose from your existing forms to display, and customize each one to match your site's style. You can include as many forms as you like, giving you complete flexibility.", 'getanewsletter' ); ?></p>
+                            <div class="display-guide__link-container">
+                                <a target="_blank" href="<?php esc_html_e( "https://support.getanewsletter.com/en/articles/10660480-add-a-subscription-form-in-wordpress#h_e4f60c8206", 'getanewsletter' ); ?>" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center ↗", 'getanewsletter' ); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="display-guide">
+                        <img src="<?php echo plugin_dir_url(__FILE__) . 'assets/admin/img/widgets.png'; ?>" class="display-guide__image">
+                        <div class="display-guide__content">
+                            <h3 class="display-guide__title"><?php esc_html_e( 'Sidebars and footers', 'getanewsletter' ); ?></h3>
+                            <p class="display-guide__description"><?php esc_html_e( "You can also add forms to your website using widgets. Simply navigate to Appearance > Widgets to place forms in any widget area, such as sidebars or the footer.", 'getanewsletter' ); ?></p>
+                            <div class="display-guide__link-container">
+                                <a target="_blank" href="<?php esc_html_e( "https://support.getanewsletter.com/en/articles/10660480-add-a-subscription-form-in-wordpress#h_e4f60c8206", 'getanewsletter' ); ?>" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center ↗", 'getanewsletter' ); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="display-guide">
+                        <img src="<?php echo plugin_dir_url(__FILE__) . 'assets/admin/img/popups.png'; ?>" class="display-guide__image">
+                        <div class="display-guide__content">
+                            <h3 class="display-guide__title"><?php esc_html_e( 'Popup', 'getanewsletter' ); ?></h3>
+                            <p class="display-guide__description"><?php esc_html_e( "In your Get a Newsletter account, you can easily choose which pages show your popup forms and decide when they appear. Plus, you can turn the popup feature on or off from the plugin settings page.", 'getanewsletter' ); ?></p>
+                            <div class="display-guide__link-container">
+                                <a target="_blank" href="<?php esc_html_e( "https://support.getanewsletter.com/en/articles/5335643-create-a-popup-form", 'getanewsletter' ); ?>" class="guide-column__link"><?php esc_html_e( "Learn more in our Help center ↗", 'getanewsletter' ); ?></a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="display-guide">
-                    <img src="https://placehold.co/350x200" class="display-guide__image">
-                    <div class="display-guide__content">
-                        <strong class="display-guide__title"><?php esc_html_e( 'Popup', 'getanewsletter' ); ?></strong>
-                        <p class="display-guide__description"><?php esc_html_e( "Lorem ipsum odor amet, consectetuer adipiscing elit. Turpis urna ligula facilisi per aenean tempus tellus. Platea himenaeos dignissim id class curae ligula.", 'getanewsletter' ); ?></p>
-                        <div class="display-guide__link-container">
-                            <a href="#" class="display-guide__link"><?php esc_html_e( "Learn more in our Help center", 'getanewsletter' ); ?></a>
-                        </div>
-                    </div>
+    
+                <hr style="margin: 40px 0;">
+    
+                <div class="guide-get-started">
+                    <h2><?php esc_html_e( 'Ready to get started?', 'getanewsletter' ); ?></h2>
+                    <p style="font-size: 18px;"><?php esc_html_e( 'Continue to forms to view your forms or create a new one', 'getanewsletter' ); ?></p>
+                    <a style="font-size: 15px;" class="button button-primary" href="/wp-admin/admin.php?page=newsletter_subscription_forms"><?php esc_html_e( 'Continue to forms', 'getanewsletter' ); ?></a>
                 </div>
-            </div>
-
-            <hr>
-
-            <div class="guide-get-started">
-                <h2><?php esc_html_e( 'Ready to get started?', 'getanewsletter' ); ?></h2>
-                <p><?php esc_html_e( 'Continue to forms to get started', 'getanewsletter' ); ?></p>
-                <a class="button button-primary" href="/wp-admin/admin.php?page=newsletter_subscription_forms">Continue to forms</a>
             </div>
         </div>
     <?php

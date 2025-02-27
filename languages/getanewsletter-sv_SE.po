@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Get a Newsletter 2.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/getanewsletter\n"
-"POT-Creation-Date: 2025-01-30T09:05:34+00:00\n"
-"PO-Revision-Date: 2025-01-30 10:07+0100\n"
+"POT-Creation-Date: 2025-02-27T14:33:34+00:00\n"
+"PO-Revision-Date: 2025-02-27 15:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Generator: Poedit 3.5\n"
 
 #. Plugin Name of the plugin
-#: getanewsletter.php getanewsletter.php:1106 blocks/build/index.js:1
+#: getanewsletter.php getanewsletter.php:1186 blocks/build/index.js:1
 #: blocks/src/index.js:9
 msgid "Get a Newsletter"
 msgstr "Get a Newsletter"
@@ -39,154 +39,158 @@ msgstr ""
 msgid "getanewsletter"
 msgstr "getanewsletter"
 
-#: getanewsletter.php:51 getanewsletter.php:289
+#: getanewsletter.php:51 getanewsletter.php:290
 msgid "Forms"
 msgstr "Formulär"
 
-#: getanewsletter.php:53 getanewsletter.php:751
+#: getanewsletter.php:53 getanewsletter.php:835
 msgid "Settings"
 msgstr "Inställningar"
 
-#: getanewsletter.php:54 getanewsletter.php:540
+#: getanewsletter.php:54
+msgid "Guide"
+msgstr "Guide"
+
+#: getanewsletter.php:55 getanewsletter.php:624
 msgid "Support"
 msgstr "Support"
 
-#: getanewsletter.php:101
+#: getanewsletter.php:102
 msgid "The subscription form has been deleted"
 msgstr "Prenumerationsformuläret har tagits bort"
 
-#: getanewsletter.php:117
+#: getanewsletter.php:118
 msgid "The subscription form has been created"
 msgstr "Prenumerationsformuläret har skapats"
 
-#: getanewsletter.php:122 getanewsletter.php:154
+#: getanewsletter.php:123 getanewsletter.php:155
 msgid "Please correct the errors below: "
 msgstr "Vänligen rätta till felen nedan: "
 
-#: getanewsletter.php:149
+#: getanewsletter.php:150
 msgid "The subscription form has been updated"
 msgstr "Prenumerationsformuläret har uppdaterats"
 
-#: getanewsletter.php:242
+#: getanewsletter.php:243
 msgid "Unknown error"
 msgstr "Okänt fel"
 
-#: getanewsletter.php:249
+#: getanewsletter.php:250
 msgid "Unable to connect to the Get A Newsletter API."
 msgstr "Kan inte ansluta till Get A Newsletters API."
 
-#: getanewsletter.php:292 getanewsletter.php:348
+#: getanewsletter.php:293 getanewsletter.php:349
 msgid "Add new form"
 msgstr "Lägg till formulär"
 
-#: getanewsletter.php:298
+#: getanewsletter.php:299
 msgid ""
 "Unable to connect to the Get a Newsletter API. Please verify your API key"
 msgstr ""
 "Kan inte ansluta till Get A Newsletters API. Vänligen kontrollera din API-"
 "nyckel"
 
-#: getanewsletter.php:307
+#: getanewsletter.php:308
 msgid "Name"
 msgstr "Namn"
 
-#: getanewsletter.php:308 assets/admin/js/scripts.js:27
+#: getanewsletter.php:309 assets/admin/js/scripts.js:27
 msgid "List"
 msgstr "Lista"
 
-#: getanewsletter.php:309
+#: getanewsletter.php:310
 msgid "Shortcode"
 msgstr "Kortkod"
 
-#: getanewsletter.php:310
+#: getanewsletter.php:311
 msgid "Actions"
 msgstr "Verktyg"
 
-#: getanewsletter.php:321
+#: getanewsletter.php:322
 msgid "Edit"
 msgstr "Redigera"
 
-#: getanewsletter.php:321
+#: getanewsletter.php:322
 msgid "Delete"
 msgstr "Radera"
 
-#: getanewsletter.php:358
+#: getanewsletter.php:359
 msgid "1. Name your form"
 msgstr "1. Namnge ditt formulär"
 
-#: getanewsletter.php:362 assets/admin/js/scripts.js:23
+#: getanewsletter.php:363 assets/admin/js/scripts.js:23
 msgid "Form name"
 msgstr "Namn"
 
-#: getanewsletter.php:370
+#: getanewsletter.php:371
 msgid "2. Contact fields"
 msgstr "2. Kontaktfält"
 
-#: getanewsletter.php:374 getanewsletter.php:1286
+#: getanewsletter.php:375 getanewsletter.php:1367
 msgid "Email"
 msgstr "Epost"
 
-#: getanewsletter.php:378 getanewsletter.php:1032 getanewsletter.php:1140
-#: getanewsletter.php:1295 getanewsletter.php:1767 blocks/build/index.js:1
-#: blocks/src/index.js:243
+#: getanewsletter.php:379 getanewsletter.php:1117 getanewsletter.php:1221
+#: getanewsletter.php:1376 getanewsletter.php:1857 blocks/build/index.js:1
+#: blocks/src/index.js:251
 msgid "First name"
 msgstr "Förnamn"
 
-#: getanewsletter.php:382 getanewsletter.php:1041 getanewsletter.php:1149
-#: getanewsletter.php:1303 getanewsletter.php:1772 blocks/build/index.js:1
-#: blocks/src/index.js:249
+#: getanewsletter.php:383 getanewsletter.php:1126 getanewsletter.php:1230
+#: getanewsletter.php:1384 getanewsletter.php:1862 blocks/build/index.js:1
+#: blocks/src/index.js:257
 msgid "Last name"
 msgstr "Efternamn"
 
-#: getanewsletter.php:393
+#: getanewsletter.php:394
 msgid "3. Attribute fields"
 msgstr "3. Attributfält"
 
-#: getanewsletter.php:417
+#: getanewsletter.php:418
 msgid "4. List and Sender"
 msgstr "4. Lista och avsändare"
 
-#: getanewsletter.php:419
+#: getanewsletter.php:420
 msgid "3. List and Sender"
 msgstr "3. Lista och avsändare"
 
-#: getanewsletter.php:424
+#: getanewsletter.php:425
 msgid "Choose list"
 msgstr "Välj lista"
 
-#: getanewsletter.php:427
+#: getanewsletter.php:428
 msgid "Choose a list"
 msgstr "Välj en lista"
 
-#: getanewsletter.php:441
+#: getanewsletter.php:442
 msgid "Choose sender"
 msgstr "Välj avsändare"
 
-#: getanewsletter.php:444
+#: getanewsletter.php:445
 msgid "Choose a sender"
 msgstr "Välj en avsändare"
 
-#: getanewsletter.php:458
+#: getanewsletter.php:459
 msgid "Show advanced settings"
 msgstr "Visa avancerade inställningar"
 
-#: getanewsletter.php:464
+#: getanewsletter.php:465
 msgid "5. Confirmation email"
 msgstr "5. Bekräftelsemail"
 
-#: getanewsletter.php:466
+#: getanewsletter.php:467
 msgid "4. Confirmation email"
 msgstr "4. Bekräftelsemail"
 
-#: getanewsletter.php:471
+#: getanewsletter.php:472
 msgid "Subject"
 msgstr "Ämne"
 
-#: getanewsletter.php:475
+#: getanewsletter.php:476
 msgid "Message"
 msgstr "Meddelande"
 
-#: getanewsletter.php:477
+#: getanewsletter.php:478
 msgid ""
 "Hello!\n"
 "\n"
@@ -216,35 +220,184 @@ msgstr ""
 "P.S. Om du inte vill ha vårt nyhetsbrev i framtiden kan du enkelt avsluta "
 "prenumerationen via länken som finns med i varje nyhetsbrev."
 
-#: getanewsletter.php:486
+#: getanewsletter.php:487
 msgid "6. Form settings"
 msgstr "6. Formulärinställningar"
 
-#: getanewsletter.php:488
+#: getanewsletter.php:489
 msgid "5. Form settings"
 msgstr "5. Formulärinställningar"
 
-#: getanewsletter.php:493
+#: getanewsletter.php:494
 msgid "Next URL"
 msgstr "Nästa URL"
 
-#: getanewsletter.php:497
+#: getanewsletter.php:498
 msgid "Button Text"
 msgstr "Knapptext"
 
-#: getanewsletter.php:510
+#: getanewsletter.php:511
 msgid "Save and return"
 msgstr "Spara"
 
-#: getanewsletter.php:511
+#: getanewsletter.php:512
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: getanewsletter.php:544
+#: getanewsletter.php:524
+msgid "Getting started guide"
+msgstr "Kom igång-guide"
+
+#: getanewsletter.php:525
+msgid ""
+"An overview of the Get a Newsletter form plugin and the features available "
+"to you."
+msgstr ""
+"En översikt av Get a Newsletters Wordpress-tillägg och de funktioner som "
+"finns tillgängliga för dig."
+
+#: getanewsletter.php:529
+msgid "Create and manage forms"
+msgstr "Skapa och hantera formulär"
+
+#: getanewsletter.php:530
+msgid ""
+"There's two types of forms available to you ‒ Embedded forms and popup forms."
+msgstr ""
+"Det finns två typer av formulär som är tillgängliga för dig ‒ Inbäddade "
+"formulär och popup-formulär."
+
+#: getanewsletter.php:535
+msgid "Embedded forms"
+msgstr "Inbäddade formulär"
+
+#: getanewsletter.php:536
+msgid ""
+"Manage the forms from your Get a Newsletter account directly from your "
+"WordPress site. You can view, edit, and add new forms, and any changes made "
+"here will automatically update in both locations."
+msgstr ""
+"Hantera formulären från ditt Get a Newsletter-konto direkt från din "
+"WordPress-sida. Du kan visa, redigera och lägga till nya formulär, och alla "
+"ändringar som görs här kommer automatiskt att uppdateras på båda platser."
+
+#: getanewsletter.php:538
+msgid "Manage embedded forms"
+msgstr "Hantera inbäddade formulär"
+
+#: getanewsletter.php:539
+msgid ""
+"https://support.getanewsletter.com/en/articles/3678267-create-a-subscription-"
+"form"
+msgstr ""
+"https://support.getanewsletter.com/sv/articles/3678267-skapa-ett-"
+"prenumerationsformular"
+
+#: getanewsletter.php:539 getanewsletter.php:548 getanewsletter.php:565
+#: getanewsletter.php:575 getanewsletter.php:585
+msgid "Learn more in our Help center ↗"
+msgstr "Lär dig mer i vårt Hjälpcenter ↗"
+
+#: getanewsletter.php:544 getanewsletter.php:881
+msgid "Popup forms"
+msgstr "Popup-formulär"
+
+#: getanewsletter.php:545
+msgid ""
+"Popup forms can only be managed from your Get a Newsletter account. However, "
+"you can enable them directly from the Settings page on your WordPress site."
+msgstr ""
+"Popup-formulär kan endast hanteras från ditt Get a Newsletter-konto. Du kan "
+"däremot aktivera dem direkt från inställningssidan på din WordPress-sida."
+
+#: getanewsletter.php:547 getanewsletter.php:888
+msgid "Enable popup forms"
+msgstr "Aktivera popup-formulär"
+
+#: getanewsletter.php:548 getanewsletter.php:585
+msgid ""
+"https://support.getanewsletter.com/en/articles/5335643-create-a-popup-form"
+msgstr ""
+"https://support.getanewsletter.com/sv/articles/5335643-skapa-ett-popup-"
+"formular"
+
+#: getanewsletter.php:555
+msgid "Displaying forms on your site"
+msgstr "Visa formulär på din sida"
+
+#: getanewsletter.php:556
+msgid "There's a few different ways to display forms on your site."
+msgstr "Det finns flera olika sätt att visa formulär på din webbplats."
+
+#: getanewsletter.php:562
+msgid "Posts and pages"
+msgstr "Sidor och inlägg"
+
+#: getanewsletter.php:563
+msgid ""
+"Easily add forms to your posts and pages by inserting a new \"Get a "
+"Newsletter\"-block. Choose from your existing forms to display, and "
+"customize each one to match your site's style. You can include as many forms "
+"as you like, giving you complete flexibility."
+msgstr ""
+"Lägg enkelt till formulär i dina inlägg och sidor genom att infoga ett nytt "
+"‘Get a Newsletter’-block. Välj bland dina befintliga formulär att visa, och "
+"anpassa varje formulär för att matcha din webbplats stil. Du kan inkludera "
+"så många formulär du vill, vilket ger dig fullständig flexibilitet."
+
+#: getanewsletter.php:565 getanewsletter.php:575
+msgid ""
+"https://support.getanewsletter.com/en/articles/10660480-add-a-subscription-"
+"form-in-wordpress#h_e4f60c8206"
+msgstr ""
+"https://support.getanewsletter.com/sv/articles/10660480-lagg-till-ett-"
+"prenumerationsformular-i-wordpress#h_d66a66c187"
+
+#: getanewsletter.php:572
+msgid "Sidebars and footers"
+msgstr "Sidofält och sidfot"
+
+#: getanewsletter.php:573
+msgid ""
+"You can also add forms to your website using widgets. Simply navigate to "
+"Appearance > Widgets to place forms in any widget area, such as sidebars or "
+"the footer."
+msgstr ""
+"Du kan också lägga till formulär på din webbplats med hjälp av widgetar. "
+"Navigera till Utseende > Widgetar för att placera formulär i valfritt "
+"widgetområde, som sidofält eller sidfot."
+
+#: getanewsletter.php:582
+msgid "Popup"
+msgstr "Popup"
+
+#: getanewsletter.php:583
+msgid ""
+"In your Get a Newsletter account, you can easily choose which pages show "
+"your popup forms and decide when they appear. Plus, you can turn the popup "
+"feature on or off from the plugin settings page."
+msgstr ""
+"På ditt Get a Newsletter-konto kan du enkelt välja vilka sidor som visar "
+"dina popup-formulär och bestämma när de ska visas. Dessutom kan du slå på "
+"eller av popup-funktionen från pluginets inställningssida."
+
+#: getanewsletter.php:594
+msgid "Ready to get started?"
+msgstr "Redo att komma igång?"
+
+#: getanewsletter.php:595
+msgid "Continue to forms to view your forms or create a new one"
+msgstr "Fortsätt till formulär för att visa dina formulär eller skapa ett nytt"
+
+#: getanewsletter.php:596
+msgid "Continue to forms"
+msgstr "Fortsätt till formulär"
+
+#: getanewsletter.php:628
 msgid "Need help?"
 msgstr "Behöver du hjälp?"
 
-#: getanewsletter.php:551
+#: getanewsletter.php:635
 msgid ""
 "If you are experiencing issues with the plugin you can reach out to our "
 "support team. In order to help you as fast as possible please copy the "
@@ -254,40 +407,40 @@ msgstr ""
 "att hjälpa dig så snabbt som möjligt, vänligen kopiera detaljerna nedan och "
 "inkludera dem i ditt meddelande. Mejla oss på %s"
 
-#: getanewsletter.php:560
+#: getanewsletter.php:644
 msgid "Debug information"
 msgstr "Felsökningsinformation"
 
-#: getanewsletter.php:562
+#: getanewsletter.php:646
 msgid "Copy text to clipboard"
 msgstr "Kopiera text till urklipp"
 
-#: getanewsletter.php:591 getanewsletter.php:603 getanewsletter.php:613
-#: getanewsletter.php:623 getanewsletter.php:643 getanewsletter.php:657
+#: getanewsletter.php:675 getanewsletter.php:687 getanewsletter.php:697
+#: getanewsletter.php:707 getanewsletter.php:727 getanewsletter.php:741
 msgid "Cannot connect to Get A Newsletter API"
 msgstr "Kan inte ansluta till Get A Newsletter API"
 
-#: getanewsletter.php:596
+#: getanewsletter.php:680
 msgid "Cannot delete a form"
 msgstr "Kan inte ta bort ett formulär"
 
-#: getanewsletter.php:666
-msgid "Getting Started"
-msgstr "Kom igång"
+#: getanewsletter.php:750
+msgid "Connect your account"
+msgstr "Anslut ditt konto"
 
-#: getanewsletter.php:667
+#: getanewsletter.php:751
 msgid ""
-"Thank you for choosing Get a Newsletter's WordPress plugin – the easiest way "
-"to get your subscription forms online."
+"To get access to the plugin, you must first connect to your Get a Newsletter-"
+"account"
 msgstr ""
-"Tack för att du har valt Get a Newsletters WordPress-plugin – det enklaste "
-"sättet att få dina prenumerationsformulär online."
+"För att få tillgång till tillägget måste du först koppla upp dig mot ditt "
+"Get a Newsletter-konto"
 
-#: getanewsletter.php:672
+#: getanewsletter.php:756
 msgid "Log in or sign up"
 msgstr "Logga in eller skapa ett konto"
 
-#: getanewsletter.php:676
+#: getanewsletter.php:760
 msgid ""
 "Log in to <a href=\"%1$s\">app.getanewsletter.com</a>. Don't have an account "
 "yet, <a href=\"%2$s\">sign up</a> instead."
@@ -295,39 +448,39 @@ msgstr ""
 "Logga in på <a href=“%1$s”>app.getanewsletter.com</a>. Har du inget konto "
 "än, <a href=“%2$s”>registrera dig</a> istället."
 
-#: getanewsletter.php:688
+#: getanewsletter.php:772
 msgid "Create an API key"
 msgstr "Skapa en API-nyckel"
 
-#: getanewsletter.php:692
+#: getanewsletter.php:776
 msgid "Once logged in, go to %s and create a new API key."
 msgstr "När du har loggat in, gå till %s och skapa en ny API-nyckel."
 
-#: getanewsletter.php:696
+#: getanewsletter.php:780
 msgid "My Account -> API"
 msgstr "Mitt konto -> API"
 
-#: getanewsletter.php:707
+#: getanewsletter.php:791
 msgid "Add API key to authenticate"
 msgstr "Lägg till API-nyckeln för att autentisera"
 
-#: getanewsletter.php:708
+#: getanewsletter.php:792
 msgid "Copy and paste the generated API key below to authenticate."
 msgstr "Kopiera och klistra in din nya API-nyckel nedan för att autentisera."
 
-#: getanewsletter.php:714
+#: getanewsletter.php:798
 msgid "Your API key"
 msgstr "Din API-nyckel"
 
-#: getanewsletter.php:716
+#: getanewsletter.php:800 assets/admin/js/scripts.js:155
 msgid "Continue"
 msgstr "Fortsätt"
 
-#: getanewsletter.php:757 getanewsletter.php:774
+#: getanewsletter.php:841 getanewsletter.php:858
 msgid "API key"
 msgstr "API-nyckel"
 
-#: getanewsletter.php:764
+#: getanewsletter.php:848
 msgid ""
 "Here is your API key for connecting your Get a Newsletter account to this "
 "WordPress site. To update the API key, log in to your account and go to %s "
@@ -337,19 +490,15 @@ msgstr ""
 "konto till denna WordPress-sida. Om du vill uppdatera API-nyckeln, logga in "
 "på ditt konto och gå till %s för att generera en ny."
 
-#: getanewsletter.php:783
+#: getanewsletter.php:867
 msgid "Your API key is active and working"
 msgstr "Din API-nyckel är aktiv och fungerar"
 
-#: getanewsletter.php:787
+#: getanewsletter.php:871
 msgid "Invalid API key. Verify and re-enter the API key."
 msgstr "Ogiltig API-nyckel. Verifiera och ange API-nyckeln igen."
 
-#: getanewsletter.php:797
-msgid "Popup forms"
-msgstr "Popup-formulär"
-
-#: getanewsletter.php:801
+#: getanewsletter.php:885
 msgid ""
 "When creating popup forms with our tool, we ask you to paste a universal "
 "code snippet into the ⁠<head> section of your website. With this plugin, you "
@@ -359,15 +508,11 @@ msgstr ""
 "universell kodsnutt i ⁠<head>-sektionen på din webbplats. Med detta plugin "
 "kan du enkelt aktivera dina popup-formulär nedan."
 
-#: getanewsletter.php:804
-msgid "Enable popup forms"
-msgstr "Aktivera popup-formulär"
-
-#: getanewsletter.php:811
+#: getanewsletter.php:895
 msgid "Submission feedback"
 msgstr "Formulärmeddelanden"
 
-#: getanewsletter.php:815
+#: getanewsletter.php:899
 msgid ""
 "You can customize the messages shown to users when they interact with the "
 "form."
@@ -375,80 +520,80 @@ msgstr ""
 "Du kan anpassa meddelandena som visas för användarna när de interagerar med "
 "formuläret."
 
-#: getanewsletter.php:818
+#: getanewsletter.php:902
 msgid "Successful submission:"
 msgstr "Lyckad prenumeration:"
 
-#: getanewsletter.php:821
+#: getanewsletter.php:905
 msgid "Displayed when a user successfully enters their details."
 msgstr ""
 "När en användare framgångsrikt anger sina uppgifter kommer detta meddelande "
 "att visas."
 
-#: getanewsletter.php:825
+#: getanewsletter.php:909
 msgid "Invalid email:"
 msgstr "Ogiltig e-postadress:"
 
-#: getanewsletter.php:828
+#: getanewsletter.php:912
 msgid "Displayed when a user enters an invalid email address"
 msgstr ""
 "När en användare anger en ogiltig e-postadress kommer detta meddelande att "
 "visas"
 
-#: getanewsletter.php:832
+#: getanewsletter.php:916
 msgid "Existing subscription:"
 msgstr "Redan existerande prenumeration:"
 
-#: getanewsletter.php:835
+#: getanewsletter.php:919
 msgid ""
 "Displayed when a user enters an email address that is already subscribed."
 msgstr ""
 "När en användare anger en e-postadress som redan finns kommer detta "
 "meddelande att visas."
 
-#: getanewsletter.php:845
+#: getanewsletter.php:929
 msgid "Save Changes"
 msgstr "Spara ändringar"
 
-#: getanewsletter.php:940
+#: getanewsletter.php:1024
 msgid "Could not login"
 msgstr "Inloggning misslyckades"
 
-#: getanewsletter.php:1048 getanewsletter.php:1157
+#: getanewsletter.php:1133 getanewsletter.php:1238
 msgid "E-mail"
 msgstr "Epost"
 
-#: getanewsletter.php:1068 getanewsletter.php:1180 getanewsletter.php:1788
-#: blocks/build/index.js:1 blocks/src/index.js:266
+#: getanewsletter.php:1153 getanewsletter.php:1261 getanewsletter.php:1878
+#: blocks/build/index.js:1 blocks/src/index.js:274
 msgid "Subscribe"
 msgstr "Prenumerera"
 
-#: getanewsletter.php:1104
+#: getanewsletter.php:1184
 msgid "Easily integrate Get a Newsletter forms into your WordPress site."
 msgstr "Integrera enkelt Get a Newsletter-formulär på din WordPress-webbplats."
 
-#: getanewsletter.php:1246 blocks/build/index.js:1 blocks/src/index.js:138
-#: blocks/src/index.js:144
+#: getanewsletter.php:1327 blocks/build/index.js:1 blocks/src/index.js:146
+#: blocks/src/index.js:152
 msgid "Title"
 msgstr "Titel"
 
-#: getanewsletter.php:1256
+#: getanewsletter.php:1337
 msgid "Subscription form"
 msgstr "Prenumerationsformulär"
 
 #. translators: %s: URL to create a subscription form
-#: getanewsletter.php:1273
+#: getanewsletter.php:1354
 msgid ""
 "Subscription forms not created yet, create a form <a href=\"%s\">here</a>"
 msgstr ""
 "Prenumerationsformulär har ännu inte skapats, skapa ett formulär <a "
 "href=“%s”>här</a>"
 
-#: getanewsletter.php:1280
+#: getanewsletter.php:1361
 msgid "Attribute fields"
 msgstr "Attributfält"
 
-#: getanewsletter.php:1281
+#: getanewsletter.php:1362
 msgid ""
 "Choose which fields to include for this widget. Current options are copied "
 "from the original form"
@@ -456,36 +601,48 @@ msgstr ""
 "Välj vilka fält som ska inkluderas i denna widget. Aktuella alternativ är "
 "kopierade från det ursprungliga formuläret"
 
-#: getanewsletter.php:1287
+#: getanewsletter.php:1368
 msgid "Required"
 msgstr "Obligatorisk"
 
-#: getanewsletter.php:1321
+#: getanewsletter.php:1402
 msgid "Submit text"
 msgstr "Skicka-text"
 
-#: getanewsletter.php:1330
+#: getanewsletter.php:1411
 msgid ""
 "Wrong Login details. Enter correct details in Get a Newsletter options page."
 msgstr ""
 "Felaktiga inloggningsuppgifter, gå till inställningar för att korrigera."
 
-#: getanewsletter.php:1335
+#: getanewsletter.php:1416
 msgid "Enter required details in Get a Newsletter options page."
 msgstr ""
 "Fyll in obligatoriska uppgifter under inställningar för Get a Newsletter."
 
-#: getanewsletter.php:1486
+#: getanewsletter.php:1567
 msgid "Please, double check if the provided API key is correct"
 msgstr "Vänligen dubbelkolla att den angivna API-token är korrekt"
 
-#: getanewsletter.php:1733
+#: getanewsletter.php:1737 blocks/build/index.js:1 blocks/src/index.js:23
+msgid "Join our newsletter"
+msgstr "Prenumerera på vårt nyhetsbrev"
+
+#: getanewsletter.php:1745 blocks/build/index.js:1 blocks/src/index.js:31
+msgid "Enter your details below to sign up for our newsletter"
+msgstr "Ange dina uppgifter nedan för att registrera dig för vårt nyhetsbrev"
+
+#: getanewsletter.php:1814
 msgid "No form selected."
 msgstr "Inget formulär är valt."
 
-#: getanewsletter.php:1744
+#: getanewsletter.php:1827
 msgid "This element cannot be rendered at the moment."
 msgstr "Detta element kan inte visas för tillfället."
+
+#: getanewsletter.php:1866 blocks/build/index.js:1 blocks/src/index.js:262
+msgid "Email address"
+msgstr "E-postadress"
 
 #: subscribe.php:45
 msgid ""
@@ -525,77 +682,68 @@ msgstr "Vänligen fyll i alla obligatoriska fält."
 msgid "Your API token is active and working"
 msgstr "Din API-token är aktiv och fungerar"
 
-#: assets/admin/js/scripts.js:155
-msgid "Continue to forms"
-msgstr "Fortsätt till prenumerationsformulär"
-
 #: assets/admin/js/scripts.js:176
 msgid "Copied!"
 msgstr "Kopierat!"
 
-#: blocks/build/index.js:1 blocks/src/index.js:23
-msgid "Join our newsletter"
-msgstr "Prenumerera på vårt nyhetsbrev"
-
-#: blocks/build/index.js:1 blocks/src/index.js:31
-msgid "Enter your details below to sign up for our newsletter"
-msgstr "Ange dina uppgifter nedan för att registrera dig för vårt nyhetsbrev"
-
-#: blocks/build/index.js:1 blocks/src/index.js:120
+#: blocks/build/index.js:1 blocks/src/index.js:128
 msgid "Form Settings"
 msgstr "Formulärinställningar"
 
-#: blocks/build/index.js:1 blocks/src/index.js:125 blocks/src/index.js:216
+#: blocks/build/index.js:1 blocks/src/index.js:133 blocks/src/index.js:224
 msgid "Select form"
 msgstr "Välj ett formulär"
 
-#: blocks/build/index.js:1 blocks/src/index.js:128 blocks/src/index.js:219
+#: blocks/build/index.js:1 blocks/src/index.js:136 blocks/src/index.js:227
 msgid "Choose a form"
 msgstr "Välj ett formulär"
 
-#: blocks/build/index.js:1 blocks/src/index.js:151 blocks/src/index.js:157
+#: blocks/build/index.js:1 blocks/src/index.js:159 blocks/src/index.js:165
 msgid "Description"
 msgstr "Beskrivning"
 
-#: blocks/build/index.js:1 blocks/src/index.js:164
+#: blocks/build/index.js:1 blocks/src/index.js:172
 msgid "Appearance"
 msgstr "Utseende"
 
-#: blocks/build/index.js:1 blocks/src/index.js:167
+#: blocks/build/index.js:1 blocks/src/index.js:175
 msgid "Square corners"
 msgstr "Fyrkantiga hörn"
 
-#: blocks/build/index.js:1 blocks/src/index.js:168
+#: blocks/build/index.js:1 blocks/src/index.js:176
 msgid "Rounded corners"
 msgstr "Rundade hörn"
 
-#: blocks/build/index.js:1 blocks/src/index.js:174
+#: blocks/build/index.js:1 blocks/src/index.js:182
 msgid "Color settings"
 msgstr "Färginställningar"
 
-#: blocks/build/index.js:1 blocks/src/index.js:179
+#: blocks/build/index.js:1 blocks/src/index.js:187
 msgid "Input field – Background"
 msgstr "Fält – Bakgrund"
 
-#: blocks/build/index.js:1 blocks/src/index.js:184
+#: blocks/build/index.js:1 blocks/src/index.js:192
 msgid "Input field – Border"
 msgstr "Fält – Ram"
 
-#: blocks/build/index.js:1 blocks/src/index.js:189
+#: blocks/build/index.js:1 blocks/src/index.js:197
 msgid "Label"
 msgstr "Fält – Text"
 
-#: blocks/build/index.js:1 blocks/src/index.js:194
+#: blocks/build/index.js:1 blocks/src/index.js:202
 msgid "Button – Background"
 msgstr "Knapp – Bakgrund"
 
-#: blocks/build/index.js:1 blocks/src/index.js:199
+#: blocks/build/index.js:1 blocks/src/index.js:207
 msgid "Button – Text"
 msgstr "Knapp – Text"
 
-#: blocks/build/index.js:1 blocks/src/index.js:254
-msgid "Email address"
-msgstr "E-postadress"
+#~ msgid ""
+#~ "Thank you for choosing Get a Newsletter's WordPress plugin – the easiest "
+#~ "way to get your subscription forms online."
+#~ msgstr ""
+#~ "Tack för att du har valt Get a Newsletters WordPress-plugin – det "
+#~ "enklaste sättet att få dina prenumerationsformulär online."
 
 #~ msgid "Get a Newsletter forms"
 #~ msgstr "Get a Newsletter formulär"
