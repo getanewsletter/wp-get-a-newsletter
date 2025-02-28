@@ -43,7 +43,6 @@ Signup required at (https://app.getanewsletter.com)
 = 4.0 =
 Added Newsletter Form Gutenberg block
 Made the plugin translatable
-Added Ukrainian translation
 
 = 3.3 =
 Updated the design for the Settings-page

@@ -26,8 +26,6 @@ add_action('admin_init', function() {
     register_setting('newsletter', 'newsletter_apikey');
     register_setting('newsletter', 'newsletter_msg_success');
     register_setting('newsletter', 'newsletter_msg_confirm');
-    register_setting('newsletter', 'newsletter_msg_505');
-    register_setting('newsletter', 'newsletter_msg_512');
     register_setting('newsletter', 'gan_enable_popup_forms');
     session_write_close();
 });
@@ -905,26 +903,12 @@ function newsletter_options() {
                             <span class="gan-input-description"><?php _e( 'Displayed when a user successfully enters their details.', 'getanewsletter' ); ?></span>
                         </td>
                     </tr>
-                    <tr valign="top">
-                        <th scope="row"><?php esc_html_e( 'Invalid email:', 'getanewsletter' ); ?></th>
-                        <td>
-                            <input type="text" class="regular-text" name="newsletter_msg_505" value="<?php echo get_option('newsletter_msg_505', 'Invalid e-mail'); ?>" />
-                            <br/> <span class="gan-input-description"><?php _e( 'Displayed when a user enters an invalid email address', 'getanewsletter' ); ?></span>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row"><?php esc_html_e( 'Existing subscription:', 'getanewsletter' ); ?></th>
-                        <td>
-                            <input type="text" class="regular-text" name="newsletter_msg_512" value="<?php echo get_option('newsletter_msg_512', 'Subscription already exists'); ?>" />
-                            <br/> <span class="gan-input-description"><?php _e( 'Displayed when a user enters an email address that is already subscribed.', 'getanewsletter' ); ?></span>
-                        </td>
-                    </tr>
                 </table>
             </div>
         </div>
 
         <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="page_options" value="newsletter_user,newsletter_pass,newsletter_apikey,newsletter_msg_success,newsletter_msg_confirm,newsletter_msg_505,newsletter_msg_512,gan_enable_popup_forms" />
+        <input type="hidden" name="page_options" value="newsletter_user,newsletter_pass,newsletter_apikey,newsletter_msg_success,newsletter_msg_confirm,gan_enable_popup_forms" />
         <p class="submit">
             <input type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'getanewsletter') ?>" />
         </p>
@@ -1629,8 +1613,6 @@ function gan_uninstall_action() {
 	delete_option( 'gan_user_hash' );
     delete_option( 'newsletter_msg_success' );
     delete_option( 'newsletter_msg_confirm' );
-    delete_option( 'newsletter_msg_505' );
-    delete_option( 'newsletter_msg_512' );
     delete_option( 'gan_enable_popup_forms' );
 }
 register_uninstall_hook( __FILE__, 'gan_uninstall_action' );
