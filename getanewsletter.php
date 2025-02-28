@@ -1155,8 +1155,8 @@ function gan_shortcode($atts) {
                     </button>
                 </div>
             </div>
-            <div class="news-note"></div>
         </form>
+        <div class="news-note"></div>
     </div>
     <?php
 
@@ -1263,9 +1263,8 @@ class GetaNewsletter extends WP_Widget {
                     </button>
                 </div>
             </div>
-    
-            <div class="news-note"></div>
         </form>
+        <div class="news-note"></div>
     
         <?php echo $after_widget; ?>
         <?php
@@ -1509,6 +1508,7 @@ function news_js_ajax()
         //<![CDATA[
         jQuery(document).ready(function() {
             jQuery('.news-loading').hide();
+            jQuery('.news-note').hide();
 
             jQuery('.newsletter-signup').submit(function(e) {
                 e.preventDefault();
@@ -1518,7 +1518,14 @@ function news_js_ajax()
                 var inputs = form.find('input:not([type="hidden"])');
                 var submitButton = form.find('.gan-button-container--button');
                 var resultContainer = jQuery('<span></span>');
-                var resultWrapper = form.find('.news-note');
+                var resultWrapper = form.siblings('.news-note');
+
+                resultWrapper.css({
+                    'border-radius': '8px',
+                    'padding': '10px 20px',
+                    'font-weight': '500',
+                    'line-height': '1.2'
+                });
 
                 jQuery.ajax({
                     'type': 'POST',
@@ -1532,20 +1539,48 @@ function news_js_ajax()
                     'success': function(response) {
                         submitButton.removeClass('loading');
                         submitButton.attr('disabled', false);
-                        inputs.val('');
-                        inputs.first().focus();
-                        resultWrapper.empty().append(
-                            resultContainer.addClass('news-success')
-                                .removeClass('news-error')
-                                .html(response.message));
+
+                        if (response.status === 201) {
+                            inputs.val('');
+                            form.hide();
+                            resultWrapper.show();
+                            resultWrapper.css({
+                                'background': '#daf1e0',
+                                'border': '1px solid #37a169',
+                                'color': '#194c34'
+                            });
+                            resultWrapper.empty().append(
+                                resultContainer.addClass('news-success')
+                                    .removeClass('news-error')
+                                    .html(response.message));
+                        } else {
+                            resultWrapper.css({
+                                'margin-top': '10px',
+                                'background': '#fbe5e5',
+                                'border': '1px solid #da4444',
+                                'color': '#8c2828'
+                            });
+                            resultWrapper.show();
+                            resultWrapper.empty().append(
+                                resultContainer.removeClass('news-success')
+                                    .addClass('news-error')
+                                    .html(response.message));
+                        }
                     },
                     'error': function(response) {
+                        // This will only trigger for actual HTTP errors
                         submitButton.removeClass('loading');
                         submitButton.attr('disabled', false);
+                        resultWrapper.css({
+                            'background': '#fbe5e5',
+                            'border': '1px solid #da4444',
+                            'color': '#8c2828'
+                        });
+                        resultWrapper.show();
                         resultWrapper.empty().append(
                             resultContainer.removeClass('news-success')
                                 .addClass('news-error')
-                                .html(response.responseJSON.message));
+                                .html('A network error occurred. Please try again later.'));
                     }
                 });
             });
@@ -1879,8 +1914,8 @@ function render_gan_block( $attributes ) {
     $form_html .= '<svg class="gan-button-container--button-spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M140,32V64a12,12,0,0,1-24,0V32a12,12,0,0,1,24,0Zm33.25,62.75a12,12,0,0,0,8.49-3.52L204.37,68.6a12,12,0,0,0-17-17L164.77,74.26a12,12,0,0,0,8.48,20.49ZM224,116H192a12,12,0,0,0,0,24h32a12,12,0,0,0,0-24Zm-42.26,48.77a12,12,0,1,0-17,17l22.63,22.63a12,12,0,0,0,17-17ZM128,180a12,12,0,0,0-12,12v32a12,12,0,0,0,24,0V192A12,12,0,0,0,128,180ZM74.26,164.77,51.63,187.4a12,12,0,0,0,17,17l22.63-22.63a12,12,0,1,0-17-17ZM76,128a12,12,0,0,0-12-12H32a12,12,0,0,0,0,24H64A12,12,0,0,0,76,128ZM68.6,51.63a12,12,0,1,0-17,17L74.26,91.23a12,12,0,0,0,17-17Z"></path></svg>';
     $form_html .= '</button>';
     $form_html .= '</div>';
-    $form_html .= '<div class="news-note"></div>';
     $form_html .= '</form>';
+    $form_html .= '<div class="news-note"></div>';
     $form_html .= '</div>';
 
     return $form_html;
