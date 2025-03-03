@@ -13,6 +13,10 @@ Create beautiful newsletter signup forms with customizable designs and multiple 
 - Multiple forms can be used on the same page
 - Available in English and Swedish
 
+## Documentation
+
+For the official WordPress plugin documentation, see [readme.txt](./readme.txt).
+
 ## Development
 
 ### Requirements
