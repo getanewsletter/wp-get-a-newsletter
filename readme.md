@@ -31,17 +31,11 @@ For the official WordPress plugin documentation, see [readme.txt](./readme.txt).
 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/getanewsletter.git
-cd getanewsletter
+git clone git@github.com:getanewsletter/wp-get-a-newsletter.git
+cd wp-get-a-newsletter
 ```
 
-2. Install PHP dependencies
-
-```bash
-composer install
-```
-
-3. Install JavaScript dependencies and build block editor components
+2. Install JavaScript dependencies and build block editor components
 
 ```bash
 cd blocks
@@ -49,7 +43,7 @@ npm install
 npm run build
 ```
 
-For development, you can use:
+3. For development, start the dev server from while standing in the `blocks`-folder:
 
 ```bash
 npm run start
@@ -90,16 +84,14 @@ The plugin uses WordPress' translation system and supports translations for both
 
    This creates/updates the template file containing all translatable strings from both PHP and JavaScript.
 
-2. **Create/Edit Translations using POEdit**
+2. **Edit Translations using POEdit**
 
    - Open POEdit
    - Go to File > Open
-   - Navigate to the `languages/getanewsletter.pot` file
-   - Go to File > Save As
-   - Save following the naming convention: `getanewsletter-{locale}.po`
-     - Example: `getanewsletter-sv_SE.po` for Swedish
-     - Note: The locale code must match WordPress locale codes
-   - Translate all strings
+   - Navigate to the `languages/getanewsletter-sv_SE.po` file and open it
+   - Go to Translation > Update from POT file...
+     - This will update the list of translated strings with the new ones
+   - Translate all new strings
    - Save the file (this automatically creates the .mo file)
 
 3. **Generate JSON files for JavaScript translations**
