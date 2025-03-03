@@ -1,46 +1,85 @@
 === Get a Newsletter ===
-Tags: email, marketing, newsletter, subscription
+Tags: email, marketing, newsletter, subscription, forms, gutenberg, popup, email marketing, mailing list, subscribers
 Requires at least: 5.2.0
-Stable tag: 4.0
+Stable tag: 4.0.0
 Tested up to: 6.7
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Contributors: dreambuilder
 
-Email marketing made simple.
+Create beautiful newsletter signup forms with customizable designs and multiple display options.
 
 == Description ==
 
-With Get a Newsletter's WordPress plugin you can easily get more people to subscribe to your newsletter. Add a new form as a widget or use the shortcode to include a form in your blog posts or pages and wait for the subscribers to roll in.
+Get a Newsletter's WordPress plugin makes it easy to grow your email list with beautiful subscription forms. Create and customize forms directly in WordPress, then add them anywhere on your site using the block editor, widgets, or shortcodes.
+
+Whether you want a simple newsletter signup in your sidebar or a customized form in your content, this plugin has you covered. Design forms that match your brand with custom colors and styles, and use popup forms to capture visitors' attention at the right moment.
 
 Plugin features:
 
-* Create new forms in the Wordpress admin panel
-* Add forms using shortcodes in blog posts or pages
-* Add forms using widgets to the sidebar or in the footer
+* Create and manage newsletter forms directly in WordPress
+* Add forms using the block editor (Gutenberg)
+* Customize form appearance with colors and styles
+* Add forms using widgets in sidebars or footer
+* Add forms using shortcodes in posts or pages
+* Support for both embedded and popup forms
+* Multiple forms can be used on the same page
+* Available in English and Swedish
+* Easy setup with step-by-step guide
+* Seamless integration with Get a Newsletter service
 
 Website: https://www.getanewsletter.com
 
 == Installation ==
 
-Signup required at (https://app.getanewsletter.com)
+=== Install the plugin ===
 
-1. Install wordpress plugin
-2. Login to your account on https://app.getanewsletter.com
-3. Go to My account > API > API Tokens
-4. Create a new API token
-5. Copy the API token
-6. Go to Contacts > Forms
-7. Create a new subscription form(We only support embedded forms via the plugin for now)
-8. Open wordpress settings and goto getanewsletter plugin
-9. Paste API token and fill out required information
-10. Add subscribe widget, goto Layout > widgets and look for a widget called get a newsletter
+1. Log in to your WordPress site
+2. Go to "Plugins" > "Add New"
+3. Search for "getanewsletter"
+4. Click "Install Now"
+5. Click "Activate"
 
+=== Connect your account ===
+
+1. Click on "Get a Newsletter" in the WordPress sidebar menu
+2. Log in to your Get a Newsletter account at https://app.getanewsletter.com
+   (Don't have an account? Sign up at https://app.getanewsletter.com)
+3. Go to "My Account" > "API" and create a new API key
+4. Copy the API key
+5. Return to WordPress and paste the API key in the settings
+6. Click "Continue" to complete the connection
+
+After connecting your account, you can:
+* Create forms in the Forms section
+* Add forms to posts and pages using the block editor
+* Add forms to your sidebars and footer using widgets
+* Enable popup forms in the Settings section
+
+Need help? Visit our support center at https://support.getanewsletter.com
+
+== Frequently Asked Questions ==
+
+= Do I need a Get a Newsletter account? =
+
+Yes, you need an account to use this plugin. You can sign up at https://app.getanewsletter.com
+
+= Can I use multiple forms on the same page? =
+
+Yes, with version 4.0.0 you can use multiple forms on the same page, each with their own unique design.
+
+= How do I style my forms? =
+
+Forms can be styled using the built-in customization options in the block editor, including colors, borders, and spacing.
+
+= How do I enable popup forms? =
+
+Popup forms can be enabled in the Settings section of the plugin. Once enabled, you can manage your popup forms from your Get a Newsletter account.
 
 == Changelog ==
 
-= 4.0 =
+= 4.0.0 =
 * Added Gutenberg block support with visual customization options
 * Added support for multiple forms on the same page
 * Added Swedish translation and improved overall translation support
@@ -48,67 +87,63 @@ Signup required at (https://app.getanewsletter.com)
 * Improved form management with better editing interface
 * Enhanced form styling with customizable colors and appearance
 
-= 3.3 =
-Updated the design for the Settings-page
-Added an option to enable popup forms from the settings page
-Added a support page with system info to easier get help
+= 3.3.0 =
+* Updated the design for the Settings-page
+* Added an option to enable popup forms from the settings page
+* Added a support page with system info to easier get help
 
-= 3.2 =
-Completely re-made the onboarding process for users that install and activate the plugin for the first time
+= 3.2.0 =
+* Completely re-made the onboarding process for users that install and activate the plugin for the first time
 
-= 3.1 =
-Added custom scripts and styles for the settings pages
-Form errors and success notices now appear as expected
-Form errors now utilize transients instead of the PHP sessions
-Cosmetic changes to the settings pages
+= 3.1.0 =
+* Added custom scripts and styles for the settings pages
+* Form errors and success notices now appear as expected
+* Form errors now utilize transients instead of the PHP sessions
+* Cosmetic changes to the settings pages
 
 = 3.0.5 =
-Fixed bug caused by changed API for choosing sender when creating a subscription form
+* Fixed bug caused by changed API for choosing sender when creating a subscription form
 
 = 3.0.4 =
-Updated documentation and tested on latest wordpress version
+* Updated documentation and tested on latest WordPress version
 
 = 3.0.3 =
-Fix for WP Site Health warning(Active PHP session detected)
+* Fix for WP Site Health warning (Active PHP session detected)
 
 = 3.0.2 =
-Add fallback to http if https API request fail
+* Add fallback to http if https API request fail
 
 = 3.0.1 =
-Removed use of short_open_tag
+* Removed use of short_open_tag
 
 = 3.0.0 =
-PHP 7.2 and Wordpress 5.2 fixes
-Making possible to create/edit subscription forms in WordPress admin
-Added shortcode for subscription forms
-Some minor enhancements
+* PHP 7.2 and WordPress 5.2 fixes
+* Making possible to create/edit subscription forms in WordPress admin
+* Added shortcode for subscription forms
+* Some minor enhancements
 
 = 2.0.5 =
-Saving widget fixes
+* Saving widget fixes
 
 = 2.0.4 =
-PHP 5.3 fixes
+* PHP 5.3 fixes
 
 = 2.0.2 =
-Added swedish translation
+* Added Swedish translation
 
 = 2.0.0 =
 * Beautiful handling of upgrading old installations
-* Convert existing widgets and create a matching subscription form.
+* Convert existing widgets and create a matching subscription form
 
-If subscription forms is new to you, here are some information about them http://help.getanewsletter.com/en/support/how-do-i-create-a-subscription-form/
+For more information about subscription forms, visit https://support.getanewsletter.com
 
 = 1.9.1 =
 * Bugfixes
 
 = 1.9.0 =
-* Available in wordpress public repository
-
+* Available in WordPress public repository
 
 == Upgrade Notice ==
 
-
-== Frequently Asked Questions ==
-
-
-== Screenshots ==
+= 4.0.0 =
+Major update with Gutenberg block support, improved form styling, and Swedish translation. Requires WordPress 5.2 or higher.
