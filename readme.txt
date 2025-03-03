@@ -41,8 +41,12 @@ Signup required at (https://app.getanewsletter.com)
 == Changelog ==
 
 = 4.0 =
-Added Newsletter Form Gutenberg block
-Made the plugin translatable
+* Added Gutenberg block support with visual customization options
+* Added support for multiple forms on the same page
+* Added Swedish translation and improved overall translation support
+* Added new guide page with step-by-step instructions
+* Improved form management with better editing interface
+* Enhanced form styling with customizable colors and appearance
 
 = 3.3 =
 Updated the design for the Settings-page
