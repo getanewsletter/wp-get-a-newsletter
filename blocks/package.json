@@ -1,0 +1,20 @@
+{
+  "name": "getanewsletter-blocks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start --hot"
+  },
+  "dependencies": {
+    "@wordpress/block-editor": "^14.10.1",
+    "@wordpress/blocks": "^14.4.1",
+    "@wordpress/components": "^29.1.1",
+    "@wordpress/core-data": "^7.15.1",
+    "@wordpress/element": "^6.15.1",
+    "@wordpress/i18n": "^5.15.1"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.8.1"
+  }
+}

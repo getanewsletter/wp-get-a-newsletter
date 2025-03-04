@@ -1,0 +1,177 @@
+.gan-block-form {
+  --gan-border-radius: 0;
+  --gan-field-background: #ffffff;
+  --gan-field-border: #000000;
+  --gan-label-color: #000000;
+  --gan-button-background: #0280ff;
+  --gan-button-text-color: #ffffff;
+  --gan-input-height: 40px;
+  --gan-font-size: 16px;
+}
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Layout, title and description
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+/* Only add margin-top if the title or description is present */
+.gan-block-form:has(h2, p) form {
+  margin-top: 20px;
+}
+
+.gan-block-form h2.gan-block-form--title {
+  all: unset;
+  display: block;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.gan-block-form p.gan-block-form--description {
+  all: unset;
+  display: block;
+  margin-top: 6px;
+  font-size: var(--gan-font-size);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Input field
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-block-form .gan-block-form--input-field {
+  margin-bottom: 10px;
+}
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Labels
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-block-form .newsletter-signup label {
+  all: unset;
+  color: var(--gan-label-color);
+  font-size: var(--gan-font-size);
+  font-weight: 600;
+  cursor: default;
+  user-select: none;
+}
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Inputs
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-block-form .newsletter-signup input[type="text"],
+.gan-block-form .newsletter-signup input[type="email"] {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: var(--gan-border-radius);
+  background-color: var(--gan-field-background);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--gan-field-border);
+  display: block;
+  padding: 0 10px;
+  margin: 0;
+  margin-top: 4px;
+  height: var(--gan-input-height);
+  font-size: var(--gan-font-size);
+}
+
+.gan-block-form .newsletter-signup input[type="text"]:focus,
+.gan-block-form .newsletter-signup input[type="email"]:focus {
+  outline: 1px solid var(--gan-button-background);
+  border-color: var(--gan-button-background);
+}
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Submit button
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-block-form .newsletter-signup .gan-button-container {
+  margin-top: 30px;
+}
+
+.gan-block-form
+  .newsletter-signup
+  .gan-button-container
+  button[type="submit"].gan-button-container--button {
+  all: unset;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: var(--gan-button-background);
+  color: var(--gan-button-text-color);
+  height: var(--gan-input-height);
+  font-size: var(--gan-font-size);
+  font-weight: 600;
+  border-radius: var(--gan-border-radius);
+}
+
+.gan-block-form
+  .newsletter-signup
+  .gan-button-container
+  button[type="submit"].gan-button-container--button:hover {
+  opacity: 0.8;
+}
+
+.gan-block-form
+  .newsletter-signup
+  .gan-button-container
+  button[type="submit"].gan-button-container--button:focus-visible {
+  outline: 2px solid var(--gan-button-background);
+  outline-offset: 2px;
+}
+
+/* 
+The styles below applies to all form types – block, shortcode and widget – in order to
+center the spinner in the button for the pending state.
+*/
+button[type="submit"].gan-button-container--button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button[type="submit"].gan-button-container--button
+  .gan-button-container--button-spinner {
+  position: absolute;
+  animation: spin 1s linear infinite;
+  visibility: hidden;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading state for the submit button */
+button[type="submit"].gan-button-container--button.loading
+  .gan-button-container--button-text {
+  opacity: 0;
+}
+
+button[type="submit"].gan-button-container--button.loading
+  .gan-button-container--button-spinner {
+  visibility: visible;
+}
+
+button[type="submit"].gan-button-container--button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Validation messages
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.gan-block-form .news-note {
+  margin-top: 20px;
+  font-size: var(--gan-font-size);
+}

@@ -62,6 +62,11 @@ class GAPI
     public $body;
 
     /*
+     * HTTP client instance
+     */
+    private $http;
+
+    /*
      * GAPI()
      *
      * A constructor. Prepares the interface for work with the API.
@@ -685,7 +690,7 @@ class GAPI
      */
     function attribute_listing()
     {
-        $ok = $this->call_api('GET', 'attributes/');
+        $ok = $this->call_api('GET', 'attributes/?paginate_by=100');
         if ($ok) {
             $this->result = $this->body['results'];
 

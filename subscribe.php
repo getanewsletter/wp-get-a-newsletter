@@ -42,7 +42,7 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
         if(!empty($_POST['form_link'])) {
             $form_link = str_replace('http:', 'https:', $_POST['form_link']);
         } else {
-            $response['message'] = __('Subscription form missing mandatory options, please contact administrator.');
+            $response['message'] = __('Subscription form missing mandatory options, please contact administrator.', 'getanewsletter');
             $errors = true;
         }
 
@@ -74,13 +74,16 @@ if(strpos($_SERVER['HTTP_REFERER'], $curdomain)) {
             $response['status'] = $request->response['code'];
 
             if($response['status'] == 201) {
+                $response['status'] = 201;
                 $response['message'] = get_option('newsletter_msg_success');
             } else {
-                $response['message'] = __('An error has occured', 'getanewsletter');
+                $response['status'] = 400;
+                $response['message'] = __('An unknown error has occurred. Please try again later.', 'getanewsletter');
+                // error_log('GetANewsletter API Error - Status: ' . $response['status']);
+                // error_log('GetANewsletter API Response: ' . print_r($request, true));
             }
         }
 
-        header("HTTP/1.0 " . $response['status']);
         header('Content-Type: application/json');
         echo json_encode($response, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         wp_die();

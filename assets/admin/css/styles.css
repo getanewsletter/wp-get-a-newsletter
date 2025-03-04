@@ -213,3 +213,92 @@
 .gan-support-info-copy:focus {
   text-decoration: none;
 }
+
+.gan-guide-page {
+  background: #fff;
+  margin-top: 20px;
+  padding: 40px;
+  border: 1px solid #c3c4c7;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+@media screen and (max-width: 782px) {
+  .gan-guide-page {
+    margin-top: 12px;
+  }
+}
+
+.gan-guide-page img {
+  max-width: 100%;
+}
+
+.gan-guide-page .gan-guide-title {
+  font-size: 24px;
+  font-weight: 600;
+  padding: 0;
+  line-height: 1;
+}
+
+.gan-guide-page h2 {
+  margin-bottom: 0;
+  font-size: 20px;
+}
+
+.gan-guide-page h3 {
+  font-size: 16px;
+  margin-top: 0;
+}
+
+.gan-guide-page p,
+.gan-guide-page a {
+  font-size: 15px;
+}
+
+.gan-guide-page .guide-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 40px;
+  gap: 40px;
+}
+
+@media screen and (max-width: 980px) {
+  .gan-guide-page .guide-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gan-guide-page .guide-column {
+  background-color: #f4f4f4;
+  padding: 30px;
+}
+
+.gan-guide-page .guide-column__link-container {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  row-gap: 10px;
+}
+
+.gan-guide-page .display-guides {
+  display: grid;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.gan-guide-page .display-guide {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media screen and (max-width: 980px) {
+  .gan-guide-page .display-guide {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gan-guide-page .guide-get-started {
+  padding: 30px 0;
+  text-align: center;
+}
