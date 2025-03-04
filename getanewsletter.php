@@ -2,7 +2,7 @@
 /*
 Plugin Name: Get a Newsletter
 Plugin URI: https://www.getanewsletter.com/
-Description: Plugin to add subscription form to the site using widgets.
+Description: Turn visitors into subscribers. Eliminate manual entry of subscribers with signup forms that sync directly with your Get a Newsletter account.
 Version: 4.0
 Requires at least: 5.2.0
 Requires PHP: 7.2

@@ -1,14 +1,13 @@
 === Get a Newsletter ===
-Tags: email, marketing, newsletter, subscription, forms, gutenberg, popup, email marketing, mailing list, subscribers
+Tags: newsletter, forms, popup, email marketing, mailing list
 Requires at least: 5.2.0
 Stable tag: 4.0.0
 Tested up to: 6.7
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Contributors: dreambuilder
 
-Create beautiful newsletter signup forms with customizable designs and multiple display options.
+Turn visitors into subscribers. Eliminate manual entry of subscribers with signup forms that sync directly with your Get a Newsletter account.
 
 == Description ==
 
@@ -27,7 +26,7 @@ Plugin features:
 * Multiple forms can be used on the same page
 * Available in English and Swedish
 * Easy setup with step-by-step guide
-* Seamless integration with Get a Newsletter service
+* Seamless integration with Get a Newsletter
 
 Website: https://www.getanewsletter.com
 
@@ -147,3 +146,9 @@ For more information about subscription forms, visit https://support.getanewslet
 
 = 4.0.0 =
 Major update with Gutenberg block support, improved form styling, and Swedish translation. Requires WordPress 5.2 or higher.
+
+== Screenshots ==
+
+1. Posts and pages - Add newsletter forms using the Gutenberg block editor
+2. Sidebars and footers - Place forms in widget areas using the WordPress widget system
+3. Popup forms - Enable popup forms from the plugin settings page

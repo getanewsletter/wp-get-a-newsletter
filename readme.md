@@ -1,6 +1,8 @@
+![Screenshot of Get a Newsletter WordPress Plugin](assets/admin/img/banner-1544x500.png)
+
 # Get a Newsletter WordPress Plugin
 
-Create beautiful newsletter signup forms with customizable designs and multiple display options. This WordPress plugin integrates with the Get a Newsletter service to help you grow your email list.
+Turn visitors into subscribers. Eliminate manual entry of subscribers with signup forms that sync directly with your Get a Newsletter account.
 
 ## Features
 
