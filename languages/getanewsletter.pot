@@ -1,22 +1,22 @@
-# Copyright (C) 2025 getanewsletter
+# Copyright (C) 2026 getanewsletter
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
 "Project-Id-Version: Get a Newsletter 4.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/getanewsletter\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-get-a-newsletter\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-27T14:34:26+00:00\n"
+"POT-Creation-Date: 2026-01-15T14:29:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: getanewsletter\n"
 
 #. Plugin Name of the plugin
 #: getanewsletter.php
-#: getanewsletter.php:1186
+#: getanewsletter.php:1295
 #: blocks/build/index.js:1
 #: blocks/src/index.js:9
 msgid "Get a Newsletter"
@@ -30,7 +30,7 @@ msgstr ""
 
 #. Description of the plugin
 #: getanewsletter.php
-msgid "Plugin to add subscription form to the site using widgets."
+msgid "Turn visitors into subscribers. Eliminate manual entry of subscribers with signup forms that sync directly with your Get a Newsletter account."
 msgstr ""
 
 #. Author of the plugin
@@ -38,171 +38,171 @@ msgstr ""
 msgid "getanewsletter"
 msgstr ""
 
-#: getanewsletter.php:51
-#: getanewsletter.php:290
+#: getanewsletter.php:49
+#: getanewsletter.php:288
 msgid "Forms"
 msgstr ""
 
-#: getanewsletter.php:53
-#: getanewsletter.php:835
+#: getanewsletter.php:51
+#: getanewsletter.php:833
 msgid "Settings"
 msgstr ""
 
-#: getanewsletter.php:54
+#: getanewsletter.php:52
 msgid "Guide"
 msgstr ""
 
-#: getanewsletter.php:55
-#: getanewsletter.php:624
+#: getanewsletter.php:53
+#: getanewsletter.php:622
 msgid "Support"
 msgstr ""
 
-#: getanewsletter.php:102
+#: getanewsletter.php:100
 msgid "The subscription form has been deleted"
 msgstr ""
 
-#: getanewsletter.php:118
+#: getanewsletter.php:116
 msgid "The subscription form has been created"
 msgstr ""
 
-#: getanewsletter.php:123
-#: getanewsletter.php:155
+#: getanewsletter.php:121
+#: getanewsletter.php:153
 msgid "Please correct the errors below: "
 msgstr ""
 
-#: getanewsletter.php:150
+#: getanewsletter.php:148
 msgid "The subscription form has been updated"
 msgstr ""
 
-#: getanewsletter.php:243
+#: getanewsletter.php:241
 msgid "Unknown error"
 msgstr ""
 
-#: getanewsletter.php:250
+#: getanewsletter.php:248
 msgid "Unable to connect to the Get A Newsletter API."
 msgstr ""
 
-#: getanewsletter.php:293
-#: getanewsletter.php:349
+#: getanewsletter.php:291
+#: getanewsletter.php:347
 msgid "Add new form"
 msgstr ""
 
-#: getanewsletter.php:299
+#: getanewsletter.php:297
 msgid "Unable to connect to the Get a Newsletter API. Please verify your API key"
 msgstr ""
 
-#: getanewsletter.php:308
+#: getanewsletter.php:306
 msgid "Name"
 msgstr ""
 
-#: getanewsletter.php:309
+#: getanewsletter.php:307
 #: assets/admin/js/scripts.js:27
 msgid "List"
 msgstr ""
 
-#: getanewsletter.php:310
+#: getanewsletter.php:308
 msgid "Shortcode"
 msgstr ""
 
-#: getanewsletter.php:311
+#: getanewsletter.php:309
 msgid "Actions"
 msgstr ""
 
-#: getanewsletter.php:322
+#: getanewsletter.php:320
 msgid "Edit"
 msgstr ""
 
-#: getanewsletter.php:322
+#: getanewsletter.php:320
 msgid "Delete"
 msgstr ""
 
-#: getanewsletter.php:359
+#: getanewsletter.php:357
 msgid "1. Name your form"
 msgstr ""
 
-#: getanewsletter.php:363
+#: getanewsletter.php:361
 #: assets/admin/js/scripts.js:23
 msgid "Form name"
 msgstr ""
 
-#: getanewsletter.php:371
+#: getanewsletter.php:369
 msgid "2. Contact fields"
 msgstr ""
 
-#: getanewsletter.php:375
-#: getanewsletter.php:1367
+#: getanewsletter.php:373
+#: getanewsletter.php:1475
 msgid "Email"
 msgstr ""
 
-#: getanewsletter.php:379
-#: getanewsletter.php:1117
-#: getanewsletter.php:1221
-#: getanewsletter.php:1376
-#: getanewsletter.php:1857
+#: getanewsletter.php:377
+#: getanewsletter.php:1226
+#: getanewsletter.php:1330
+#: getanewsletter.php:1484
+#: getanewsletter.php:2011
 #: blocks/build/index.js:1
 #: blocks/src/index.js:251
 msgid "First name"
 msgstr ""
 
-#: getanewsletter.php:383
-#: getanewsletter.php:1126
-#: getanewsletter.php:1230
-#: getanewsletter.php:1384
-#: getanewsletter.php:1862
+#: getanewsletter.php:381
+#: getanewsletter.php:1235
+#: getanewsletter.php:1339
+#: getanewsletter.php:1492
+#: getanewsletter.php:2016
 #: blocks/build/index.js:1
 #: blocks/src/index.js:257
 msgid "Last name"
 msgstr ""
 
-#: getanewsletter.php:394
+#: getanewsletter.php:392
 msgid "3. Attribute fields"
 msgstr ""
 
-#: getanewsletter.php:418
+#: getanewsletter.php:416
 msgid "4. List and Sender"
 msgstr ""
 
-#: getanewsletter.php:420
+#: getanewsletter.php:418
 msgid "3. List and Sender"
 msgstr ""
 
-#: getanewsletter.php:425
+#: getanewsletter.php:423
 msgid "Choose list"
 msgstr ""
 
-#: getanewsletter.php:428
+#: getanewsletter.php:426
 msgid "Choose a list"
 msgstr ""
 
-#: getanewsletter.php:442
+#: getanewsletter.php:440
 msgid "Choose sender"
 msgstr ""
 
-#: getanewsletter.php:445
+#: getanewsletter.php:443
 msgid "Choose a sender"
 msgstr ""
 
-#: getanewsletter.php:459
+#: getanewsletter.php:457
 msgid "Show advanced settings"
 msgstr ""
 
-#: getanewsletter.php:465
+#: getanewsletter.php:463
 msgid "5. Confirmation email"
 msgstr ""
 
-#: getanewsletter.php:467
+#: getanewsletter.php:465
 msgid "4. Confirmation email"
 msgstr ""
 
-#: getanewsletter.php:472
+#: getanewsletter.php:470
 msgid "Subject"
 msgstr ""
 
-#: getanewsletter.php:476
+#: getanewsletter.php:474
 msgid "Message"
 msgstr ""
 
-#: getanewsletter.php:478
+#: getanewsletter.php:476
 msgid ""
 "Hello!\n"
 "\n"
@@ -216,365 +216,413 @@ msgid ""
 "Ps. If you don't want our newsletter in the future, you can easily unsubscribe with the link provided in every newsletter."
 msgstr ""
 
-#: getanewsletter.php:487
+#: getanewsletter.php:485
 msgid "6. Form settings"
 msgstr ""
 
-#: getanewsletter.php:489
+#: getanewsletter.php:487
 msgid "5. Form settings"
 msgstr ""
 
-#: getanewsletter.php:494
+#: getanewsletter.php:492
 msgid "Next URL"
 msgstr ""
 
-#: getanewsletter.php:498
+#: getanewsletter.php:496
 msgid "Button Text"
 msgstr ""
 
-#: getanewsletter.php:511
+#: getanewsletter.php:509
 msgid "Save and return"
 msgstr ""
 
-#: getanewsletter.php:512
+#: getanewsletter.php:510
 msgid "Cancel"
 msgstr ""
 
-#: getanewsletter.php:524
+#: getanewsletter.php:522
 msgid "Getting started guide"
 msgstr ""
 
-#: getanewsletter.php:525
+#: getanewsletter.php:523
 msgid "An overview of the Get a Newsletter form plugin and the features available to you."
 msgstr ""
 
-#: getanewsletter.php:529
+#: getanewsletter.php:527
 msgid "Create and manage forms"
 msgstr ""
 
-#: getanewsletter.php:530
+#: getanewsletter.php:528
 msgid "There's two types of forms available to you ‒ Embedded forms and popup forms."
 msgstr ""
 
-#: getanewsletter.php:535
+#: getanewsletter.php:533
 msgid "Embedded forms"
 msgstr ""
 
-#: getanewsletter.php:536
+#: getanewsletter.php:534
 msgid "Manage the forms from your Get a Newsletter account directly from your WordPress site. You can view, edit, and add new forms, and any changes made here will automatically update in both locations."
 msgstr ""
 
-#: getanewsletter.php:538
+#: getanewsletter.php:536
 msgid "Manage embedded forms"
 msgstr ""
 
-#: getanewsletter.php:539
+#: getanewsletter.php:537
 msgid "https://support.getanewsletter.com/en/articles/3678267-create-a-subscription-form"
 msgstr ""
 
-#: getanewsletter.php:539
-#: getanewsletter.php:548
-#: getanewsletter.php:565
-#: getanewsletter.php:575
-#: getanewsletter.php:585
+#: getanewsletter.php:537
+#: getanewsletter.php:546
+#: getanewsletter.php:563
+#: getanewsletter.php:573
+#: getanewsletter.php:583
 msgid "Learn more in our Help center ↗"
 msgstr ""
 
-#: getanewsletter.php:544
-#: getanewsletter.php:881
+#: getanewsletter.php:542
+#: getanewsletter.php:905
 msgid "Popup forms"
 msgstr ""
 
-#: getanewsletter.php:545
+#: getanewsletter.php:543
 msgid "Popup forms can only be managed from your Get a Newsletter account. However, you can enable them directly from the Settings page on your WordPress site."
 msgstr ""
 
-#: getanewsletter.php:547
-#: getanewsletter.php:888
+#: getanewsletter.php:545
+#: getanewsletter.php:912
 msgid "Enable popup forms"
 msgstr ""
 
-#: getanewsletter.php:548
-#: getanewsletter.php:585
+#: getanewsletter.php:546
+#: getanewsletter.php:583
 msgid "https://support.getanewsletter.com/en/articles/5335643-create-a-popup-form"
 msgstr ""
 
-#: getanewsletter.php:555
+#: getanewsletter.php:553
 msgid "Displaying forms on your site"
 msgstr ""
 
-#: getanewsletter.php:556
+#: getanewsletter.php:554
 msgid "There's a few different ways to display forms on your site."
 msgstr ""
 
-#: getanewsletter.php:562
+#: getanewsletter.php:560
 msgid "Posts and pages"
 msgstr ""
 
-#: getanewsletter.php:563
+#: getanewsletter.php:561
 msgid "Easily add forms to your posts and pages by inserting a new \"Get a Newsletter\"-block. Choose from your existing forms to display, and customize each one to match your site's style. You can include as many forms as you like, giving you complete flexibility."
 msgstr ""
 
-#: getanewsletter.php:565
-#: getanewsletter.php:575
+#: getanewsletter.php:563
+#: getanewsletter.php:573
 msgid "https://support.getanewsletter.com/en/articles/10660480-add-a-subscription-form-in-wordpress#h_e4f60c8206"
 msgstr ""
 
-#: getanewsletter.php:572
+#: getanewsletter.php:570
 msgid "Sidebars and footers"
 msgstr ""
 
-#: getanewsletter.php:573
+#: getanewsletter.php:571
 msgid "You can also add forms to your website using widgets. Simply navigate to Appearance > Widgets to place forms in any widget area, such as sidebars or the footer."
 msgstr ""
 
-#: getanewsletter.php:582
+#: getanewsletter.php:580
 msgid "Popup"
 msgstr ""
 
-#: getanewsletter.php:583
+#: getanewsletter.php:581
 msgid "In your Get a Newsletter account, you can easily choose which pages show your popup forms and decide when they appear. Plus, you can turn the popup feature on or off from the plugin settings page."
 msgstr ""
 
-#: getanewsletter.php:594
+#: getanewsletter.php:592
 msgid "Ready to get started?"
 msgstr ""
 
-#: getanewsletter.php:595
+#: getanewsletter.php:593
 msgid "Continue to forms to view your forms or create a new one"
 msgstr ""
 
-#: getanewsletter.php:596
+#: getanewsletter.php:594
 msgid "Continue to forms"
 msgstr ""
 
-#: getanewsletter.php:628
+#: getanewsletter.php:626
 msgid "Need help?"
 msgstr ""
 
-#: getanewsletter.php:635
+#: getanewsletter.php:633
+#, php-format
 msgid "If you are experiencing issues with the plugin you can reach out to our support team. In order to help you as fast as possible please copy the details below and include it in your message. Email us at %s"
 msgstr ""
 
-#: getanewsletter.php:644
+#: getanewsletter.php:642
 msgid "Debug information"
 msgstr ""
 
-#: getanewsletter.php:646
+#: getanewsletter.php:644
 msgid "Copy text to clipboard"
 msgstr ""
 
-#: getanewsletter.php:675
-#: getanewsletter.php:687
-#: getanewsletter.php:697
-#: getanewsletter.php:707
-#: getanewsletter.php:727
-#: getanewsletter.php:741
+#: getanewsletter.php:673
+#: getanewsletter.php:685
+#: getanewsletter.php:695
+#: getanewsletter.php:705
+#: getanewsletter.php:725
+#: getanewsletter.php:739
 msgid "Cannot connect to Get A Newsletter API"
 msgstr ""
 
-#: getanewsletter.php:680
+#: getanewsletter.php:678
 msgid "Cannot delete a form"
 msgstr ""
 
-#: getanewsletter.php:750
+#: getanewsletter.php:748
 msgid "Connect your account"
 msgstr ""
 
-#: getanewsletter.php:751
+#: getanewsletter.php:749
 msgid "To get access to the plugin, you must first connect to your Get a Newsletter-account"
 msgstr ""
 
-#: getanewsletter.php:756
+#: getanewsletter.php:754
 msgid "Log in or sign up"
 msgstr ""
 
-#: getanewsletter.php:760
+#: getanewsletter.php:758
+#, php-format
 msgid "Log in to <a href=\"%1$s\">app.getanewsletter.com</a>. Don't have an account yet, <a href=\"%2$s\">sign up</a> instead."
 msgstr ""
 
-#: getanewsletter.php:772
+#: getanewsletter.php:770
 msgid "Create an API key"
 msgstr ""
 
-#: getanewsletter.php:776
+#: getanewsletter.php:774
+#, php-format
 msgid "Once logged in, go to %s and create a new API key."
 msgstr ""
 
-#: getanewsletter.php:780
+#: getanewsletter.php:778
 msgid "My Account -> API"
 msgstr ""
 
-#: getanewsletter.php:791
+#: getanewsletter.php:789
 msgid "Add API key to authenticate"
 msgstr ""
 
-#: getanewsletter.php:792
+#: getanewsletter.php:790
 msgid "Copy and paste the generated API key below to authenticate."
 msgstr ""
 
-#: getanewsletter.php:798
+#: getanewsletter.php:796
 msgid "Your API key"
 msgstr ""
 
-#: getanewsletter.php:800
+#: getanewsletter.php:798
 #: assets/admin/js/scripts.js:155
 msgid "Continue"
 msgstr ""
 
-#: getanewsletter.php:841
-#: getanewsletter.php:858
+#: getanewsletter.php:839
+#: getanewsletter.php:856
 msgid "API key"
 msgstr ""
 
-#: getanewsletter.php:848
+#: getanewsletter.php:846
+#, php-format
 msgid "Here is your API key for connecting your Get a Newsletter account to this WordPress site. To update the API key, log in to your account and go to %s to generate a new one."
 msgstr ""
 
-#: getanewsletter.php:867
+#: getanewsletter.php:865
 msgid "Your API key is active and working"
 msgstr ""
 
-#: getanewsletter.php:871
-msgid "Invalid API key. Verify and re-enter the API key."
+#: getanewsletter.php:873
+#, php-format
+msgid "Your connection is not working (key ending in %s)"
+msgstr ""
+
+#: getanewsletter.php:876
+msgid "The key no longer works. This happens if it was removed from your account."
+msgstr ""
+
+#: getanewsletter.php:878
+msgid "Create a new key in your Get a Newsletter account (My Account → API) and paste it above."
+msgstr ""
+
+#: getanewsletter.php:882
+msgid "Try Again"
 msgstr ""
 
 #: getanewsletter.php:885
-msgid "When creating popup forms with our tool, we ask you to paste a universal code snippet into the ⁠<head> section of your website. With this plugin, you can easily enable your popup forms below."
+msgid "Testing..."
 msgstr ""
 
-#: getanewsletter.php:895
-msgid "Submission feedback"
+#: getanewsletter.php:889
+msgid "Go to My Account"
 msgstr ""
 
-#: getanewsletter.php:899
-msgid "You can customize the messages shown to users when they interact with the form."
-msgstr ""
-
-#: getanewsletter.php:902
-msgid "Successful submission:"
-msgstr ""
-
-#: getanewsletter.php:905
-msgid "Displayed when a user successfully enters their details."
+#: getanewsletter.php:892
+msgid "Get Help"
 msgstr ""
 
 #: getanewsletter.php:909
-msgid "Invalid email:"
-msgstr ""
-
-#: getanewsletter.php:912
-msgid "Displayed when a user enters an invalid email address"
-msgstr ""
-
-#: getanewsletter.php:916
-msgid "Existing subscription:"
+msgid "When creating popup forms with our tool, we ask you to paste a universal code snippet into the ⁠<head> section of your website. With this plugin, you can easily enable your popup forms below."
 msgstr ""
 
 #: getanewsletter.php:919
-msgid "Displayed when a user enters an email address that is already subscribed."
+msgid "Submission feedback"
+msgstr ""
+
+#: getanewsletter.php:923
+msgid "You can customize the messages shown to users when they interact with the form."
+msgstr ""
+
+#: getanewsletter.php:926
+msgid "Successful submission:"
 msgstr ""
 
 #: getanewsletter.php:929
+msgid "Displayed when a user successfully enters their details."
+msgstr ""
+
+#: getanewsletter.php:939
 msgid "Save Changes"
 msgstr ""
 
-#: getanewsletter.php:1024
-msgid "Could not login"
+#: getanewsletter.php:1001
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: getanewsletter.php:1029
+msgid "Your forms are not working right now"
+msgstr ""
+
+#: getanewsletter.php:1032
+#, php-format
+msgid "Your connection key (ending in %s) has stopped working."
+msgstr ""
+
+#: getanewsletter.php:1038
+msgid "Fix Connection"
 msgstr ""
 
 #: getanewsletter.php:1133
-#: getanewsletter.php:1238
+msgid "Could not login"
+msgstr ""
+
+#: getanewsletter.php:1242
+#: getanewsletter.php:1347
 msgid "E-mail"
 msgstr ""
 
-#: getanewsletter.php:1153
-#: getanewsletter.php:1261
-#: getanewsletter.php:1878
+#: getanewsletter.php:1262
+#: getanewsletter.php:1370
+#: getanewsletter.php:2032
 #: blocks/build/index.js:1
 #: blocks/src/index.js:274
 msgid "Subscribe"
 msgstr ""
 
-#: getanewsletter.php:1184
+#: getanewsletter.php:1293
 msgid "Easily integrate Get a Newsletter forms into your WordPress site."
 msgstr ""
 
-#: getanewsletter.php:1327
+#: getanewsletter.php:1435
 #: blocks/build/index.js:1
 #: blocks/src/index.js:146
 #: blocks/src/index.js:152
 msgid "Title"
 msgstr ""
 
-#: getanewsletter.php:1337
+#: getanewsletter.php:1445
 msgid "Subscription form"
 msgstr ""
 
 #. translators: %s: URL to create a subscription form
-#: getanewsletter.php:1354
+#: getanewsletter.php:1462
+#, php-format
 msgid "Subscription forms not created yet, create a form <a href=\"%s\">here</a>"
 msgstr ""
 
-#: getanewsletter.php:1361
+#: getanewsletter.php:1469
 msgid "Attribute fields"
 msgstr ""
 
-#: getanewsletter.php:1362
+#: getanewsletter.php:1470
 msgid "Choose which fields to include for this widget. Current options are copied from the original form"
 msgstr ""
 
-#: getanewsletter.php:1368
+#: getanewsletter.php:1476
 msgid "Required"
 msgstr ""
 
-#: getanewsletter.php:1402
+#: getanewsletter.php:1510
 msgid "Submit text"
 msgstr ""
 
-#: getanewsletter.php:1411
+#: getanewsletter.php:1519
 msgid "Wrong Login details. Enter correct details in Get a Newsletter options page."
 msgstr ""
 
-#: getanewsletter.php:1416
+#: getanewsletter.php:1524
 msgid "Enter required details in Get a Newsletter options page."
 msgstr ""
 
-#: getanewsletter.php:1567
+#: getanewsletter.php:1711
 msgid "Please, double check if the provided API key is correct"
 msgstr ""
 
-#: getanewsletter.php:1737
+#: getanewsletter.php:1891
 #: blocks/build/index.js:1
 #: blocks/src/index.js:23
 msgid "Join our newsletter"
 msgstr ""
 
-#: getanewsletter.php:1745
+#: getanewsletter.php:1899
 #: blocks/build/index.js:1
 #: blocks/src/index.js:31
 msgid "Enter your details below to sign up for our newsletter"
 msgstr ""
 
-#: getanewsletter.php:1814
+#: getanewsletter.php:1968
 msgid "No form selected."
 msgstr ""
 
-#: getanewsletter.php:1827
+#: getanewsletter.php:1981
 msgid "This element cannot be rendered at the moment."
 msgstr ""
 
-#: getanewsletter.php:1866
+#: getanewsletter.php:2020
 #: blocks/build/index.js:1
 #: blocks/src/index.js:262
 msgid "Email address"
+msgstr ""
+
+#: getanewsletter.php:2106
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#: getanewsletter.php:2117
+msgid "No API token configured."
+msgstr ""
+
+#: getanewsletter.php:2132
+msgid "It works! Your connection is back."
+msgstr ""
+
+#: getanewsletter.php:2137
+#, php-format
+msgid "Still not working: %s"
 msgstr ""
 
 #: subscribe.php:45
 msgid "Subscription form missing mandatory options, please contact administrator."
 msgstr ""
 
-#: subscribe.php:79
+#: subscribe.php:81
 msgid "An unknown error has occurred. Please try again later."
 msgstr ""
 
@@ -595,6 +643,7 @@ msgid "Button text"
 msgstr ""
 
 #: assets/admin/js/scripts.js:64
+#, js-format
 msgid "%s is required."
 msgstr ""
 

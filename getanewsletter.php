@@ -827,96 +827,269 @@ function newsletter_options() {
     }
 ?>
     <div class="wrap gan-settings-page">
-
-    <form method="post" action="options.php?option_page=newsletter">
-
         <h1><?php esc_html_e( 'Settings', 'getanewsletter' ); ?></h1>
 
-        <?php wp_nonce_field('newsletter-options'); ?>
+        <!-- API Key Section -->
+        <form method="post" action="options.php?option_page=newsletter" class="gan-section-form">
+            <?php wp_nonce_field('newsletter-options'); ?>
+            
+            <div class="postbox" id="gan-account-information">
+                <div class="postbox-header">
+                    <h2 class="hndle"><?php esc_html_e( 'API key', 'getanewsletter' ); ?></h2>
+                </div>
 
-        <div class="postbox" id="gan-account-information">
-            <div class="postbox-header">
-                <h2 class="hndle"><?php esc_html_e( 'API key', 'getanewsletter' ); ?></h2>
-            </div>
+                <div class="inside">
+                    <?php if ( $is_api_token_correct ): ?>
+                        <!-- STATE 3: Key working successfully -->
+                        <p>
+                            <?php 
+                                echo sprintf(
+                                    esc_html__(
+                                        'This is the API key for connecting your Get a Newsletter account to this WordPress site. To update the API key, log in to your account and go to %s to generate a new one.',
+                                        'getanewsletter'
+                                    ),
+                                    '<a href="https://app.getanewsletter.com/account/api" target="_blank">My Account → API</a>'
+                                );
+                            ?>
+                        </p>
 
-            <div class="inside">
-                <p>
-                    <?php 
-                        echo sprintf(
-                            esc_html__(
-                                'Here is your API key for connecting your Get a Newsletter account to this WordPress site. To update the API key, log in to your account and go to %s to generate a new one.',
-                                'getanewsletter'
-                            ),
-                            '<a href="https://app.getanewsletter.com/account/api" target="_blank">My Account -> API</a>'
-                        );
-                    ?>
-                </p>
+                        <div>
+                            <label class="gan-label-block" for="newsletter_pass"><?php _e( 'API key:', 'getanewsletter' ); ?></label>
+                            <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo esc_attr(get_option('newsletter_pass')); ?>" />
 
-                <div>
-                    <label class="gan-label-block" for="newsletter_pass"><?php _e( 'API key', 'getanewsletter' ); ?></label>
-                    <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo get_option('newsletter_pass'); ?>" />
-
-                    <div class="gan-result-message">
-                        <?php if ( $is_api_token_correct ): ?>
-                            <div class="gan-success-message">
-                                <div class="gan-checkmark-container">
-                                    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 41.9375 8.625 C 41.273438 8.648438 40.664063 9 40.3125 9.5625 L 21.5 38.34375 L 9.3125 27.8125 C 8.789063 27.269531 8.003906 27.066406 7.28125 27.292969 C 6.5625 27.515625 6.027344 28.125 5.902344 28.867188 C 5.777344 29.613281 6.078125 30.363281 6.6875 30.8125 L 20.625 42.875 C 21.0625 43.246094 21.640625 43.410156 22.207031 43.328125 C 22.777344 43.242188 23.28125 42.917969 23.59375 42.4375 L 43.6875 11.75 C 44.117188 11.121094 44.152344 10.308594 43.78125 9.644531 C 43.410156 8.984375 42.695313 8.589844 41.9375 8.625 Z"/></svg>
+                            <div class="gan-result-message">
+                                <div class="gan-success-message">
+                                    <div class="gan-checkmark-container">
+                                        <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 41.9375 8.625 C 41.273438 8.648438 40.664063 9 40.3125 9.5625 L 21.5 38.34375 L 9.3125 27.8125 C 8.789063 27.269531 8.003906 27.066406 7.28125 27.292969 C 6.5625 27.515625 6.027344 28.125 5.902344 28.867188 C 5.777344 29.613281 6.078125 30.363281 6.6875 30.8125 L 20.625 42.875 C 21.0625 43.246094 21.640625 43.410156 22.207031 43.328125 C 22.777344 43.242188 23.28125 42.917969 23.59375 42.4375 L 43.6875 11.75 C 44.117188 11.121094 44.152344 10.308594 43.78125 9.644531 C 43.410156 8.984375 42.695313 8.589844 41.9375 8.625 Z"/></svg>
+                                    </div>
+                                    <span><?php esc_html_e( 'Your API key is active and working', 'getanewsletter' ); ?></span>
                                 </div>
-                                <span><?php esc_html_e( 'Your API key is active and working', 'getanewsletter' ); ?></span>
                             </div>
-                        <?php else:  ?>
-                            <div class="notice notice-error inline">
-                                <p><?php esc_html_e( 'Invalid API key. Verify and re-enter the API key.', 'getanewsletter' ); ?></p>
+                        </div>
+
+                    <?php else: ?>
+                        <!-- STATE 2: Key exists but failing -->
+                        <div class="notice notice-warning inline gan-connection-issue">
+                            <p>
+                                <strong>⚠️ <?php _e('Connection issue detected', 'getanewsletter'); ?></strong><br><br>
+                                <?php 
+                                $token_suffix = substr(get_option('newsletter_pass'), -4);
+                                echo sprintf(
+                                    __('Your API key (ending in %s) failed to connect. This could be temporary or the key might be invalid.', 'getanewsletter'),
+                                    '<code>•••' . esc_html($token_suffix) . '</code>'
+                                );
+                                ?>
+                            </p>
+                        </div>
+
+                        <div class="gan-error-steps">
+                            <h4><?php _e('Step 1: Test your current key', 'getanewsletter'); ?></h4>
+                            <div class="gan-step-actions">
+                                <button type="button" id="gan-test-connection" class="button">
+                                    <span class="gan-test-text"><?php _e('Test Connection', 'getanewsletter'); ?></span>
+                                    <span class="gan-test-spinner" style="display:none;">
+                                        <span class="spinner" style="visibility:visible;float:none;margin:0 5px 0 0;"></span>
+                                        <?php _e('Testing...', 'getanewsletter'); ?>
+                                    </span>
+                                </button>
                             </div>
-                        <?php endif; ?>
-                    </div>
+                            <div id="gan-test-result" style="margin-top:15px;"></div>
+
+                            <hr class="gan-divider">
+
+                            <h4><?php _e('Step 2: If testing fails, replace with a new key', 'getanewsletter'); ?></h4>
+                            <ol class="gan-instructions">
+                                <li><?php _e('Log in to Get a Newsletter', 'getanewsletter'); ?></li>
+                                <li>
+                                    <?php 
+                                    echo sprintf(
+                                        __('Go to %s', 'getanewsletter'),
+                                        '<a href="https://app.getanewsletter.com/account/api" target="_blank">' . __('My Account → API', 'getanewsletter') . '</a>'
+                                    );
+                                    ?>
+                                </li>
+                                <li><?php _e('Create a new key and paste it below', 'getanewsletter'); ?></li>
+                            </ol>
+
+                            <div>
+                                <label class="gan-label-block" for="newsletter_pass"><?php _e( 'New API key:', 'getanewsletter' ); ?></label>
+                                <input type="password" name="newsletter_pass" id="newsletter_pass" value="" placeholder="<?php esc_attr_e('Paste your new API key here', 'getanewsletter'); ?>" />
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <input type="hidden" name="action" value="update" />
+                    <input type="hidden" name="page_options" value="newsletter_pass" />
+                    <p class="submit">
+                        <input type="submit" class="button-primary" value="<?php echo esc_attr($is_api_token_correct ? __( 'Save API Key', 'getanewsletter') : __( 'Save New Key', 'getanewsletter')); ?>" />
+                    </p>
                 </div>
             </div>
-        </div>
+        </form>
 
-        <div class="postbox" id="gan-messages">
-            <div class="postbox-header">
-                <h2 class="hndle"><?php _e( 'Popup forms', 'getanewsletter' ); ?></h2>
+        <!-- Popup Forms Section -->
+        <form method="post" action="options.php?option_page=newsletter" class="gan-section-form">
+            <?php wp_nonce_field('newsletter-options'); ?>
+            
+            <div class="postbox" id="gan-popup-forms">
+                <div class="postbox-header">
+                    <h2 class="hndle"><?php _e( 'Popup forms', 'getanewsletter' ); ?></h2>
+                </div>
+
+                <div class="inside">
+                    <p><?php esc_html_e( "When creating popup forms with our tool, we ask you to paste a universal code snippet into the ⁠<head> section of your website. With this plugin, you can easily enable your popup forms below.", 'getanewsletter' ); ?></p>
+                    <label for="gan_enable_popup_forms">
+                        <input id="gan_enable_popup_forms" type="checkbox" name="gan_enable_popup_forms" <?php echo get_option( 'gan_enable_popup_forms', false ) ? 'checked' : '' ?> />
+                        <strong><?php esc_html_e( 'Enable popup forms', 'getanewsletter' ); ?></strong>
+                    </label>
+
+                    <input type="hidden" name="action" value="update" />
+                    <input type="hidden" name="page_options" value="gan_enable_popup_forms" />
+                    <p class="submit">
+                        <input type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'getanewsletter') ?>" />
+                    </p>
+                </div>
             </div>
+        </form>
 
-            <div class="inside">
-                <p><?php esc_html_e( "When creating popup forms with our tool, we ask you to paste a universal code snippet into the ⁠<head> section of your website. With this plugin, you can easily enable your popup forms below.", 'getanewsletter' ); ?></p>
-                <label for="gan_enable_popup_forms">
-                    <input id="gan_enable_popup_forms" type="checkbox" name="gan_enable_popup_forms" <?php echo get_option( 'gan_enable_popup_forms', false ) ? 'checked' : '' ?> />
-                    <strong><?php esc_html_e( 'Enable popup forms', 'getanewsletter' ); ?></strong>
-                </label>
+        <!-- Submission Feedback Section -->
+        <form method="post" action="options.php?option_page=newsletter" class="gan-section-form">
+            <?php wp_nonce_field('newsletter-options'); ?>
+            
+            <div class="postbox" id="gan-submission-feedback">
+                <div class="postbox-header">
+                    <h2 class="hndle"><?php esc_html_e( 'Submission feedback', 'getanewsletter' ); ?></h2>
+                </div>
+
+                <div class="inside">
+                    <p><?php esc_html_e( 'You can customize the messages shown to users when they interact with the form.', 'getanewsletter' ); ?></p>
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row"><?php esc_html_e( 'Successful submission:', 'getanewsletter' ); ?></th>
+                            <td>
+                                <input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /> <br>
+                                <span class="gan-input-description"><?php _e( 'Displayed when a user successfully enters their details.', 'getanewsletter' ); ?></span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <input type="hidden" name="action" value="update" />
+                    <input type="hidden" name="page_options" value="newsletter_msg_success" />
+                    <p class="submit">
+                        <input type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'getanewsletter') ?>" />
+                    </p>
+                </div>
             </div>
-        </div>
+        </form>
 
-        <div class="postbox" id="gan-messages">
-            <div class="postbox-header">
-                <h2 class="hndle"><?php esc_html_e( 'Submission feedback', 'getanewsletter' ); ?></h2>
-            </div>
-
-            <div class="inside">
-                <p><?php esc_html_e( 'You can customize the messages shown to users when they interact with the form.', 'getanewsletter' ); ?></p>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row"><?php esc_html_e( 'Successful submission:', 'getanewsletter' ); ?></th>
-                        <td>
-                            <input type="text" class="regular-text" name="newsletter_msg_success" value="<?php echo get_option('newsletter_msg_success', 'Thank you for subscribing to our newsletters.'); ?>" /> <br>
-                            <span class="gan-input-description"><?php _e( 'Displayed when a user successfully enters their details.', 'getanewsletter' ); ?></span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="page_options" value="newsletter_user,newsletter_pass,newsletter_apikey,newsletter_msg_success,newsletter_msg_confirm,gan_enable_popup_forms" />
-        <p class="submit">
-            <input type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'getanewsletter') ?>" />
-        </p>
-    </form>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('#gan-test-connection').on('click', function(e) {
+            e.preventDefault();
+            
+            var $button = $(this);
+            var $resultDiv = $('#gan-test-result');
+            
+            // Show loading state
+            $button.prop('disabled', true);
+            $button.find('.gan-test-text').hide();
+            $button.find('.gan-test-spinner').show();
+            $resultDiv.empty();
+            
+            // Make AJAX request
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'gan_test_connection',
+                    nonce: '<?php echo wp_create_nonce('gan-test-connection'); ?>'
+                },
+                success: function(response) {
+                    // Reset button state
+                    $button.prop('disabled', false);
+                    $button.find('.gan-test-text').show();
+                    $button.find('.gan-test-spinner').hide();
+                    
+                    if (response.success) {
+                        // Show success message
+                        $resultDiv.html(
+                            '<div class="notice notice-success inline">' +
+                            '<p><strong>✓ ' + response.data.message + '</strong></p>' +
+                            '</div>'
+                        );
+                        
+                        // Reload page after 2 seconds to show updated status
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        // Show error message
+                        $resultDiv.html(
+                            '<div class="notice notice-error inline">' +
+                            '<p><strong>✗ ' + response.data.message + '</strong></p>' +
+                            '</div>'
+                        );
+                    }
+                },
+                error: function() {
+                    // Reset button state
+                    $button.prop('disabled', false);
+                    $button.find('.gan-test-text').show();
+                    $button.find('.gan-test-spinner').hide();
+                    
+                    // Show error message
+                    $resultDiv.html(
+                        '<div class="notice notice-error inline">' +
+                        '<p><strong><?php _e('An error occurred. Please try again.', 'getanewsletter'); ?></strong></p>' +
+                        '</div>'
+                    );
+                }
+            });
+        });
+    });
+    </script>
 <?php
 }
 
 add_action('admin_menu', 'newsletter_menu');
+
+add_action('admin_notices', 'gan_show_auth_failure_notice');
+function gan_show_auth_failure_notice() {
+    // Don't show on the settings page itself (user already sees the detailed error there)
+    $screen = get_current_screen();
+    if ($screen && $screen->id === 'toplevel_page_newsletter') {
+        return;
+    }
+    
+    $api_token = get_option('newsletter_pass');
+    if (!$api_token) {
+        return;
+    }
+    
+    if (get_transient('gan_auth_failed_' . md5($api_token))) {
+        // Show last 4 characters of token for identification
+        $token_suffix = substr($api_token, -4);
+        $masked_token = '•••' . $token_suffix;
+        
+        ?>
+        <div class="notice notice-error is-dismissible">
+            <p>
+                <strong><?php _e('Get a Newsletter: Connection needs your attention', 'getanewsletter'); ?></strong><br>
+                <?php 
+                echo sprintf(
+                    __('Your API key (ending in %s) has stopped working.', 'getanewsletter'),
+                    '<code>' . esc_html($masked_token) . '</code>'
+                );
+                ?>
+                <br>
+                <a href="<?php echo admin_url('admin.php?page=newsletter'); ?>" class="button button-primary" style="margin-top: 8px;">
+                    <?php _e('Fix Connection', 'getanewsletter'); ?>
+                </a>
+            </p>
+        </div>
+        <?php
+    }
+}
 
 
 function newsletter_plugin_check_version($plugin_data) {
@@ -1714,6 +1887,18 @@ function update_user_hash_after_token_update( $old_value, $value, $option ) {
     update_option( 'gan_user_hash', $hash );
 }
 
+add_action('update_option_newsletter_pass', 'gan_clear_auth_cache', 10, 3);
+function gan_clear_auth_cache($old_value, $new_value, $option) {
+    // Clear cache for both old and new tokens
+    foreach ([$old_value, $new_value] as $token) {
+        if ($token) {
+            $hash = md5($token);
+            delete_transient('gan_auth_failed_' . $hash);
+            delete_transient('gan_auth_email_sent_' . $hash);
+        }
+    }
+}
+
 add_action( 'init', 'gan_register_blocks' );
 function gan_register_blocks() {
     wp_register_script(
@@ -1959,4 +2144,48 @@ function gan_ajax_get_subscription_form() {
         'form' => $result['data']['form'],
         'customAttributes' => $result['data']['customAttributes'],
     ) );
+}
+
+add_action('wp_ajax_gan_test_connection', 'gan_ajax_test_connection');
+function gan_ajax_test_connection() {
+    // Check permissions
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( array(
+            'message' => __('You do not have permission to perform this action.', 'getanewsletter')
+        ) );
+    }
+
+    // Check nonce
+    check_ajax_referer('gan-test-connection', 'nonce');
+
+    $api_token = get_option('newsletter_pass');
+    
+    if ( ! $api_token ) {
+        wp_send_json_error( array(
+            'message' => __('No API token configured.', 'getanewsletter')
+        ) );
+    }
+
+    // Clear the auth cache to force a fresh test
+    // Note: We only clear the auth cache, not the email sent cache,
+    // to maintain the 24-hour email rate limit
+    $token_hash = md5($api_token);
+    delete_transient('gan_auth_failed_' . $token_hash);
+
+    // Test the connection
+    $conn = new GAPI('', $api_token);
+    $result = $conn->check_login();
+
+    if ( $result ) {
+        wp_send_json_success( array(
+            'message' => __('It works! Your connection is back.', 'getanewsletter')
+        ) );
+    } else {
+        wp_send_json_error( array(
+            'message' => sprintf(
+                __('Still not working: %s', 'getanewsletter'),
+                $conn->errorMessage
+            )
+        ) );
+    }
 }
