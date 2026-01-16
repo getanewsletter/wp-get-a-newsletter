@@ -210,7 +210,73 @@ class GAPI
      */
     function check_login()
     {
-        return $this->call_api('GET', 'user/');
+        $token_hash = md5($this->password);
+        
+        // Check if authentication failed recently
+        if (get_transient('gan_auth_failed_' . $token_hash)) {
+            $this->errorCode = 401;
+            $this->errorMessage = 'Authentication failed (cached)';
+            return false;
+        }
+        
+        // Make the API call
+        $result = $this->call_api('GET', 'user/');
+        
+        // If 401, cache it for 6 hours
+        if (!$result && $this->errorCode == 401) {
+            set_transient('gan_auth_failed_' . $token_hash, time(), 6 * HOUR_IN_SECONDS);
+            
+            // Send one notification email (rate-limited to once per 24h)
+            if (!get_transient('gan_auth_email_sent_' . $token_hash)) {
+                $this->send_failure_email();
+                set_transient('gan_auth_email_sent_' . $token_hash, true, DAY_IN_SECONDS);
+            }
+        }
+        
+        return $result;
+    }
+
+    /*
+     * send_failure_email()
+     *
+     * Private method that sends an email notification when authentication fails.
+     */
+    private function send_failure_email()
+    {
+        $admin_email = get_option('admin_email');
+        $token_suffix = substr($this->password, -4);
+        $site_name = get_bloginfo('name');
+        $site_url = get_bloginfo('url');
+        $settings_url = admin_url('admin.php?page=newsletter');
+        
+        $subject = sprintf(
+            __('[%s] Get a Newsletter WordPress plugin: Connection needs your attention', 'getanewsletter'),
+            $site_name
+        );
+        
+        $message = sprintf(
+            __("Hello!\n\n" .
+            "The Get a Newsletter WordPress plugin on your website cannot connect right now.\n\n" .
+            "Website: %s (%s)\n" .
+            "API key: ●●●%s\n\n" .
+            "Your API key is no longer working.\n" .
+            "This usually happens when the key was removed from your Get a Newsletter account.\n\n" .
+            "How to fix the WordPress plugin:\n" .
+            "1. Log in at https://app.getanewsletter.com\n" .
+            "2. Go to My Account → API\n" .
+            "3. Create a new API key\n" .
+            "4. Paste the new key here: %s\n\n" .
+            "Need help with the WordPress plugin?\n" .
+            "Contact support@getanewsletter.com\n\n" .
+            "Best regards,\n" .
+            "Get a Newsletter", 'getanewsletter'),
+            $site_name,
+            $site_url,
+            $token_suffix,
+            $settings_url
+        );
+        
+        wp_mail($admin_email, $subject, $message);
     }
 
     /*
@@ -695,7 +761,7 @@ class GAPI
             $this->result = $this->body['results'];
 
             foreach ($this->result as $id => $value) {
-                $this->result[$id]['usage'] = $value['usage_count'];
+                $this->result[$id]['usage'] = $value['usage_count'] ?? 0;
                 unset($this->result[$id]['usage_count']);
             }
         }
