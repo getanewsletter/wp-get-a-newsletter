@@ -855,7 +855,7 @@ function newsletter_options() {
 
                         <div>
                             <label class="gan-label-block" for="newsletter_pass"><?php _e( 'API key:', 'getanewsletter' ); ?></label>
-                            <input type="text" name="newsletter_pass" id="newsletter_pass" value="<?php echo esc_attr(get_option('newsletter_pass')); ?>" />
+                            <input type="password" name="newsletter_pass" id="newsletter_pass" value="<?php echo esc_attr(get_option('newsletter_pass')); ?>" />
 
                             <div class="gan-result-message">
                                 <div class="gan-success-message">
