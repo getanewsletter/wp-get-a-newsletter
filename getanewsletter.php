@@ -925,11 +925,6 @@ function newsletter_options() {
                     </p>
                 </div>
             </div>
-        </form>
-
-        <!-- Popup Forms Section -->
-        <form method="post" action="options.php?option_page=newsletter" class="gan-section-form">
-            <?php wp_nonce_field('newsletter-options'); ?>
             
             <div class="postbox" id="gan-popup-forms">
                 <div class="postbox-header">
@@ -950,11 +945,6 @@ function newsletter_options() {
                     </p>
                 </div>
             </div>
-        </form>
-
-        <!-- Submission Feedback Section -->
-        <form method="post" action="options.php?option_page=newsletter" class="gan-section-form">
-            <?php wp_nonce_field('newsletter-options'); ?>
             
             <div class="postbox" id="gan-submission-feedback">
                 <div class="postbox-header">
@@ -1264,6 +1254,43 @@ function gan_shortcode($atts) {
 
     ob_start();
     ?>
+    <style>
+        button[type="submit"].gan-button-container--button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button[type="submit"].gan-button-container--button
+        .gan-button-container--button-spinner {
+            position: absolute;
+            animation: spin 1s linear infinite;
+            visibility: hidden;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        button[type="submit"].gan-button-container--button.loading .gan-button-container--button-text {
+            opacity: 0;
+        }
+
+        button[type="submit"].gan-button-container--button.loading .gan-button-container--button-spinner {
+            visibility: visible;
+        }
+
+        button[type="submit"].gan-button-container--button:disabled {
+            opacity: 0.7;
+            cursor: default;
+        }
+    </style>
+
     <div class="gan-newsletter-widget">
         <form method="post" class="newsletter-signup" action="javascript:alert('success!');" enctype="multipart/form-data">
             <input type="hidden" name="action" value="getanewsletter_subscribe" />
