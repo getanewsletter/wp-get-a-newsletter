@@ -435,7 +435,7 @@ class GAPI
      }
 
     function get_senders() {
-        return $this->call_api('GET', 'senders/');
+        return $this->call_api('GET', 'senders/?paginate_by=100');
     }
 
      function subscription_form_get($key) {
@@ -998,7 +998,7 @@ class GAPI
 
     function subscription_lists_list()
     {
-        $ok = $this->call_api('GET', 'lists/');
+        $ok = $this->call_api('GET', 'lists/?paginate_by=100');
         if ($ok) {
             $this->result = $this->body['results'];
         }
