@@ -2211,7 +2211,7 @@ function gan_ajax_test_connection() {
         wp_send_json_error( array(
             'message' => sprintf(
                 __('Still not working: %s', 'getanewsletter'),
-                $conn->errorMessage
+                sanitize_text_field( wp_strip_all_tags( (string) $conn->errorMessage ) )
             )
         ) );
     }
