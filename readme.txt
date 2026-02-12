@@ -1,8 +1,8 @@
 === Get a Newsletter ===
 Tags: newsletter, forms, popup, email marketing, mailing list
 Requires at least: 5.2.0
-Stable tag: 4.0.0
-Tested up to: 6.7
+Stable tag: 4.1.0
+Tested up to: 6.9.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -78,6 +78,14 @@ Popup forms can be enabled in the Settings section of the plugin. Once enabled, 
 
 == Changelog ==
 
+= 4.1.0 =
+* Fixed critical errors on shortcode rendering despite valid API key
+* Fixed pagination for accounts with many subscription lists or senders
+* Added caching for failed API authentication to improve performance
+* Added admin email notifications when API connection fails
+* Improved settings page with better error messaging and troubleshooting steps
+* Added loading state for form submission buttons
+
 = 4.0.0 =
 * Added Gutenberg block support with visual customization options
 * Added support for multiple forms on the same page
@@ -143,6 +151,9 @@ For more information about subscription forms, visit https://support.getanewslet
 * Available in WordPress public repository
 
 == Upgrade Notice ==
+
+= 4.1.0 =
+Bug fixes and performance improvements. Fixes critical errors on shortcode rendering and adds better error handling for API connection issues.
 
 = 4.0.0 =
 Major update with Gutenberg block support, improved form styling, and Swedish translation. Requires WordPress 5.2 or higher.

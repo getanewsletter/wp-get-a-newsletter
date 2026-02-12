@@ -3,7 +3,7 @@
 Plugin Name: Get a Newsletter
 Plugin URI: https://www.getanewsletter.com/
 Description: Turn visitors into subscribers. Eliminate manual entry of subscribers with signup forms that sync directly with your Get a Newsletter account.
-Version: 4.0
+Version: 4.1.0
 Requires at least: 5.2.0
 Requires PHP: 7.2
 Author: getanewsletter
@@ -13,7 +13,7 @@ Text Domain: getanewsletter
 Domain Path: /languages/
 */
 
-define( 'GAN_VERSION', '3.3' );
+define( 'GAN_VERSION', '4.1.0' );
 
 require_once("GAPI.class.php");
 
